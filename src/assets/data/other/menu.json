@@ -1,0 +1,31 @@
+[
+  {
+    "label": "Boshqaruv",
+    "icon": "pi pi-user",
+    "type": "link",
+    "route": "dashboard",
+    "permissions": []
+  },
+  {
+    "label": "Ombor",
+    "icon": "pi pi-warehouse",
+    "type": "link",
+    "route": "warehouse",
+    "permissions": []
+  },
+  {
+    "label": "Kassa",
+    "icon": "pi pi-calculator",
+    "type": "link",
+    "route": "cashbox",
+    "permissions": []
+  },
+  {
+    "label": "Hisobot",
+    "icon": "pi pi-chart-bar",
+    "type": "link",
+    "route": "analytics",
+    "permissions": []
+  }
+]
+

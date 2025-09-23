@@ -1,0 +1,27 @@
+<p-toolbar
+  class="fixed top-0 left-0 right-0 z-50 shadow-md"
+  [style]="{ borderBottom: 'transparent', borderRadius: '0' }">
+<ng-template #start>
+    <div class="flex items-center gap-8">
+      <!-- 🔘 Drawer Toggle Button -->
+      <a href="/" class="flex justify-between items-center gap-2">
+        <div class="logo-container">
+          <img src="assets/images/ruzi-icon.png" alt="RUZI icon" class="logo-icon" />
+          <div class="logo">
+            <span class="ruzi">RUZI SAVDO</span>
+          </div>
+        </div>
+      </a>
+      <p-button [outlined]="false" [rounded]="true" (onClick)="onToggleSidebar()">
+        <i class="pi pi-bars m-1"></i>
+      </p-button>
+      <app-breadcrumb/>
+    </div>
+  </ng-template>
+
+  <ng-template #end>
+    <div class="flex items-center mx-2">
+      <app-userprofile/>
+    </div>
+  </ng-template>
+</p-toolbar>

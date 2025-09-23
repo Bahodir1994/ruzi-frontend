@@ -1,0 +1,16 @@
+<div (click)="toggleCalendar()" class="px-4 text-center flex justify-center" style="cursor: pointer;">
+  <span style="font-size: 20px; font-weight: bold; letter-spacing: 3px;" class="p-2 border-r-2">{{ currentTime }}</span>
+  <span style="font-size: 20px; font-weight: bold; letter-spacing: 3px;" class="p-2">{{ currentDate }}</span>
+</div>
+
+<p-drawer header="Календарь" [(visible)]="showCalendar" position="right" [dismissible]="true" [modal]="true"
+          [style]="{width: '600px'}">
+  <div class="calendar-wrapper">
+    <full-calendar #fullCalendar [options]="calendarOptions"></full-calendar>
+  </div>
+  <div class="flex">
+    <a href="https://cbu.uz/" target="_blank" title="O‘zbekiston Respublikasi Markaziy banki"><img
+      src="https://cbu.uz/uz/informer/?txtclr=fcf5f5&brdclr=003dff&bgclr=4473e5&r_choose=USD_EUR_RUB" alt=""></a>
+  </div>
+</p-drawer>
+

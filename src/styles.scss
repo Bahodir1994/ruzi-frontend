@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "primeicons/primeicons.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: Arial, Helvetica sans-serif !important;
+}
+
+
+.table-style-v1 th {
+  background-color: #57a4f1 !important;
+  border-right: 1.5px dashed #4068e0 !important;
+  color: #201F20FF !important;
+  border-bottom: 2px solid #101b33 !important;
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "module": "module-bnt",
+    "host": "http://192.168.224.18:9091",
+    "ssl": false,
+    "active": true,
+    "list": [
+      {
+        "url": "/route-bnt/crud",
+        "method": "POST",
+        "label": "create_cmdt_child",
+        "comment": "bnt o'rganilgan tovar ma'lumotini kiritish",
+        "active": true
+      }
+    ]
+  }
+]

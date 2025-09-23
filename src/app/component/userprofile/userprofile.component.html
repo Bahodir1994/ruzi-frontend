@@ -1,0 +1,69 @@
+<p-button variant="text" icon="pi pi-user text-white hover:text-gray-600" (click)="menu.toggle($event)" [rounded]="true"
+          styleClass="border-4 border-gray-900">
+</p-button>
+
+<p-menu
+  #menu
+  [popup]="true"
+  appendTo="#navbar"
+  styleClass="right-menu-panel shadow-lg"
+  class="right-menu"
+>
+  <ng-template #start>
+    <p-panel header="" styleClass="border-0">
+      <div class="row p-2 w-full" style="min-width: 250px">
+        <div class="grid grid-rows-1 grid-flow-col gap-2">
+          <div class="bg-gray-300 w-16 h-16 rounded-full flex items-center justify-center">📷</div>
+          <div class="px-2 pt-1 w-[270px]">
+            <span class="font-semibold text-gray-600">{{ user?.firstName + ' ' + user?.lastName }}</span>
+          </div>
+        </div>
+        <p-divider/>
+        <div class="w-full">
+          <p-button [raised]="true" (click)="authService.logout()" size="small" styleClass="w-full">
+            <i class="pi pi-sign-out"></i> Chiqish
+          </p-button>
+        </div>
+      </div>
+    </p-panel>
+  </ng-template>
+  <ng-template #end>
+    <p-scrollPanel [style]="{ width: '100%', height: '400px'}" styleClass="pb-3 mb-3">
+      <div *ngIf="userGroups && userGroups.length > 0">
+        <p-panel header="Фойдаланувчи роллари" styleClass="border-0">
+          <ul class="max-w-md divide-y divide-gray-200 dark:divide-gray-700">
+            <li
+              class="p-2 sm:py-2 hover:bg-gray-300 rounded hover:text-blue-600 hover:drop-shadow-2xl transition delay-75 duration-150 ease-in-out hover:cursor-help"
+              *ngFor="let groupOne of userGroups" [pTooltip]="tooltipContent">
+              <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <div class="shrink-0">
+                  <i class="pi pi-user text-blue-600 hover:text-lime-50" style="font-size: 1rem"></i>
+                </div>
+                <div class="flex-1 min-w-0 text-nowrap">
+                  <p>{{ groupOne.name }}</p>
+                </div>
+                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                  <ng-template #tooltipContent>
+                    <div class="text-start text-nowrap" *ngFor="let roleOne of groupOne.roles">
+                      <p class="font-medium text-sm text-lime-50 pb-0 mb-0">
+                        <b>
+                          <i class="pi pi-check px-2" style="color: dodgerblue; font-size: 0.8rem"></i>
+                          {{ roleOne }}
+                        </b>
+                      </p>
+                      <p-divider styleClass="py-1 my-0"/>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </p-panel>
+      </div>
+
+      <div *ngIf="userGroups?.length === 0" class="text-center text-gray-500 mt-4">
+        Loading roles...
+      </div>
+    </p-scrollPanel>
+  </ng-template>
+</p-menu>

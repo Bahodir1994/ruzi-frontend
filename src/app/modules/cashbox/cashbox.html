@@ -1,0 +1,86 @@
+<div class="flex h-screen w-screen">
+  <p-splitter class="w-full h-full">
+    <ng-template #panel>
+      <p-toolbar class="h-[75px] border-b-2 border-gray-700 shadow-md rounded-none">
+        <ng-template #start>
+          <div class="flex items-center w-[600px] gap-2">
+            <p-button text severity="secondary">
+              <i class="pi pi-star rounded-lg border-2 p-2" style="font-size: 2rem"></i>
+            </p-button>
+
+            <input
+              #searchInput
+              type="search"
+              pInputText
+              placeholder="Tovarlarni qidirish..."
+              class="flex-1 h-[80%] px-4 text-2xl border-none bg-transparent focus:ring-0 focus:outline-none"
+            />
+          </div>
+        </ng-template>
+        <ng-template #end>
+          <div class="flex justify-end gap-6">
+            <p-button [text]="true" severity="info">
+              <i class="pi pi-list" style="font-size: 2rem"></i>
+            </p-button>
+            <p-button [text]="true" severity="info">
+              <i class="pi pi-tags" style="font-size: 2rem"></i>
+            </p-button>
+          </div>
+        </ng-template>
+      </p-toolbar>
+      <div class="h-full">
+        <p-table
+          [columns]="cols"
+          stripedRows
+          [value]="cars"
+          [scrollable]="true"
+          scrollHeight="800px"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="92"
+          class="bg-ruziblue"
+        >
+          <ng-template #body let-rowData let-rowIndex="rowIndex" let-columns="columns">
+              <tr style="height:46px">
+                <td *ngFor="let col of columns">
+                  {{ rowData[col.field] }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+      </div>
+    </ng-template>
+    <ng-template #panel>
+      <p-toolbar class="h-[75px] border-b-2 border-gray-700 shadow-lg rounded-none">
+        <ng-template #start>
+          <div class="flex items-center gap-2">
+            <p-button text severity="secondary">
+              <i class="pi pi-user rounded-lg border-2 p-2" style="font-size: 2rem"></i>
+            </p-button>
+          </div>
+        </ng-template>
+        <ng-template #center>
+          <span class="text-3xl font-bold">Sotilayotgan tovarlar</span>
+        </ng-template>
+        <ng-template #end>
+          <div class="flex justify-end gap-6">
+            <p-button [text]="true" severity="info">
+              <i class="pi pi-trash" style="font-size: 2rem"></i>
+            </p-button>
+          </div>
+        </ng-template>
+      </p-toolbar>
+    </ng-template>
+  </p-splitter>
+</div>
+
+<div class="absolute bottom-4 rounded-3xl left-4 bg-white dark:bg-gray-700">
+  <p-button
+    [rounded]="true"
+    [text]="true"
+    [raised]="true"
+    [outlined]="false"
+    routerLink="/analytics"
+  >
+    <i class="pi pi-shop p-5" style="font-size: 2.5rem"></i>
+  </p-button>
+</div>

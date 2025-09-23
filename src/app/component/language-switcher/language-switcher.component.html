@@ -1,0 +1,16 @@
+<div class="flex justify-between items-center mx-2">
+  <!-- Flag as menu toggle -->
+  <button
+    class="flag-toggle"
+    (click)="langMenu.toggle($event)"
+    pTooltip="{{ selectedLang.name }}"
+    tooltipPosition="bottom"
+  >
+    <span class="flag-icon fi fi-{{ selectedLang.icon }}"></span>
+  </button>
+
+  <span class="text-sm text-blue-50 px-2">{{ selectedLang.name }}</span>
+
+  <!-- Language menu -->
+  <p-menu #langMenu [model]="menuItems" [popup]="true"></p-menu>
+</div>

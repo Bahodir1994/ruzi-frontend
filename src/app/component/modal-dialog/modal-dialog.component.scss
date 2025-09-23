@@ -1,0 +1,70 @@
+/* Стили для модального окна */
+.custom-modal {
+  background: rgba(0, 0, 0, 0.6); /* Полупрозрачный фон */
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  animation: modalFadeIn 0.5s ease-out; /* Добавление анимации */
+}
+
+/* Анимация появления модального окна */
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Стили для фона модального окна */
+.custom-modal .p-dialog {
+  background: #ffffff; /* Белый фон для самого окна */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* Стили для svg */
+.custom-modal svg {
+  width: 50px;
+  height: 50px;
+  animation: svgAnim 2s infinite; /* Добавление анимации к SVG */
+}
+
+/* Анимация для SVG */
+@keyframes svgAnim {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Стили для кнопок и текста */
+.custom-modal .p-dialog-header {
+  background: #4CAF50; /* Зеленый фон для заголовка */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.custom-modal .p-dialog-footer {
+  background: #f5f5f5;
+}
+
+.custom-modal .p-dialog .p-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.custom-modal .p-dialog .p-button:hover {
+  background-color: #45a049;
+}

@@ -1,0 +1,13 @@
+<div class="matero-error-wrap">
+  <div class="matero-error-code">{{ code }}</div>
+  @if (title) {
+    <div class="matero-error-title">{{ title }}</div>
+  }
+  @if (message) {
+    <div class="matero-error-message">{{ message }}</div>
+  }
+  <div class="flex justify-center gap-2">
+    <p-button icon="pi pi-undo" (click)="navigateBack()" label="Orqaga qaytish"/>
+    <p-button (click)="navigateToSite()" label="YAAT ga o'tish"/>
+  </div>
+</div>
