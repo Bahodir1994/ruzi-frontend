@@ -4,6 +4,7 @@ import {AuthGuard} from './configuration/authentication/auth.guard';
 import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
 import {Warehouse} from './modules/warehouse/warehouse';
+import {Directory} from './modules/directory/directory';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,15 @@ export const routes: Routes = [
           roles: [],
           title: 'Hisobot',
           breadcrumb: 'Hisobot'
+        }
+      },
+      {
+        path: 'catalog',
+        component: Directory,
+        data: {
+          roles: [],
+          title: 'Katalog',
+          breadcrumb: 'Katalog'
         }
       },
       {

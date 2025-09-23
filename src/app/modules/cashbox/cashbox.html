@@ -1,19 +1,20 @@
 <div class="flex h-screen w-screen">
   <p-splitter class="w-full h-full">
     <ng-template #panel>
-      <p-toolbar class="h-[75px] border-b-2 border-gray-700 shadow-md rounded-none">
+        <p-toolbar class="h-[80px] border-b-2 !items-center !py-0 border-gray-700 shadow-md rounded-none">
         <ng-template #start>
-          <div class="flex items-center w-[600px] gap-2">
+          <div class="flex items-center w-[700px] gap-2">
             <p-button text severity="secondary">
               <i class="pi pi-star rounded-lg border-2 p-2" style="font-size: 2rem"></i>
             </p-button>
-
             <input
               #searchInput
               type="search"
               pInputText
+              pSize="large"
               placeholder="Tovarlarni qidirish..."
-              class="flex-1 h-[80%] px-4 text-2xl border-none bg-transparent focus:ring-0 focus:outline-none"
+              class="flex-1 px-4 focus:ring-0 focus:outline-none"
+              [style]="{border: '0px', background: 'transparent', fontSize: '30px'}"
             />
           </div>
         </ng-template>
@@ -28,7 +29,7 @@
           </div>
         </ng-template>
       </p-toolbar>
-      <div class="h-full">
+        <div class="h-full">
         <p-table
           [columns]="cols"
           stripedRows
@@ -50,7 +51,7 @@
       </div>
     </ng-template>
     <ng-template #panel>
-      <p-toolbar class="h-[75px] border-b-2 border-gray-700 shadow-lg rounded-none">
+        <p-toolbar class="h-[80px] border-b-2 !items-center !py-0 border-gray-700 shadow-md rounded-none">
         <ng-template #start>
           <div class="flex items-center gap-2">
             <p-button text severity="secondary">
@@ -59,7 +60,7 @@
           </div>
         </ng-template>
         <ng-template #center>
-          <span class="text-3xl font-bold">Sotilayotgan tovarlar</span>
+          <span class="text-3xl font-bold">Savatdagi tovarlar</span>
         </ng-template>
         <ng-template #end>
           <div class="flex justify-end gap-6">

@@ -5,7 +5,8 @@ export const apiConfigData: ApiUrls[] = [
   /** Module */
   {
     module: "warehouse",
-    host: "http://192.168.224.38:9050",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
     ssl: false,
     active: true,
     list: [
@@ -20,10 +21,6 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
-
-
-
-
       {
         url: "/route-bnt/crud/bnt/info/private",
         method: "get",

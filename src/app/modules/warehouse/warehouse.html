@@ -7,11 +7,70 @@
     <p-tabpanels>
       <p-tabpanel value="0">
         <p-tabs>
-          <p-tabpanels>
+          <p-tabpanels [style]="{padding: '0px'}">
             <p-tabpanel>
+              <div class="w-full flex justify-start py-2">
+                <div class="flex">
+                  <p-datePicker
+                    size="small"
+                    class="pr-2"
+                    [(ngModel)]="dateStart"
+                    [showIcon]="true"
+                    [showOnFocus]="false"
+                    [showButtonBar]="true"
+                    inputId="inputDateStart"
+                    dateFormat="dd-mm-yy"
+                    placeholder="DD-MM-YYYY"
+                    (onSelect)="loadData()"
+                    (onInput)="loadData()"
+                    (onClear)="loadData()"
+                  >
+                    <ng-template #customButtonBar>
+                      <div class="p-button-bar">
+                        <button pButton type="button" text="Today11"></button>
+                        <button pButton type="button" text="Clear11"></button>
+                        <button pButton type="button" text="Close11"></button>
+                      </div>
+                    </ng-template>
+                  </p-datePicker>
+                  <p-datePicker
+                    size="small"
+                    class="pr-2"
+                    [(ngModel)]="dateEnd"
+                    [showIcon]="true"
+                    [showOnFocus]="false"
+                    [showButtonBar]="true"
+                    inputId="inputDateEnd"
+                    dateFormat="dd-mm-yy"
+                    placeholder="DD-MM-YYYY"
+                    (onSelect)="loadData()"
+                    (onInput)="loadData()"
+                    (onClear)="loadData()"
+                  ></p-datePicker>
+                  <p-icon-field iconPosition="right" class="pr-2">
+                    <p-inputicon class="pi pi-search"></p-inputicon>
+                    <input
+                      type="text"
+                      pInputText
+                      pSize="small"
+                      placeholder="Qidiruv"
+                      [(ngModel)]="searchValue"
+                      (input)="loadData()"
+                    />
+                  </p-icon-field>
+                  @if (permissions['create_new_permission']) {
+                    <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-plus" label="Янги"
+                              [outlined]="true"/>
+                  }
+                  @if (permissions['download_excel_privilege']) {
+                    <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-excel" label="Excel"
+                              [outlined]="true"/>
+                  }
+                </div>
+              </div>
               <p-table
                 size="small"
-                #dataTableBnt
+                #dataTablePurchaseOrder
                 [value]="purchaseOrderModel"
                 dataKey="id"
                 [rowHover]="true"
@@ -22,10 +81,9 @@
                 [paginator]="true"
                 currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
                 [filterDelay]="0"
-                [globalFilterFields]="['generateId']"
+                [globalFilterFields]="['orderNumber','supplier.name','warehouse.name']"
                 (onFilter)="onFilter($event)"
                 (onSort)="onSort($event)"
-
                 [scrollable]="true"
                 [totalRecords]="totalRecords"
                 [lazy]="true"
@@ -34,95 +92,122 @@
                 [pageLinks]="5"
                 [showJumpToPageInput]="true"
                 scrollHeight="650px"
+                stripedRows
                 class="p-datatable-gridlines p-datatable-sm text-xs p-datatable-wrapper"
               >
+                <!-- HEADER -->
                 <ng-template pTemplate="header">
                   <tr class="table-style-v1">
                     <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
-                    <th pSortableColumn="number" class="text-center text-nowrap sort-header">Murojaat raqami
-                      <p-sortIcon field="number"/>
+
+                    <th pSortableColumn="orderNumber" class="text-center text-nowrap sort-header">
+                      Buyurtma raqami
+                      <p-sortIcon field="orderNumber" />
                     </th>
-                    <th class="text-center text-nowrap sort-header">Vaqti
-                      <p-sortIcon field="date"/>
+
+                    <th pSortableColumn="supplier.name" class="text-center text-nowrap sort-header">
+                      Ta’minotchi
+                      <p-sortIcon field="supplier.name" />
                     </th>
-                    <th pSortableColumn="status" class="text-center text-nowrap sort-header">Maqomi
-                      <p-sortIcon field="status"/>
+
+                    <th pSortableColumn="warehouse.name" class="text-center text-nowrap sort-header">
+                      Ombor
+                      <p-sortIcon field="warehouse.name" />
                     </th>
-                    <th pSortableColumn="decNum" class="text-center text-nowrap sort-header">Hujjat raqami
-                      <p-sortIcon field="decNum"/>
+
+                    <th pSortableColumn="createdAt" class="text-center text-nowrap sort-header">
+                      Yaratilgan sana
+                      <p-sortIcon field="createdAt" />
                     </th>
-                    <th pSortableColumn="g8name" class="text-center text-nowrap sort-header">Tashkilot
-                      <p-sortIcon field="g8name"/>
+
+                    <th pSortableColumn="approvedAt" class="text-center text-nowrap sort-header">
+                      Tasdiqlangan sana
+                      <p-sortIcon field="approvedAt" />
                     </th>
-                    <th pSortableColumn="bntPerson.fullName" class="text-center text-nowrap sort-header">
-                      Murojaatchi
-                      <p-sortIcon field="bntPerson.fullName"/>
+
+                    <th pSortableColumn="currency" class="text-center text-nowrap sort-header">
+                      Valyuta
+                      <p-sortIcon field="currency" />
                     </th>
-                    <th>Amallar</th>
+
+                    <th pSortableColumn="totalAmount" class="text-center text-nowrap sort-header">
+                      Umumiy summa
+                      <p-sortIcon field="totalAmount" />
+                    </th>
+
+                    <th pSortableColumn="paidAmount" class="text-center text-nowrap sort-header">
+                      To‘langan summa
+                      <p-sortIcon field="paidAmount" />
+                    </th>
+
+                    <th pSortableColumn="debtAmount" class="text-center text-nowrap sort-header">
+                      Qarzdorlik
+                      <p-sortIcon field="debtAmount" />
+                    </th>
+
+                    <th pSortableColumn="status" class="text-center text-nowrap sort-header">
+                      Holat
+                      <p-sortIcon field="status" />
+                    </th>
+
+                    <th pSortableColumn="paymentStatus" class="text-center text-nowrap sort-header">
+                      To‘lov holati
+                      <p-sortIcon field="paymentStatus" />
+                    </th>
+
+                    <th class="text-center text-nowrap sort-header">Amallar</th>
                   </tr>
                 </ng-template>
+
+                <!-- BODY -->
                 <ng-template
                   pTemplate="body"
-                  let-purchaseOrderModel
+                  let-row
                   let-expanded="expanded"
-                  let-i="rowIndex">
+                  let-i="rowIndex"
+                >
                   <tr style="height:49px">
-                    <td pFrozenColumn alignFrozen="left" class="shadow text-nowrap text-center cursor-pointer">
-                      <div style="display: inline-flex; align-items: center;">
-                        <span class="pr-2">{{ i + 1 }}</span>
-                        <i
-                          pRipple
-                          [className]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                        ></i>
-                      </div>
+                    <td pFrozenColumn alignFrozen="left" class="shadow text-nowrap text-center">
+                      {{ i + 1 }}
                     </td>
-                    <td class="text-nowrap text-center">
-                    </td>
-                    <td class="text-nowrap text-center">
-                      {{ purchaseOrderModel.id }}
-                    </td>
-                    <td class="text-nowrap text-center">
-                    </td>
-                    <td class="text-nowrap text-center">
-                      {{ purchaseOrderModel.id }}
-                    </td>
-                    <td class="text-nowrap text-center">
-                      {{ purchaseOrderModel.id }}
-                    </td>
-                    <td class="text-nowrap text-center">
-                      {{ purchaseOrderModel.id }}
-                    </td>
+
+                    <td class="text-nowrap text-center">{{ row.orderNumber }}</td>
+                    <td class="text-nowrap text-center">{{ row.supplier?.name }}</td>
+                    <td class="text-nowrap text-center">{{ row.warehouse?.name }}</td>
+                    <td class="text-nowrap text-center">{{ row.createdAt }}</td>
+                    <td class="text-nowrap text-center">{{ row.approvedAt }}</td>
+                    <td class="text-nowrap text-center">{{ row.currency }}</td>
+                    <td class="text-nowrap text-center">{{ row.totalAmount }}</td>
+                    <td class="text-nowrap text-center">{{ row.paidAmount }}</td>
+                    <td class="text-nowrap text-center">{{ row.debtAmount }}</td>
+                    <td class="text-nowrap text-center">{{ row.status }}</td>
+                    <td class="text-nowrap text-center">{{ row.paymentStatus }}</td>
+
                     <td pFrozenColumn alignFrozen="right">
+                      <!-- Amallar tugmalari -->
+                      <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"></button>
+                      <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
                     </td>
                   </tr>
                 </ng-template>
+
+                <!-- EMPTY MESSAGE -->
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td [attr.colspan]="8" class="mx-auto">
+                    <td [attr.colspan]="13" class="mx-auto">
                       <div class="flex flex-col items-center justify-center p-6 text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-12 h-12 mb-2 text-gray-400"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 17v-2h6v2H9zM12 3C7.03 3 3 7.03 3 12s4.03 9 9
-                     9 9-4.03 9-9-4.03-9-9-9z"/>
-                        </svg>
-                        <span>Ma'lumotlar topilmadi</span>
+                        <i class="pi pi-info-circle text-3xl mb-2"></i>
+                        <span>Ma’lumotlar topilmadi</span>
                       </div>
                     </td>
                   </tr>
                 </ng-template>
               </p-table>
             </p-tabpanel>
-
-            <p-tabpanel>
-              <p>Bu boshqa tabdagi ma'lumot.</p>
-            </p-tabpanel>
           </p-tabpanels>
         </p-tabs>
       </p-tabpanel>
       <p-tabpanel value="1">
-
       </p-tabpanel>
       <p-tabpanel value="2">
       </p-tabpanel>

@@ -18,6 +18,9 @@ import {WarehouseService} from '../../service/warehouse/warehouse.service';
 import {firstValueFrom} from 'rxjs';
 import {Ripple} from 'primeng/ripple';
 import {Tooltip} from 'primeng/tooltip';
+import {DatePicker} from 'primeng/datepicker';
+import {FormsModule} from '@angular/forms';
+import {PermissionService} from '../../service/validations/permission.service';
 
 @Component({
   selector: 'app-warehouse',
@@ -28,10 +31,11 @@ import {Tooltip} from 'primeng/tooltip';
     Tabs, TabList, Tab, TabPanels, TabPanel,
     TableModule, HttpClientModule, CommonModule,
     InputTextModule, TagModule, SelectModule, MultiSelectModule,
-    ProgressBarModule, ButtonModule, IconFieldModule, InputIconModule, NgClass, Ripple, Tooltip
+    ProgressBarModule, ButtonModule, IconFieldModule, InputIconModule, NgClass, Ripple, Tooltip, DatePicker, FormsModule
   ]
 })
 export class Warehouse implements OnInit {
+  public permissions: Record<string, boolean> = {};
 
   dateStart: Date = new Date();
   dateEnd: Date = new Date();
@@ -47,11 +51,11 @@ export class Warehouse implements OnInit {
     start:0,
     length: 10,
     search:{value: '', regex: false},
-    order: [{column: 0, dir: 'asc'}],
+    order: [{column: 2, dir: 'desc'}],
     columns:[
       {data: 'id', name: 'id', searchable: true, orderable: true, search: {value: '', regex: false}},
       {data: 'orderNumber', name: 'orderNumber', searchable: true, orderable: true, search: {value: '', regex: false}},
-      {data: 'createdAt', name: 'createdAt', searchable: true, orderable: true, search: {value: '', regex: false}},
+      {data: 'createdAt', name: 'createdAt', searchable: false, orderable: false, search: {value: '', regex: false}},
       {data: 'approvedAt', name: 'approvedAt', searchable: true, orderable: true, search: {value: '', regex: false}},
       {data: 'currency', name: 'currency', searchable: true, orderable: true, search: {value: '', regex: false}},
       {data: 'dueDate', name: 'dueDate', searchable: true, orderable: true, search: {value: '', regex: false}},
@@ -65,11 +69,16 @@ export class Warehouse implements OnInit {
   }
   constructor(
     private cdr: ChangeDetectorRef,
-    private warehouseService: WarehouseService) {}
+    private warehouseService: WarehouseService,
+    private permissionService: PermissionService) {}
 
   ngOnInit() {
     this.dateStart = new Date(1991, 0, 1);
     this.loadData().then(r => null);
+  }
+
+  canAccess(key: string, status: string): boolean {
+    return this.permissionService.canAccess(Warehouse, key, status);
   }
 
   async loadData() {

@@ -1,9 +1,7 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Splitter} from 'primeng/splitter';
 import {Button} from 'primeng/button';
 import {RouterLink} from '@angular/router';
-import {Image} from 'primeng/image';
-import {Listbox} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
 import {NgForOf} from '@angular/common';
@@ -38,7 +36,8 @@ interface Column {
   templateUrl: './cashbox.html',
   standalone: true,
   styleUrl: './cashbox.scss',
-  providers: [CarService]
+  providers: [CarService],
+  encapsulation: ViewEncapsulation.None
 })
 export class Cashbox implements OnInit, AfterViewInit{
   @ViewChild('searchInput') searchInput!: ElementRef;
