@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {CommonModule, NgClass} from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
 import {TableFilterEvent, TableModule} from 'primeng/table';
 import {TagModule} from 'primeng/tag';
@@ -14,10 +13,9 @@ import {ButtonModule} from 'primeng/button';
 import {PurchaseOrderModel} from './warehouse.model';
 import {DataTableInput} from '../../component/datatables/datatable-input.model';
 import {FilterMetadata, SortEvent} from 'primeng/api';
-import {WarehouseService} from '../../service/warehouse/warehouse.service';
+import {WarehouseService} from '../../service/modules/warehouse/warehouse.service';
 import {firstValueFrom} from 'rxjs';
 import {Ripple} from 'primeng/ripple';
-import {Tooltip} from 'primeng/tooltip';
 import {DatePicker} from 'primeng/datepicker';
 import {FormsModule} from '@angular/forms';
 import {PermissionService} from '../../service/validations/permission.service';
@@ -29,9 +27,9 @@ import {PermissionService} from '../../service/validations/permission.service';
   styleUrls: ['./warehouse.scss'],
   imports: [
     Tabs, TabList, Tab, TabPanels, TabPanel,
-    TableModule, HttpClientModule, CommonModule,
+    TableModule, CommonModule,
     InputTextModule, TagModule, SelectModule, MultiSelectModule,
-    ProgressBarModule, ButtonModule, IconFieldModule, InputIconModule, NgClass, Ripple, Tooltip, DatePicker, FormsModule
+    ProgressBarModule, ButtonModule, IconFieldModule, InputIconModule, Ripple, DatePicker, FormsModule
   ]
 })
 export class Warehouse implements OnInit {
@@ -67,6 +65,7 @@ export class Warehouse implements OnInit {
       {data: 'comment', name: 'comment', searchable: true, orderable: true, search: {value: '', regex: false}},
     ]
   }
+
   constructor(
     private cdr: ChangeDetectorRef,
     private warehouseService: WarehouseService,

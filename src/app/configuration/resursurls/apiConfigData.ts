@@ -21,6 +21,8 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
+
+
       {
         url: "/route-bnt/crud/bnt/info/private",
         method: "get",
@@ -238,6 +240,26 @@ export const apiConfigData: ApiUrls[] = [
         method: "get",
         label: "bnt_app_cmdt_status",
         comment: "bnt app va tovar statuslari",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
+  },
+  {
+    module: "directory",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      /*todo info*/
+      {
+        url: "/api/purchase-orders/read-table-data",
+        method: "post",
+        label: "product_table",
+        comment: "tovarlar asosy jadvali",
         active: true,
         showSuccess: false,
         showWarning: true,

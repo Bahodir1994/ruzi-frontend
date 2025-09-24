@@ -5,7 +5,7 @@ import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
 import {NgForOf} from '@angular/common';
-import {CarService} from '../../service/cashbox/car-service';
+import {CarService} from '../../service/modules/cashbox/car-service';
 import {Car} from '../../domain/car';
 import {Toolbar} from 'primeng/toolbar';
 import {IconField} from 'primeng/iconfield';
@@ -25,13 +25,10 @@ interface Column {
     Button,
     FormsModule,
     TableModule,
-    NgForOf,
     Toolbar,
-    IconField,
-    InputIcon,
-    SplitButton,
     InputText,
-    RouterLink
+    RouterLink,
+    NgForOf
   ],
   templateUrl: './cashbox.html',
   standalone: true,
