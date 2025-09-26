@@ -2,7 +2,7 @@
 import PrimeUI from 'tailwindcss-primeui';
 
 export default {
-  darkMode: 'media',
+  darkMode: ['selector', '[class="p-dark"]'],
   content: ['./src/**/*.{html,ts}'],
   plugins: [PrimeUI],
   theme: {
@@ -12,11 +12,6 @@ export default {
       lg: '992px',
       xl: '1200px',
       '2xl': '1920px'
-    },
-    extend: {
-      colors: {
-        ruziblue: "#253b63"
-      }
     }
   }
 };

@@ -3,8 +3,8 @@ import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
 import {TableFilterEvent, TableModule} from 'primeng/table';
 import {FilterMetadata, PrimeTemplate, SortEvent} from 'primeng/api';
 import {firstValueFrom} from 'rxjs';
-import {DataTableInput} from '../../component/datatables/datatable-input.model';
-import {DirectoryService} from '../../service/modules/directory/directory.service';
+import {DataTableInput} from '../../../component/datatables/datatable-input.model';
+import {DirectoryService} from '../../../service/modules/directory/directory.service';
 import {ProductModel} from './directory.model';
 import {Button, ButtonDirective} from 'primeng/button';
 import {DatePicker} from 'primeng/datepicker';
@@ -14,6 +14,8 @@ import {InputText} from 'primeng/inputtext';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Tag} from 'primeng/tag';
 import {DecimalPipe} from '@angular/common';
+import {PermissionService} from '../../../service/validations/permission.service';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-directory',
@@ -34,7 +36,8 @@ import {DecimalPipe} from '@angular/common';
     TableModule,
     FormsModule,
     Tag,
-    DecimalPipe
+    DecimalPipe,
+    RouterLink
   ],
   templateUrl: './directory.html',
   standalone: true,
@@ -68,18 +71,28 @@ export class Directory implements OnInit{
       {data: 'unit', name: 'unit', searchable: false, orderable: false, search: {value: '', regex: false}},
       {data: 'defaultSalePrice', name: 'defaultSalePrice', searchable: false, orderable: false, search: {value: '', regex: false}},
       {data: 'description', name: 'description', searchable: false, orderable: false, search: {value: '', regex: false}},
-      {data: 'isActive', name: 'isActive', searchable: false, orderable: false, search: {value: '', regex: false}}
+      {data: 'isActive', name: 'isActive', searchable: false, orderable: false, search: {value: '', regex: false}},
+      {data: 'insTime', name: 'insTime', searchable: false, orderable: false, search: {value: '', regex: false}}
     ]
   }
 
   constructor(
     private directoryService: DirectoryService,
     private cdr: ChangeDetectorRef,
+    private permissionService: PermissionService
   ) {}
 
   ngOnInit(): void {
     this.dateStart = new Date(1991, 0, 1);
     this.loadData().then(r => null);
+
+    this.permission('null');
+  }
+
+  permission(status: string) {
+    this.permissions = {
+      add_new_product: this.permissionService.canAccess(Directory, 'add_new_product', status)
+    };
   }
 
   async loadData() {
@@ -123,7 +136,6 @@ export class Directory implements OnInit{
         }
       }
     });
-
     if (this.searchValue != null) {
       this.dataTableInputProductModel.search.value = this.searchValue;
     }
@@ -134,14 +146,11 @@ export class Directory implements OnInit{
     if (docDateColumn) {
       docDateColumn.search.value = `${formattedDateStart};${formattedDateEnd}`;
     }
-
     try {
       const data = await firstValueFrom(this.directoryService.data_table_main(this.dataTableInputProductModel));
-
       this.productModel = data.data as ProductModel[];
       this.totalRecords = data.recordsFiltered;
       this.cdr.detectChanges();
-
     } finally {
       this.isLoading = false;
     }

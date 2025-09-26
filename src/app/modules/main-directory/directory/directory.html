@@ -57,13 +57,11 @@
             />
           </p-icon-field>
           @if (permissions['add_new_product']) {
-            <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-plus" label="Янги"
+            <p-button routerLink="/main-directory/product" size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-plus" label="Yangi tovar qo'shish "
                       [outlined]="true"/>
           }
-          @if (permissions['download_excel_product']) {
-            <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-excel" label="Excel"
+          <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-excel" label="Excel"
                       [outlined]="true"/>
-          }
         </div>
       </div>
       <p-table

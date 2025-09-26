@@ -5,7 +5,7 @@ import {ApiConfigService} from '../../../configuration/resursurls/apiConfig.serv
 import {DataTableInput, DataTableOutput} from '../../../component/datatables/datatable-input.model';
 import {Observable} from 'rxjs';
 import {PurchaseOrderModel} from '../../../modules/warehouse/warehouse.model';
-import {ProductModel} from '../../../modules/directory/directory.model';
+import {ProductModel} from '../../../modules/main-directory/directory/directory.model';
 
 @Injectable({
   providedIn: 'root'

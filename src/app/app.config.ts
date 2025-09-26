@@ -25,6 +25,7 @@ import {KeycloakService} from 'keycloak-angular';
 import {DialogService} from 'primeng/dynamicdialog';
 import {initializer} from './configuration/authentication/keycloak-init';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import Aura from '@primeuix/themes/aura';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -43,9 +44,7 @@ export const appConfig: ApplicationConfig = {
       loadingInterceptor,
     ])),
     providePrimeNG({
-      theme: {
-        preset: PresetWhiteBlue
-      }
+      theme: { preset: Aura, options: { darkModeSelector: '.p-dark' } },
     }),
     importProvidersFrom(
       ToastModule,

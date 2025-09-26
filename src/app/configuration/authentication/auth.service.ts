@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   public loadUserRoles() {
-    const roles: string[] = this.keycloak.getUserRoles(false, "lab");
+    const roles: string[] = this.keycloak.getUserRoles(false, "ruzi");
     return roles.map(role => ({
       name: role,
       code: role
@@ -73,7 +73,7 @@ export class AuthService {
   }
 
   public logout() {
-    this.keycloak.logout('http://172.16.112.7:9080/esad/');
+    this.keycloak.logout();
   }
 
   getToken(): Observable<string | undefined> {

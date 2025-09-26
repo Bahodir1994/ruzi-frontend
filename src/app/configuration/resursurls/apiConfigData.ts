@@ -256,7 +256,7 @@ export const apiConfigData: ApiUrls[] = [
     list: [
       /*todo info*/
       {
-        url: "/api/purchase-orders/read-table-data",
+        url: "/api/products/read-table-data",
         method: "post",
         label: "product_table",
         comment: "tovarlar asosy jadvali",

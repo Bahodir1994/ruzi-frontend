@@ -17,7 +17,7 @@
     "label": "Katalog",
     "icon": "pi pi-address-book",
     "type": "link",
-    "route": "catalog",
+    "route": "main-directory",
     "permissions": []
   },
   {

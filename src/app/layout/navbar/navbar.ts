@@ -3,6 +3,7 @@ import {Toolbar} from 'primeng/toolbar';
 import {Button} from 'primeng/button';
 import {Breadcrumb} from '../../component/breadcrumb/breadcrumb';
 import {UserprofileComponent} from '../../component/userprofile/userprofile.component';
+import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +11,8 @@ import {UserprofileComponent} from '../../component/userprofile/userprofile.comp
     Toolbar,
     Button,
     Breadcrumb,
-    UserprofileComponent
+    UserprofileComponent,
+    ThemeSwitcher
   ],
   templateUrl: './navbar.html',
   standalone: true,
