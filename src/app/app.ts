@@ -10,10 +10,11 @@ import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from './service/translate/language.service';
 import {Title} from '@angular/platform-browser';
 import {filter, map} from 'rxjs';
+import {ThemeSwitcher} from './configuration/theme/themeswitcher';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Toast],
+  imports: [RouterOutlet, Toast, ThemeSwitcher],
   templateUrl: './app.html',
   standalone: true,
   styleUrl: './app.scss'

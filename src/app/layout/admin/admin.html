@@ -1,22 +1,21 @@
 <!-- Navbar -->
 <div class="absolute top-0 left-0 right-0 h-[180px] -z-10"></div>
 
-<app-navbar (toggleSidebar)="toggleDrawer()" class="fixed top-0 left-0 right-0 z-50"/>
-
-
+<!--<app-navbar (toggleSidebar)="toggleDrawer()" class="fixed top-0 left-0 right-0 z-50"/>-->
 <!-- Layout -->
-<div class="flex h-screen pt-[4rem] overflow-hidden transition-all duration-300">
+<div class="flex h-screen overflow-hidden transition-all duration-300">
 
   <!-- Sidebar -->
 
-  <app-menu [visible]="visible"></app-menu>
+  <app-menu (toggleSidebar)="toggleDrawer()" [visible]="visible"></app-menu>
 
 
   <!-- Main content -->
   <main
-    class="flex-1 overflow-y-auto px-4 py-4 transition-all duration-300 ease-in-out bg-gray-100 dark:bg-gray-800"
+    class="flex-1 overflow-y-auto px-4 py-4 transition-all duration-300 ease-in-out"
     [ngStyle]="{ 'width': visible ? 'calc(100% - 16rem)' : '100%' }"
   >
-    <app-body/>
+    <app-breadcrumb></app-breadcrumb>
+    <router-outlet></router-outlet>
   </main>
 </div>

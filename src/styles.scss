@@ -10,6 +10,10 @@ html, body {
 }
 
 :root {
+  --link-color: var(--p-primary-600);
+  --link-hover-color: var(--p-primary-700);
+  --link-hover-bg: color-mix(in srgb, var(--p-primary-600), transparent 85%);
+
   --body-bg: var(--p-surface-50);
   --body-text-color: var(--p-surface-900);
   --card-border: 1px solid var(--border-color);
@@ -20,6 +24,11 @@ html, body {
 }
 
 :root[class='p-dark'] {
+  --link-color: var(--p-primary-400);
+  --link-hover-color: var(--p-primary-300);
+  --link-hover-bg: color-mix(in srgb, var(--p-primary-400), transparent 80%);
+
+
   --body-bg: var(--p-surface-950);
   --body-text-color: var(--p-surface-50);
   --card-border: 1px solid transparent;

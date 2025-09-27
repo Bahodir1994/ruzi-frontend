@@ -1,5 +1,5 @@
 <div
-  class="h-full shadow-md transition-all duration-300 ease-in-out bg-gray-950 text-white rounded-tr-lg"
+  class="h-full shadow-md transition-all duration-300 ease-in-out rounded-tr-lg"
   [ngClass]="{'w-64': visible,'w-16': !visible}"
 >
   <div class="flex flex-col h-full">
@@ -18,7 +18,7 @@
                     enterActiveClass="animate-slidedown"
                     leaveToClass="hidden"
                     leaveActiveClass="animate-slideup"
-                    class="hover:bg-ruziblue hover:text-white flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple"
+                    class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple"
                   >
                     <i class="{{menu_data.icon}} pl-1 mr-2"></i>
                     <span
@@ -105,7 +105,7 @@
                     [routerLink]="menu_data.route"
                     pRipple
                     [ngClass]="{'active-router-link': isActiveRoute(menu_data.route) || isParentActive(menu_data)}"
-                    class="hover:bg-ruziblue hover:text-white flex items-center cursor-pointer p-3 my-3 rounded-border duration-150 transition-colors p-ripple"
+                    class="flex items-center cursor-pointer p-3 my-3 rounded-border duration-150 transition-colors p-ripple"
                   >
                     <i
                       class="{{menu_data.icon}} pl-1 mr-2"
@@ -125,6 +125,14 @@
           </ul>
         </li>
       </ul>
+    </div>
+    <div class="mt-auto">
+      <hr class="mx-4 border-t border-0 border-surface" />
+      <div class="flex items-center gap-2 p-4">
+        <p-button size="small" icon="pi pi-align-right" [outlined]="true" (onClick)="onToggleSidebar()"></p-button>
+<!--        <p-button size="small" icon="pi pi-user" [outlined]="true"></p-button>-->
+<!--        <p-button size="small" icon="pi pi-sign-out" [outlined]="true"></p-button>-->
+      </div>
     </div>
   </div>
 </div>

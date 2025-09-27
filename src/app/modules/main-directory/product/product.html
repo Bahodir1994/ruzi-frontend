@@ -1,1 +1,56 @@
-<p>product works!</p>
+<div class="flex justify-center items-start min-h-screen pt-12">
+  <p-card class="w-full max-w-3xl shadow-md rounded-lg" header="Create Item" [style]="{'box-shadow': 'none', 'background-color': 'transparent'}">
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <!-- Item type -->
+        <div>
+          <label class="block mb-1 text-sm font-medium">Item type</label>
+          <p-select
+            [options]="[{label:'Physical good',value:'physical'},{label:'Service',value:'service'}]"
+            formControlName="itemType"
+            placeholder="Select type"
+            class="w-full">
+          </p-select>
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="block mb-1 text-sm font-medium">Name</label>
+          <input pInputText formControlName="name" placeholder="Item name" class="w-full" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block mb-1 text-sm font-medium">Description</label>
+          <textarea pInputTextarea formControlName="description" rows="3" class="w-full"></textarea>
+        </div>
+
+        <!-- Price & Unit -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-1 text-sm font-medium">Price</label>
+            <input pInputText type="number" formControlName="price" placeholder="0.00" class="w-full" />
+          </div>
+          <div>
+            <label class="block mb-1 text-sm font-medium">Unit</label>
+            <p-select
+              [options]="[{label:'dona',value:'dona'},{label:'kg',value:'kg'},{label:'litr',value:'litr'}]"
+              formControlName="unit"
+              placeholder="Select unit"
+              class="w-full">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Active -->
+        <div class="flex items-center gap-2">
+          <p-toggleButton onLabel="Active" offLabel="Inactive" formControlName="active"></p-toggleButton>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end pt-4">
+          <button pButton type="submit" label="Save" [disabled]="!productForm.valid"></button>
+        </div>
+      </form>
+    </p-card>
+  </div>

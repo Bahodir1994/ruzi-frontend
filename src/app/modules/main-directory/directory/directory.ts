@@ -16,6 +16,8 @@ import {Tag} from 'primeng/tag';
 import {DecimalPipe} from '@angular/common';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {RouterLink} from '@angular/router';
+import {Dialog} from 'primeng/dialog';
+import {Product} from '../product/product';
 
 @Component({
   selector: 'app-directory',
@@ -37,7 +39,9 @@ import {RouterLink} from '@angular/router';
     FormsModule,
     Tag,
     DecimalPipe,
-    RouterLink
+    RouterLink,
+    Dialog,
+    Product
   ],
   templateUrl: './directory.html',
   standalone: true,
@@ -45,6 +49,14 @@ import {RouterLink} from '@angular/router';
 })
 export class Directory implements OnInit{
   public permissions: Record<string, boolean> = {};
+
+  visibleProductModal = false;
+
+  openDialog() {
+    this.visibleProductModal = true;
+  }
+
+
 
   dateStart: Date = new Date();
   dateEnd: Date = new Date();

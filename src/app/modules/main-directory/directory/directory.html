@@ -88,17 +88,20 @@
         [pageLinks]="5"
         [showJumpToPageInput]="true"
         scrollHeight="650px"
-        stripedRows
-        class="p-datatable-gridlines p-datatable-sm text-xs p-datatable-wrapper"
+        class=""
       >
         <!-- HEADER -->
         <ng-template pTemplate="header">
-          <tr class="table-style-v1">
+          <tr class="border shadow h-[60px]">
             <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
 
             <th pSortableColumn="skuCode" class="text-center text-nowrap sort-header">
               SKU Code
               <p-sortIcon field="skuCode" />
+            </th>
+
+            <th pSortableColumn="image" class="text-center text-nowrap sort-header">
+              Rasmi
             </th>
 
             <th pSortableColumn="barcode" class="text-center text-nowrap sort-header">
@@ -157,6 +160,13 @@
             </td>
 
             <td class="text-nowrap text-center">{{ row.skuCode }}</td>
+            <td>
+              <img
+                src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
+                alt="Bamboo Watch"
+                class="w-24 rounded"
+              />
+            </td>
             <td class="text-nowrap text-center">{{ row.barcode }}</td>
             <td class="text-nowrap text-center">{{ row.name }}</td>
             <td class="text-nowrap text-center">{{ row.brand }}</td>
@@ -198,3 +208,22 @@
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>
+
+<p-button
+  label="Yangi tovar qo'shish"
+  icon="pi pi-plus"
+  (click)="openDialog()"
+></p-button>
+
+<p-dialog
+  [(visible)]="visibleProductModal"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  [maximizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '100vw', height: '100vh', margin: 0, padding: 0 }"
+  [baseZIndex]="10000">
+  <app-product></app-product>
+</p-dialog>

@@ -1,5 +1,5 @@
 .border-bottom {
-  border-bottom: 1px dashed #24333f;
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .no-border {
@@ -7,26 +7,26 @@
 }
 
 .active-router-link {
-  background: #253b63; // Полупрозрачный RoyalBlue
+  background: color-mix(in srgb, var(--p-primary-color), transparent 80%);
   border-radius: 5px;
-  color: #fafafa !important;
+  color: var(--body-text-color) !important;
   transition: all 0.3s ease-in-out;
 
   .pi {
-    color: #fafafa !important;
+    color: var(--body-text-color) !important;
     transition: 0.2s ease-in;
     padding-left: 4px;
   }
 }
 
 .active-router-link-leave {
-  animation: fadeOut 0.3s forwards; // Анимация исчезновения
+  animation: fadeOut 0.3s forwards;
 }
 
 @keyframes fadeOut {
   from {
     border-radius: 5px;
-    background: royalblue;
+    background: var(--p-primary-color);
   }
   to {
     border-radius: 0;
@@ -35,17 +35,73 @@
 }
 
 .active-parent-link {
-  //border: 1px dashed #ffffff;
   padding: -1px;
   border-radius: 5px;
-  box-shadow: 0 7px 30px rgba(0, 0, 0, 0.08), 0px 22px 30px 2px rgba(0, 0, 0, 0.15), 0px 8px 10px rgba(0, 0, 0, 0.15);
-  color: white !important;
-  border-bottom: 1px dotted #ffffff;
-  border-top: 1px dotted #ffffff;
+  box-shadow: 0 7px 30px rgba(0, 0, 0, 0.08),
+  0px 22px 30px 2px rgba(0, 0, 0, 0.15),
+  0px 8px 10px rgba(0, 0, 0, 0.15);
+
+  color: var(--body-text-color) !important;
+  border-bottom: 1px dotted var(--body-text-color);
+  border-top: 1px dotted var(--body-text-color);
 
   .pi {
-    color: white !important;
+    color: var(--body-text-color) !important;
     transition: 0.2s ease-in;
     padding-left: 4px;
+  }
+}
+
+
+/**********************/
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;          /* icon va text orasidagi masofa */
+}
+
+.logo-icon {
+  width: 40px;
+  height: auto;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-family: "Segoe UI", Arial, sans-serif;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: baseline; /* RUZI va SAVDO balandligi uyg‘un chiqishi uchun */
+}
+
+/* RUZI */
+.logo .ruzi {
+  color: #ffffff;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.6), 0 0 12px #00d4ff;
+}
+
+/* Dash */
+.logo .dash {
+  color: #aaa;
+}
+
+/* SAVDO */
+.logo .savdo {
+  color: #ef4444;
+  font-size: 1rem;     /* RUZI dan kichikroq */
+  font-weight: 700;    /* ozgina yupqaroq */
+  margin-left: 4px;    /* RUZI va SAVDO orasiga joy */
+}
+
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    color: var(--link-hover-color);
+    background-color: var(--link-hover-bg);
   }
 }

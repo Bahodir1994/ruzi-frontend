@@ -1,0 +1,18 @@
+.theme-switcher-fixed {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1100; // boshqa komponentlardan yuqorida
+  background: var(--card-bg); // light/dark theme ga mos bo‘ladi
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 60px;
+  min-height: 60px;
+}
+

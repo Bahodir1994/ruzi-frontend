@@ -59,8 +59,11 @@ export interface ColorOption {
                 >
                     <i class="pi pi-palette dark:text-white"></i>
                 </button>
-                <div class="absolute top-[2.5rem] right-0 hidden w-[18rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex origin-top z-10">
-                    <div class="flex-col justify-start items-start gap-2 inline-flex pr-4">
+              <div class="absolute bottom-[2.5rem] right-0 hidden w-[18rem] p-3
+                  bg-white dark:bg-surface-800 rounded-md shadow
+                  border border-surface-200 dark:border-surface-700
+                  flex-col justify-start items-start gap-3.5 inline-flex origin-bottom z-10">
+              <div class="flex-col justify-start items-start gap-2 inline-flex pr-4">
                         <span class="text-sm font-medium">Primary Colors</span>
                         <div class="self-stretch justify-start items-start gap-2 inline-flex flex-wrap">
                             @for (primaryColor of primaryColors(); track primaryColor.name) {
