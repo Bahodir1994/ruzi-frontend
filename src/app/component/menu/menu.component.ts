@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, Input, OnInit} from '@angular/core';
 import {NgClass} from '@angular/common';
 import {Ripple} from 'primeng/ripple';
 import {StyleClass} from 'primeng/styleclass';
@@ -6,9 +6,6 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {Menu} from '../../service/sidebar/sidebarDto';
 import {SidebarService} from '../../service/sidebar/sidebar.service';
 import {AuthService} from '../../configuration/authentication/auth.service';
-import {Button, ButtonDirective} from 'primeng/button';
-import {Avatar} from 'primeng/avatar';
-import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 
 @Component({
   standalone: true,
@@ -18,22 +15,13 @@ import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
     StyleClass,
     NgClass,
     RouterLink,
-    RouterLinkActive,
-    Button,
-    Avatar,
-    ThemeSwitcher,
-    ButtonDirective
+    RouterLinkActive
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
 export class MenuComponent implements OnInit {
   @Input({required: true}) visible!: boolean;
-  @Output() toggleSidebar = new EventEmitter<void>();
-
-  onToggleSidebar() {
-    this.toggleSidebar.emit();
-  }
 
   items: Menu[] = [];
   userRoles: Set<string> = new Set();

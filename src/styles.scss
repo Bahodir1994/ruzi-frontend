@@ -45,15 +45,10 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: var(--body-bg);
   font-weight: normal;
   color: var(--body-text-color);
 }
 
 .card {
-  background: var(--card-bg);
-  border: var(--card-border);
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+  box-shadow: none !important;
 }

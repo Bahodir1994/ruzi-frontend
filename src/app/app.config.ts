@@ -5,11 +5,10 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {provideRouter} from '@angular/router';
 
-import { routes } from './app.routes';
+import {routes} from './app.routes';
 import {providePrimeNG} from 'primeng/config';
-import PresetWhiteBlue from './configuration/theme/preset-white';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptors} from '@angular/common/http';
 import {keycloakInterceptor} from './configuration/interceptors/keycloak.interceptor';
@@ -44,7 +43,7 @@ export const appConfig: ApplicationConfig = {
       loadingInterceptor,
     ])),
     providePrimeNG({
-      theme: { preset: Aura, options: { darkModeSelector: '.p-dark' } },
+      theme: {preset: Aura, options: {darkModeSelector: '.p-dark'}},
     }),
     importProvidersFrom(
       ToastModule,

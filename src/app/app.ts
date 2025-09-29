@@ -1,6 +1,5 @@
-import {Component, OnInit, signal} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, RouterOutlet} from '@angular/router';
-import {Button} from 'primeng/button';
 import {PrimeNG} from 'primeng/config';
 import {Toast} from 'primeng/toast';
 import {PrimengLocaleService} from './service/translate/primeng-locale.service';

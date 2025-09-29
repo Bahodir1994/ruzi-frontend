@@ -1,20 +1,26 @@
 import {Component} from '@angular/core';
 import {BreadcrumbService} from '../../service/braedcrumb/breadcrumb';
-import {RouterLink} from '@angular/router';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe} from '@angular/common';
+import {MenuItem} from 'primeng/api';
+import {BehaviorSubject} from 'rxjs';
+import {Breadcrumb} from 'primeng/breadcrumb';
+
 
 @Component({
   selector: 'app-breadcrumb',
   imports: [
-    RouterLink,
-    AsyncPipe
+    AsyncPipe,
+    Breadcrumb
   ],
   templateUrl: './breadcrumb.html',
   standalone: true,
   styleUrl: './breadcrumb.scss'
 })
-export class Breadcrumb {
-  breadcrumbs$;
+export class BreadcrumbComponent {
+  private _breadcrumbs$ = new BehaviorSubject<MenuItem[]>([]);
+  breadcrumbs$ = this._breadcrumbs$.asObservable();
+
+  home: MenuItem = {icon: 'pi pi-home', routerLink: '/'};
 
   constructor(private breadcrumbService: BreadcrumbService) {
     this.breadcrumbs$ = this.breadcrumbService.breadcrumbs$;

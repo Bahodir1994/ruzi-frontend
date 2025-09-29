@@ -248,7 +248,7 @@ export const apiConfigData: ApiUrls[] = [
     ]
   },
   {
-    module: "directory",
+    module: "items",
     // host: "http://192.168.224.38:9050",
     host: "http://localhost:9050",
     ssl: false,
@@ -258,7 +258,7 @@ export const apiConfigData: ApiUrls[] = [
       {
         url: "/api/products/read-table-data",
         method: "post",
-        label: "product_table",
+        label: "item_table",
         comment: "tovarlar asosy jadvali",
         active: true,
         showSuccess: false,

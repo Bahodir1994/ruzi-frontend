@@ -1,0 +1,103 @@
+<p-card header="Kategoriyalar" class="card">
+  <ng-template #header>
+    <div class="flex w-full justify-end">
+      @if (permissions['add_new_category']) {
+        <p-button
+          (click)="openChild('child1')"
+          class="pr-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-plus"
+          label="Yangi kategoriya qo'shish"
+        />
+      }
+    </div>
+  </ng-template>
+  <div class="w-full flex justify-start py-2">
+    <div class="flex">
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValue"
+          (input)="loadData()"
+        />
+      </p-icon-field>
+    </div>
+  </div>
+  <p-table [value]="categoryModel" dataKey="id" [scrollable]="true" scrollHeight="650px">
+
+    <!-- HEADER -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th>№</th>
+        <th>Kategoriya kodi</th>
+        <th>Kategoriya nomi</th>
+        <th>Gurux kategoriya</th>
+        <th>Izoh</th>
+        <th>Amallar</th>
+      </tr>
+    </ng-template>
+
+    <!-- BODY -->
+    <ng-template pTemplate="body" let-row let-i="rowIndex">
+      <tr>
+        <td>{{ i + 1 }}</td>
+        <td>{{ row.code }}</td>
+        <td>
+          {{ row.translations[0]?.name || '-' }} <!-- default translation -->
+        </td>
+        <td>
+          {{ row.parent?.translations[0]?.name || '-' }}
+        </td>
+        <td>
+          {{ row.translations[0]?.description || '-' }}
+        </td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="text-center">Kategoriya topilmadi</td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+
+</p-card>
+
+<p-dialog
+  #categoriesDialog
+  [(visible)]="showModalCreateCategory"
+  header="Header"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw',
+   '575px': '90vw' }"
+  [maximizable]="true"
+
+>
+  <ng-template #header>
+    @if (activeChild === 'child1') {
+      <ng-container [ngTemplateOutlet]="child1Header"></ng-container>
+    }
+    @if (activeChild === 'child2') {
+      <ng-container [ngTemplateOutlet]="child2Header"></ng-container>
+    }
+  </ng-template>
+  @if (activeChild === 'child1') {
+    <app-category-create
+      (close)="onClose()"
+      (headerReady)="setChildHeader($event)"
+    ></app-category-create>
+  }
+  @if (activeChild === 'child2') {
+    <app-category-edit (headerReady)="setChildHeader($event)"></app-category-edit>
+  }
+</p-dialog>

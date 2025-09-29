@@ -1,12 +1,4 @@
-<nav class="breadcrumb">
-  @for (bc of breadcrumbs$ | async; track bc; let last = $last) {
-    @if (!last) {
-      <a class="font-bold cursor-pointer text-blue-500" [routerLink]="bc.url">{{ bc.label }}</a>
-      <span> / </span>
-    } @else {
-      <span class="font-bold text-blue-500">{{ bc.label }}</span>
-    }
-  } @empty {
-    <span>Hech qanday yo‘l topilmadi</span>
-  }
-</nav>
+<p-breadcrumb
+  [model]="(breadcrumbs$ | async) || []"
+  [home]="home">
+</p-breadcrumb>

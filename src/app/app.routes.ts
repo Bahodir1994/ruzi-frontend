@@ -1,23 +1,15 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {Admin} from './layout/admin/admin';
 import {AuthGuard} from './configuration/authentication/auth.guard';
 import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
-import {Warehouse} from './modules/warehouse/warehouse';
-import {Directory} from './modules/main-directory/directory/directory';
-import {Product} from './modules/main-directory/product/product';
-import {MainDirectory} from './modules/main-directory/main-directory';
+import {ItemLibrary} from './modules/items/item.library/item.library';
+import {ImageLibrary} from './modules/items/image.library/image.library';
+import {Categories} from './modules/items/categories/categories';
+import {Units} from './modules/items/units/units';
+import {Locations} from './modules/settings/account/business-info/locations/locations';
 
 export const routes: Routes = [
-  {
-    path: 'cashbox',
-    component: Cashbox,
-    data: {
-      roles: [],
-      title: 'Kassa',
-      breadcrumb: 'Kassa'
-    }
-  },
   {
     path: '',
     component: Admin,
@@ -26,55 +18,125 @@ export const routes: Routes = [
       breadcrumb: 'Asosiy'
     },
     children: [
-      {path: '', redirectTo: 'analytics', pathMatch: 'full'},
+      {path: '', redirectTo: 'items', pathMatch: 'full'},
       {
-        path: 'analytics',
-        component: Analytics,
+        path: 'items',
         data: {
           roles: [],
-          title: 'Hisobot',
-          breadcrumb: 'Hisobot'
-        }
-      },
-      {
-        path: 'main-directory',
-        component: MainDirectory,
-        data: {
-          roles: [],
-          title: 'Katalog turlari',
-          breadcrumb: 'Katalog turlari'
+          title: 'Predmetlar va servislar',
+          breadcrumb: 'Predmetlar va Servislar'
         },
         children: [
-          {path: '', redirectTo: 'directory', pathMatch: 'full'},
+          {path: '', redirectTo: 'item-library', pathMatch: 'full'},
           {
-            path: 'directory',
-            component: Directory,
+            path: 'item-library',
+            component: ItemLibrary,
             data: {
               roles: [],
-              title: 'Katalog',
-              breadcrumb: 'Katalog'
+              title: 'Tovarlar to`plami',
+              breadcrumb: 'Tovarlar to`plami'
             }
           },
           {
-            path: 'product',
-            component: Product,
+            path: 'image-library',
+            component: ImageLibrary,
             data: {
               roles: [],
-              title: 'Tovarlar',
-              breadcrumb: 'Tovarlar'
+              title: 'Rasmlar to`plami',
+              breadcrumb: 'Rasmlar to`plami'
             }
+          },
+          {
+            path: 'categories',
+            component: Categories,
+            data: {
+              roles: [],
+              title: 'Kategoriyalar',
+              breadcrumb: 'Kategoriyalar'
+            }
+          },
+          {
+            path: 'units',
+            component: Units,
+            data: {
+              roles: [],
+              title: 'O`lchov birligi',
+              breadcrumb: 'O`lchov birligi'
+            }
+          }
+        ],
+      },
+      {
+        path: 'settings',
+        data: {
+          roles: [],
+          title: 'Sozlamalar',
+          breadcrumb: 'Sozlamalar'
+        },
+        children: [
+          {path: '', redirectTo: 'account-and-setting', pathMatch: 'full'},
+          {
+            path: 'account-and-setting',
+            data: {
+              roles: [],
+              title: 'Profil & Sozlamalar',
+              breadcrumb: 'Profil & Sozlamalar'
+            },
+            children: [
+              {path: '', redirectTo: 'personal-info', pathMatch: 'full'},
+              {
+                path: 'personal-info',
+                data: {
+                  roles: [],
+                  title: 'Personal ma`lumotlar',
+                  breadcrumb: 'Personal ma`lumotlar'
+                },
+                children: []
+              },
+              {
+                path: 'business-info',
+                data: {
+                  roles: [],
+                  title: 'Biznes ma`lumotlari',
+                  breadcrumb: 'Biznes ma`lumotlar'
+                },
+                children: [
+                  {
+                    path: 'locations',
+                    component: Locations,
+                    canActivate: [AuthGuard],
+                    data: {
+                      roles: [],
+                      title: 'Joylashuv',
+                      breadcrumb: 'Joylashuv'
+                    }
+                  }
+                ]
+              },
+            ]
           },
         ]
       },
       {
-        path: 'warehouse',
-        component: Warehouse,
+        path: 'analytics',
+        component: Analytics,
+        canActivate: [AuthGuard],
         data: {
           roles: [],
-          title: 'Ombor',
-          breadcrumb: 'Ombor'
+          title: 'Analitika',
+          breadcrumb: 'Analitika'
         }
       }
     ]
+  },
+  {
+    path: 'cashbox',
+    component: Cashbox,
+    canActivate: [AuthGuard],
+    data: {
+      roles: [],
+      title: 'Kassa',
+      breadcrumb: 'Kassa'
+    }
   }
 ];

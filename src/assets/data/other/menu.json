@@ -1,23 +1,80 @@
 [
   {
-    "label": "Boshqaruv",
-    "icon": "pi pi-user",
-    "type": "link",
-    "route": "dashboard",
+    "label": "Predmetlar",
+    "icon": "pi pi-tags",
+    "type": "sub",
+    "route": "items",
+    "items": [
+      {
+        "label": "Tovarlar to'plami",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "item-library",
+        "permissions": []
+      },
+      {
+        "label": "Rasmlar to'plami",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "image-library",
+        "permissions": []
+      },
+      {
+        "label": "Kategoriyalar",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "categories",
+        "permissions": []
+      },
+      {
+        "label": "O'lchov birligi",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "units",
+        "permissions": []
+      }
+    ],
     "permissions": []
   },
   {
-    "label": "Ombor",
-    "icon": "pi pi-warehouse",
-    "type": "link",
-    "route": "warehouse",
-    "permissions": []
-  },
-  {
-    "label": "Katalog",
-    "icon": "pi pi-address-book",
-    "type": "link",
-    "route": "main-directory",
+    "label": "Sozlamalar",
+    "icon": "pi pi-cog",
+    "type": "sub",
+    "route": "settings",
+    "items": [
+      {
+        "label": "Profil & Sozlamalar",
+        "icon": "pi pi-stop",
+        "type": "sub",
+        "route": "account-and-setting",
+        "items": [
+          {
+            "label": "Personal ma'lumotlar",
+            "icon": "pi pi-stop",
+            "type": "link",
+            "route": "personal-info",
+            "permissions": []
+          },
+          {
+            "label": "Biznes ma'lumotlari",
+            "icon": "pi pi-stop",
+            "type": "sub",
+            "route": "business-info",
+            "items": [
+              {
+                "label": "Joylashuv",
+                "icon": "pi pi-stop",
+                "type": "link",
+                "route": "locations",
+                "permissions": []
+              }
+            ],
+            "permissions": []
+          }
+        ],
+        "permissions": []
+      }
+    ],
     "permissions": []
   },
   {
@@ -28,8 +85,8 @@
     "permissions": []
   },
   {
-    "label": "Hisobot",
-    "icon": "pi pi-chart-bar",
+    "label": "Analtika",
+    "icon": "pi pi-calculator",
     "type": "link",
     "route": "analytics",
     "permissions": []

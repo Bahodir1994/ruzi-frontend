@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AuthService} from '../../configuration/authentication/auth.service';
-import {StatusEnum} from '../../component/enums/StatusEnum';
-import {Directory} from '../../modules/main-directory/directory/directory';
+import {ItemLibrary} from '../../modules/items/item.library/item.library';
+import {Categories} from '../../modules/items/categories/categories';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +13,21 @@ export class PermissionService {
     roles: string[],
     conditions?: (status: string) => boolean
   }>>([
-    /*Module Bnt -> Bnt*/
     [
-      Directory, {
-        'add_new_product': {
-          roles: ['ROLE_PRODUCT_CREATE'],
-          conditions: (status) => true
-        }
+      ItemLibrary, {
+      'add_new_product': {
+        roles: ['ROLE_PRODUCT_CREATE'],
+        conditions: (status) => true
       }
+    }
+    ],
+    [
+      Categories, {
+      'add_new_category': {
+        roles: ['ROLE_PRODUCT_CREATE'],
+        conditions: (status) => true
+      }
+    }
     ]
   ]);
 

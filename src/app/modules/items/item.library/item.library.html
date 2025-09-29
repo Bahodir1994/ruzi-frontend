@@ -1,0 +1,212 @@
+<div class="w-full flex justify-start py-2">
+  <div class="flex">
+    <p-datePicker
+      size="small"
+      class="pr-2"
+      [(ngModel)]="dateStart"
+      [showIcon]="true"
+      [showOnFocus]="false"
+      [showButtonBar]="true"
+      inputId="inputDateStart"
+      dateFormat="dd-mm-yy"
+      placeholder="DD-MM-YYYY"
+      (onSelect)="loadData()"
+      (onInput)="loadData()"
+      (onClear)="loadData()"
+    >
+      <ng-template #customButtonBar>
+        <div class="p-button-bar">
+          <button pButton type="button" text="Today11"></button>
+          <button pButton type="button" text="Clear11"></button>
+          <button pButton type="button" text="Close11"></button>
+        </div>
+      </ng-template>
+    </p-datePicker>
+    <p-datePicker
+      size="small"
+      class="pr-2"
+      [(ngModel)]="dateEnd"
+      [showIcon]="true"
+      [showOnFocus]="false"
+      [showButtonBar]="true"
+      inputId="inputDateEnd"
+      dateFormat="dd-mm-yy"
+      placeholder="DD-MM-YYYY"
+      (onSelect)="loadData()"
+      (onInput)="loadData()"
+      (onClear)="loadData()"
+    ></p-datePicker>
+    <p-icon-field iconPosition="right" class="pr-2">
+      <p-inputicon class="pi pi-search"></p-inputicon>
+      <input
+        type="text"
+        pInputText
+        pSize="small"
+        placeholder="Qidiruv"
+        [(ngModel)]="searchValue"
+        (input)="loadData()"
+      />
+    </p-icon-field>
+    @if (permissions['add_new_product']) {
+      <p-button
+        (click)="openDialog()"
+        size="small"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi tovar qo'shish"
+        [outlined]="true"
+      />
+    }
+    <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-excel" label="Excel"
+              [outlined]="true"/>
+  </div>
+</div>
+<p-table
+  size="small"
+  #dataTableProduct
+  [value]="productModel"
+  dataKey="id"
+  [rowHover]="true"
+  [rows]="10"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  loadingIcon="pi pi-spinner"
+  [paginator]="true"
+  currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
+  [filterDelay]="0"
+  [globalFilterFields]="['orderNumber','supplier.name','warehouse.name']"
+  (onFilter)="onFilter($event)"
+  (onSort)="onSort($event)"
+  [scrollable]="true"
+  [totalRecords]="totalRecords"
+  [lazy]="true"
+  (onLazyLoad)="pageChange($event)"
+  [first]="0"
+  [pageLinks]="5"
+  [showJumpToPageInput]="true"
+  scrollHeight="650px"
+  class=""
+>
+  <!-- HEADER -->
+  <ng-template pTemplate="header">
+    <tr class="border shadow h-[60px]">
+      <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
+
+      <th pSortableColumn="skuCode" class="text-center text-nowrap sort-header">
+        SKU Code
+        <p-sortIcon field="skuCode"/>
+      </th>
+
+      <th pSortableColumn="image" class="text-center text-nowrap sort-header">
+        Rasmi
+      </th>
+
+      <th pSortableColumn="barcode" class="text-center text-nowrap sort-header">
+        Shtrix kod
+        <p-sortIcon field="barcode"/>
+      </th>
+
+      <th pSortableColumn="name" class="text-center text-nowrap sort-header">
+        Mahsulot nomi
+        <p-sortIcon field="name"/>
+      </th>
+
+      <th pSortableColumn="brand" class="text-center text-nowrap sort-header">
+        Brend
+        <p-sortIcon field="brand"/>
+      </th>
+
+      <th pSortableColumn="category" class="text-center text-nowrap sort-header">
+        Kategoriya
+        <p-sortIcon field="category"/>
+      </th>
+
+      <th pSortableColumn="unit" class="text-center text-nowrap sort-header">
+        O‘lchov birligi
+        <p-sortIcon field="unit"/>
+      </th>
+
+      <th pSortableColumn="defaultSalePrice" class="text-center text-nowrap sort-header">
+        Sotuv narxi
+        <p-sortIcon field="defaultSalePrice"/>
+      </th>
+
+      <th pSortableColumn="description" class="text-center text-nowrap sort-header">
+        Izoh
+        <p-sortIcon field="description"/>
+      </th>
+
+      <th pSortableColumn="isActive" class="text-center text-nowrap sort-header">
+        Holati
+        <p-sortIcon field="isActive"/>
+      </th>
+
+      <th class="text-center text-nowrap sort-header">Amallar</th>
+    </tr>
+  </ng-template>
+
+  <!-- BODY -->
+  <ng-template
+    pTemplate="body"
+    let-row
+    let-i="rowIndex"
+  >
+    <tr style="height:49px">
+      <td pFrozenColumn alignFrozen="left" class="shadow text-nowrap text-center">
+        {{ i + 1 }}
+      </td>
+
+      <td class="text-nowrap text-center">{{ row.skuCode }}</td>
+      <td>
+        <img
+          src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
+          alt="Bamboo Watch"
+          class="w-24 rounded"
+        />
+      </td>
+      <td class="text-nowrap text-center">{{ row.barcode }}</td>
+      <td class="text-nowrap text-center">{{ row.name }}</td>
+      <td class="text-nowrap text-center">{{ row.brand }}</td>
+      <td class="text-nowrap text-center">{{ row.category }}</td>
+      <td class="text-nowrap text-center">{{ row.unit }}</td>
+      <td class="text-nowrap text-center">{{ row.defaultSalePrice | number:'1.2-2' }}</td>
+      <td class="text-nowrap text-center">{{ row.description }}</td>
+      <td class="text-nowrap text-center">
+        <p-tag [value]="row.isActive ? 'Faol' : 'Nofaol'" [severity]="row.isActive ? 'success' : 'danger'"></p-tag>
+      </td>
+
+      <td pFrozenColumn alignFrozen="right" class="text-center">
+        <!-- Amallar tugmalari -->
+        <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"></button>
+        <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+      </td>
+    </tr>
+  </ng-template>
+
+  <!-- EMPTY MESSAGE -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="12  " class="mx-auto">
+        <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+          <i class="pi pi-info-circle text-3xl mb-2"></i>
+          <span>Mahsulotlar topilmadi</span>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>
+
+<p-dialog
+  [(visible)]="visibleProductModal"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  [maximizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '100vw', height: '100vh', margin: 0, padding: 0 }"
+  [baseZIndex]="10000">
+  <app-create-item></app-create-item>
+</p-dialog>

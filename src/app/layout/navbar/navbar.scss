@@ -1,7 +1,7 @@
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 12px;          /* icon va text orasidagi masofa */
+  gap: 12px; /* icon va text orasidagi masofa */
 }
 
 .logo-icon {
@@ -21,7 +21,7 @@
 /* RUZI */
 .logo .ruzi {
   color: #ffffff;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.6), 0 0 12px #00d4ff;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6), 0 0 12px #00d4ff;
 }
 
 /* Dash */
@@ -32,7 +32,7 @@
 /* SAVDO */
 .logo .savdo {
   color: #ef4444;
-  font-size: 1rem;     /* RUZI dan kichikroq */
-  font-weight: 700;    /* ozgina yupqaroq */
-  margin-left: 4px;    /* RUZI va SAVDO orasiga joy */
+  font-size: 1rem; /* RUZI dan kichikroq */
+  font-weight: 700; /* ozgina yupqaroq */
+  margin-left: 4px; /* RUZI va SAVDO orasiga joy */
 }

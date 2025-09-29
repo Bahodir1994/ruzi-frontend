@@ -35,15 +35,10 @@
 }
 
 .active-parent-link {
-  padding: -1px;
+  background: color-mix(in srgb, var(--p-primary-color), transparent 80%);
   border-radius: 5px;
-  box-shadow: 0 7px 30px rgba(0, 0, 0, 0.08),
-  0px 22px 30px 2px rgba(0, 0, 0, 0.15),
-  0px 8px 10px rgba(0, 0, 0, 0.15);
-
   color: var(--body-text-color) !important;
-  border-bottom: 1px dotted var(--body-text-color);
-  border-top: 1px dotted var(--body-text-color);
+  transition: all 0.3s ease-in-out;
 
   .pi {
     color: var(--body-text-color) !important;
@@ -58,7 +53,7 @@
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 12px;          /* icon va text orasidagi masofa */
+  gap: 12px; /* icon va text orasidagi masofa */
 }
 
 .logo-icon {
@@ -78,7 +73,7 @@
 /* RUZI */
 .logo .ruzi {
   color: #ffffff;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.6), 0 0 12px #00d4ff;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6), 0 0 12px #00d4ff;
 }
 
 /* Dash */
@@ -89,19 +84,17 @@
 /* SAVDO */
 .logo .savdo {
   color: #ef4444;
-  font-size: 1rem;     /* RUZI dan kichikroq */
-  font-weight: 700;    /* ozgina yupqaroq */
-  margin-left: 4px;    /* RUZI va SAVDO orasiga joy */
+  font-size: 1rem; /* RUZI dan kichikroq */
+  font-weight: 700; /* ozgina yupqaroq */
+  margin-left: 4px; /* RUZI va SAVDO orasiga joy */
 }
 
 
 a {
-  color: var(--link-color);
   text-decoration: none;
   transition: color 0.2s ease, background-color 0.2s ease;
 
   &:hover {
-    color: var(--link-hover-color);
     background-color: var(--link-hover-bg);
   }
 }

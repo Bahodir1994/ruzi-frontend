@@ -8,9 +8,6 @@ import {NgForOf} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
 import {Car} from '../../domain/car';
 import {Toolbar} from 'primeng/toolbar';
-import {IconField} from 'primeng/iconfield';
-import {InputIcon} from 'primeng/inputicon';
-import {SplitButton} from 'primeng/splitbutton';
 import {InputText} from 'primeng/inputtext';
 
 interface Column {
@@ -36,7 +33,7 @@ interface Column {
   providers: [CarService],
   encapsulation: ViewEncapsulation.None
 })
-export class Cashbox implements OnInit, AfterViewInit{
+export class Cashbox implements OnInit, AfterViewInit {
   @ViewChild('searchInput') searchInput!: ElementRef;
 
   @HostListener('document:keydown', ['$event'])
@@ -53,19 +50,20 @@ export class Cashbox implements OnInit, AfterViewInit{
 
   cols!: Column[];
 
-  constructor(private carService: CarService) {}
+  constructor(private carService: CarService) {
+  }
 
   ngOnInit() {
     this.cols = [
-      { field: 'id', header: 'Id' },
-      { field: 'vin', header: 'Vin' },
-      { field: 'year', header: 'Year' },
-      { field: 'brand', header: 'Brand' },
-      { field: 'color', header: 'Color' }
+      {field: 'id', header: 'Id'},
+      {field: 'vin', header: 'Vin'},
+      {field: 'year', header: 'Year'},
+      {field: 'brand', header: 'Brand'},
+      {field: 'color', header: 'Color'}
     ];
 
-    this.cars = Array.from({ length: 10000 }).map((_, i) => this.carService.generateCar(i + 1));
-    this.virtualCars = Array.from({ length: 10000 });
+    this.cars = Array.from({length: 10000}).map((_, i) => this.carService.generateCar(i + 1));
+    this.virtualCars = Array.from({length: 10000});
   }
 
   ngAfterViewInit() {
