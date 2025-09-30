@@ -4,9 +4,8 @@ import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
-import { NgForOf } from '@angular/common';
 import {Select} from 'primeng/select';
-import {CategoryModel} from '../categories.model';
+import {CategoryModel} from '../service-model/categories.model';
 
 @Component({
   selector: 'app-category-create',

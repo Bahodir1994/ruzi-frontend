@@ -266,5 +266,44 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       }
     ]
+  },
+  {
+    module: "category",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/api/category/self",
+        method: "post",
+        label: "read_category_self",
+        comment: "categoriyalarni jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/api/category/width-item",
+        method: "post",
+        label: "read_category_width_item",
+        comment: "categoriyalarni tovarlari bilan",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/api/category/tree",
+        method: "post",
+        label: "read_category_tree",
+        comment: "categoriyalarni daraxt shaklida olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
   }
 ]

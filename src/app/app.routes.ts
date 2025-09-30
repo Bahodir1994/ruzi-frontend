@@ -5,7 +5,7 @@ import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
 import {ItemLibrary} from './modules/items/item.library/item.library';
 import {ImageLibrary} from './modules/items/image.library/image.library';
-import {Categories} from './modules/items/categories/categories';
+import {Categories} from './modules/items/categories/categories/categories';
 import {Units} from './modules/items/units/units';
 import {Locations} from './modules/settings/account/business-info/locations/locations';
 

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AuthService} from '../../configuration/authentication/auth.service';
 import {ItemLibrary} from '../../modules/items/item.library/item.library';
-import {Categories} from '../../modules/items/categories/categories';
+import {Categories} from '../../modules/items/categories/categories/categories';
 
 @Injectable({
   providedIn: 'root'
