@@ -82,7 +82,6 @@
                             <i
                               class="pi pi-chevron-{{ isActiveRoute(menu_data.route + '/' + menu_data_sub.route) ? 'down' : 'right' }} ml-auto"></i>
                           </a>
-
                           <ul
                             class="list-none py-0 pl-2 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
                             @for (menu_data_sub2 of menu_data_sub.items; track $index; let i = $index) {

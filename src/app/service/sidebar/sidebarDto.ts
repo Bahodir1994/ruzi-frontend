@@ -1,4 +1,4 @@
-export interface Menu {
+export interface MenuAs {
   route: string,
   label: string,
   icon?: string,

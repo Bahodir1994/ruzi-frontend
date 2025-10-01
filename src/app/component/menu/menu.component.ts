@@ -1,29 +1,39 @@
 import {ChangeDetectorRef, Component, inject, Input, OnInit} from '@angular/core';
-import {NgClass} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {Ripple} from 'primeng/ripple';
 import {StyleClass} from 'primeng/styleclass';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {Menu} from '../../service/sidebar/sidebarDto';
+import {MenuAs} from '../../service/sidebar/sidebarDto';
 import {SidebarService} from '../../service/sidebar/sidebar.service';
 import {AuthService} from '../../configuration/authentication/auth.service';
+import { MenuItem } from 'primeng/api';
+import {Menu} from 'primeng/menu';
+import {TieredMenu} from 'primeng/tieredmenu';
+import {Badge} from 'primeng/badge';
+
 
 @Component({
   standalone: true,
   selector: 'app-menu',
   imports: [
+    TieredMenu,
     Ripple,
-    StyleClass,
+    Badge,
+    NgIf,
     NgClass,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    StyleClass
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
 export class MenuComponent implements OnInit {
   @Input({required: true}) visible!: boolean;
+  isSidebarOpen = false;
 
-  items: Menu[] = [];
+  menuItem: MenuItem[] | undefined;
+  items: MenuAs[] = [];
   userRoles: Set<string> = new Set();
 
   private readonly router = inject(Router);
@@ -40,12 +50,14 @@ export class MenuComponent implements OnInit {
 
     this.sidebarService.menuItems$.subscribe(items => {
       this.items = this.filterMenu(items);
-
+      this.menuItem = items;
+      console.log('this.menuItem')
+      console.log(this.menuItem)
       this.cdr.detectChanges();
     });
   }
 
-  private filterMenu(menu: Menu[]): Menu[] {
+  private filterMenu(menu: MenuAs[]): MenuAs[] {
     return menu
       .map(item => {
         if (item.type === 'link') {
@@ -56,10 +68,10 @@ export class MenuComponent implements OnInit {
         }
         return null;
       })
-      .filter((item): item is Menu => item !== null);
+      .filter((item): item is MenuAs => item !== null);
   }
 
-  private hasPermission(menuItem: Menu): boolean {
+  private hasPermission(menuItem: MenuAs): boolean {
     if (!menuItem.permissions || menuItem.permissions.length === 0) {
       return true;
     }
@@ -80,7 +92,6 @@ export class MenuComponent implements OnInit {
     });
   }
 
-
   isParentActive(menu_data: any): boolean {
     if (this.isActiveRoute(menu_data.route)) {
       return true;
@@ -91,4 +102,5 @@ export class MenuComponent implements OnInit {
   }
 
   protected readonly Number = Number;
+
 }

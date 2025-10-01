@@ -1,0 +1,93 @@
+<div class="w-full flex justify-start py-2">
+  <div class="flex">
+    <p-icon-field iconPosition="right" class="pr-2">
+      <p-inputicon class="pi pi-search"></p-inputicon>
+      <input
+        type="search"
+        pInputText
+        pSize="small"
+        placeholder="Qidiruv"
+        [(ngModel)]="searchValue"
+        (input)="loadData()"
+      />
+    </p-icon-field>
+    @if (permissions['add_new_product']) {
+      <p-button
+        (click)="openDialog()"
+        size="small"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi tovar qo'shish"
+        [outlined]="true"
+      />
+    }
+  </div>
+</div>
+<p-table
+  size="small"
+  #dataTableUnit
+  [value]="unitModel"
+  dataKey="id"
+  [rowHover]="true"
+  [rows]="10"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  loadingIcon="pi pi-spinner"
+  [paginator]="true"
+  currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
+  [filterDelay]="0"
+  [scrollable]="true"
+  [totalRecords]="totalRecords"
+  [lazy]="true"
+  (onLazyLoad)="pageChange($event)"
+  [first]="0"
+  [pageLinks]="5"
+  [showJumpToPageInput]="true"
+  scrollHeight="80vh"
+>
+  <ng-template pTemplate="header">
+    <tr class="border shadow h-[60px]">
+      <th pSortableColumn="code" class="text-center text-nowrap sort-header">
+        Kodi
+        <p-sortIcon field="skuCode"/>
+      </th>
+      <th pSortableColumn="name" class="text-center text-nowrap sort-header">
+        Nomi
+        <p-sortIcon field="name"/>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body"
+               let-row
+               let-i="rowIndex"
+  >
+    <tr style="height:49px">
+      <td class="text-nowrap text-center">{{ row.code }}</td>
+      <td class="text-nowrap text-center">{{ row.name }}</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="12  " class="mx-auto">
+        <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+          <i class="pi pi-info-circle text-3xl mb-2"></i>
+          <span>Mahsulotlar topilmadi</span>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>
+
+<p-dialog
+  [(visible)]="visibleProductModal"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  [maximizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '100vw', height: '100vh', margin: 0, padding: 0 }"
+  [baseZIndex]="10000">
+</p-dialog>

@@ -1,0 +1,120 @@
+<p-card class="card">
+  <ng-template #header>
+    <div class="flex">
+      <span class="text-2xl m-4">Kategoriyalar</span>
+    </div>
+    <div class="flex w-full justify-start gap-2">
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValue"
+          (input)="loadDataTable()"
+        />
+      </p-icon-field>
+      @if (permissions['add_new_category']) {
+        <p-button
+          class="pr-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-plus"
+          label="Yangi kategoriya qo'shish"
+          (onClick)="showModalCategory = true"
+        />
+      }
+    </div>
+  </ng-template>
+  <p-table
+    size="small"
+    #dataTableCategory
+    [value]="categoryModel"
+    dataKey="id"
+    [rowHover]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    loadingIcon="pi pi-spinner"
+    [paginator]="true"
+    currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
+    [filterDelay]="0"
+    [globalFilterFields]="['orderNumber','supplier.name','warehouse.name']"
+    (onFilter)="onFilter($event)"
+    (onSort)="onSort($event)"
+    [scrollable]="true"
+    [totalRecords]="totalRecords"
+    [lazy]="true"
+    (onLazyLoad)="pageChange($event)"
+    [first]="0"
+    [pageLinks]="5"
+    [showJumpToPageInput]="true"
+    scrollHeight="650px"
+    class=""
+  >
+    <ng-template pTemplate="body" let-item let-i="rowIndex">
+      <tr>
+        <td>
+          <div class="grid grid-cols-12 gap-4 p-2 grid-nogutter">
+            <div class="col-span-12">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="md:w-40 relative">
+                  <img
+                    class="block xl:block mx-auto rounded-border w-full"
+                    [src]="item.primaryImageUrl"
+                    [alt]="item.name"
+                  />
+                  <p-tag
+                    [value]="item.code"
+                    [severity]="'success'"
+                    class="absolute dark:!bg-surface-900"
+                    [style.left.px]="4"
+                    [style.top.px]="4"
+                  />
+                </div>
+                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                  <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                    <div>
+                      <span class="font-medium text-secondary text-sm">{{ item.code }}</span>
+                      <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.code }}</div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col md:items-end gap-8">
+                    <div class="flex flex-row-reverse md:flex-row gap-2">
+                      <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ item.items.length }}
+                        ta tovar</span>
+                      <p-button
+                        size="small"
+                        icon="pi pi-shopping-cart"
+                        class="flex-auto md:flex-initial whitespace-nowrap"
+                        label="qo'shish"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="text-center">Kategoriya topilmadi</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>
+
+<p-dialog
+  #categoriesDialog
+  [(visible)]="showModalCategory"
+  header="Header"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw',
+   '575px': '90vw' }"
+  [maximizable]="true"
+
+>
+</p-dialog>

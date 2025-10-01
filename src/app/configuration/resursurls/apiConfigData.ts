@@ -254,9 +254,8 @@ export const apiConfigData: ApiUrls[] = [
     ssl: false,
     active: true,
     list: [
-      /*todo info*/
       {
-        url: "/api/products/read-table-data",
+        url: "/route-item/data-table-main",
         method: "post",
         label: "item_table",
         comment: "tovarlar asosy jadvali",
@@ -274,36 +273,46 @@ export const apiConfigData: ApiUrls[] = [
     ssl: false,
     active: true,
     list: [
+      /*todo info*/
       {
-        url: "/api/category/self",
+        url: "/route-category/data-table-main",
         method: "post",
-        label: "read_category_self",
-        comment: "categoriyalarni jadvali",
+        label: "category_table",
+        comment: "categoriya asosy jadvali",
         active: true,
         showSuccess: false,
         showWarning: true,
         roles: []
       },
       {
-        url: "/api/category/width-item",
+        url: "/route-category/data-list-main",
         method: "post",
-        label: "read_category_width_item",
-        comment: "categoriyalarni tovarlari bilan",
-        active: true,
-        showSuccess: false,
-        showWarning: true,
-        roles: []
-      },
-      {
-        url: "/api/category/tree",
-        method: "post",
-        label: "read_category_tree",
-        comment: "categoriyalarni daraxt shaklida olish",
+        label: "category_list",
+        comment: "categoriya asosy ro'yxati",
         active: true,
         showSuccess: false,
         showWarning: true,
         roles: []
       }
     ]
-  }
+  },
+  {
+    module: "units",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-unit/data-table-main",
+        method: "post",
+        label: "unit_table",
+        comment: "o'lchov birligi asosy jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
+  },
 ]

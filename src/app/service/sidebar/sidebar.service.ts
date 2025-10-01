@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
-import {Menu} from "./sidebarDto";
+import {MenuAs} from "./sidebarDto";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -11,7 +11,7 @@ export class SidebarService {
   sidebarState$ = this.isSidebarOpen.asObservable();
 
   /************************ Creating start ***************************************/
-  private menuItems = new BehaviorSubject<Menu[]>([]);
+  private menuItems = new BehaviorSubject<MenuAs[]>([]);
   menuItems$ = this.menuItems.asObservable();
   http: HttpClient;
 
@@ -31,7 +31,7 @@ export class SidebarService {
 
   /* for load sidebar menu from json */
   private loadMenuItems() {
-    this.http.get<Menu[]>('/assets/data/other/menu.json')
+    this.http.get<MenuAs[]>('/assets/data/other/menu.json')
       .subscribe({
         next: data => this.menuItems.next(data),
         error: error => console.error('Could not load menu items', error)

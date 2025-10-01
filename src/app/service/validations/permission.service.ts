@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {AuthService} from '../../configuration/authentication/auth.service';
-import {ItemLibrary} from '../../modules/items/item.library/item.library';
-import {Categories} from '../../modules/items/categories/categories/categories';
+import {Category} from '../../modules/items/category/category';
+import {Item} from '../../modules/items/item/item';
+import {Unit} from '../../modules/items/unit/unit';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class PermissionService {
     conditions?: (status: string) => boolean
   }>>([
     [
-      ItemLibrary, {
+      Item, {
       'add_new_product': {
         roles: ['ROLE_PRODUCT_CREATE'],
         conditions: (status) => true
@@ -22,7 +23,15 @@ export class PermissionService {
     }
     ],
     [
-      Categories, {
+      Category, {
+      'add_new_category': {
+        roles: ['ROLE_PRODUCT_CREATE'],
+        conditions: (status) => true
+      }
+    }
+    ],
+    [
+      Unit, {
       'add_new_category': {
         roles: ['ROLE_PRODUCT_CREATE'],
         conditions: (status) => true

@@ -3,11 +3,10 @@ import {Admin} from './layout/admin/admin';
 import {AuthGuard} from './configuration/authentication/auth.guard';
 import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
-import {ItemLibrary} from './modules/items/item.library/item.library';
-import {ImageLibrary} from './modules/items/image.library/image.library';
-import {Categories} from './modules/items/categories/categories/categories';
-import {Units} from './modules/items/units/units';
 import {Locations} from './modules/settings/account/business-info/locations/locations';
+import {Category} from './modules/items/category/category';
+import {Item} from './modules/items/item/item';
+import {Unit} from './modules/items/unit/unit';
 
 export const routes: Routes = [
   {
@@ -27,10 +26,10 @@ export const routes: Routes = [
           breadcrumb: 'Predmetlar va Servislar'
         },
         children: [
-          {path: '', redirectTo: 'item-library', pathMatch: 'full'},
+          {path: '', redirectTo: 'item', pathMatch: 'full'},
           {
-            path: 'item-library',
-            component: ItemLibrary,
+            path: 'item',
+            component: Item,
             data: {
               roles: [],
               title: 'Tovarlar to`plami',
@@ -38,17 +37,8 @@ export const routes: Routes = [
             }
           },
           {
-            path: 'image-library',
-            component: ImageLibrary,
-            data: {
-              roles: [],
-              title: 'Rasmlar to`plami',
-              breadcrumb: 'Rasmlar to`plami'
-            }
-          },
-          {
-            path: 'categories',
-            component: Categories,
+            path: 'category',
+            component: Category,
             data: {
               roles: [],
               title: 'Kategoriyalar',
@@ -56,8 +46,8 @@ export const routes: Routes = [
             }
           },
           {
-            path: 'units',
-            component: Units,
+            path: 'unit',
+            component: Unit,
             data: {
               roles: [],
               title: 'O`lchov birligi',
@@ -74,45 +64,34 @@ export const routes: Routes = [
           breadcrumb: 'Sozlamalar'
         },
         children: [
-          {path: '', redirectTo: 'account-and-setting', pathMatch: 'full'},
+          {path: '', redirectTo: 'personal-info', pathMatch: 'full'},
           {
-            path: 'account-and-setting',
+            path: 'personal-info',
             data: {
               roles: [],
-              title: 'Profil & Sozlamalar',
-              breadcrumb: 'Profil & Sozlamalar'
+              title: 'Personal ma`lumotlar',
+              breadcrumb: 'Personal ma`lumotlar'
+            },
+            children: []
+          },
+          {
+            path: 'business-info',
+            data: {
+              roles: [],
+              title: 'Biznes ma`lumotlari',
+              breadcrumb: 'Biznes ma`lumotlar'
             },
             children: [
-              {path: '', redirectTo: 'personal-info', pathMatch: 'full'},
               {
-                path: 'personal-info',
+                path: 'locations',
+                component: Locations,
+                canActivate: [AuthGuard],
                 data: {
                   roles: [],
-                  title: 'Personal ma`lumotlar',
-                  breadcrumb: 'Personal ma`lumotlar'
-                },
-                children: []
-              },
-              {
-                path: 'business-info',
-                data: {
-                  roles: [],
-                  title: 'Biznes ma`lumotlari',
-                  breadcrumb: 'Biznes ma`lumotlar'
-                },
-                children: [
-                  {
-                    path: 'locations',
-                    component: Locations,
-                    canActivate: [AuthGuard],
-                    data: {
-                      roles: [],
-                      title: 'Joylashuv',
-                      breadcrumb: 'Joylashuv'
-                    }
-                  }
-                ]
-              },
+                  title: 'Joylashuv',
+                  breadcrumb: 'Joylashuv'
+                }
+              }
             ]
           },
         ]

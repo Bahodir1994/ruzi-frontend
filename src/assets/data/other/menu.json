@@ -9,28 +9,21 @@
         "label": "Tovarlar to'plami",
         "icon": "pi pi-stop",
         "type": "link",
-        "route": "item-library",
-        "permissions": []
-      },
-      {
-        "label": "Rasmlar to'plami",
-        "icon": "pi pi-stop",
-        "type": "link",
-        "route": "image-library",
+        "route": "item",
         "permissions": []
       },
       {
         "label": "Kategoriyalar",
         "icon": "pi pi-stop",
         "type": "link",
-        "route": "categories",
+        "route": "category",
         "permissions": []
       },
       {
         "label": "O'lchov birligi",
         "icon": "pi pi-stop",
         "type": "link",
-        "route": "units",
+        "route": "unit",
         "permissions": []
       }
     ],
@@ -43,32 +36,30 @@
     "route": "settings",
     "items": [
       {
-        "label": "Profil & Sozlamalar",
+        "label": "Personal ma'lumotlar",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "personal-info",
+        "permissions": []
+      },
+      {
+        "label": "Biznes ma'lumotlari",
         "icon": "pi pi-stop",
         "type": "sub",
-        "route": "account-and-setting",
+        "route": "business-info",
         "items": [
           {
-            "label": "Personal ma'lumotlar",
+            "label": "Kirim",
             "icon": "pi pi-stop",
             "type": "link",
-            "route": "personal-info",
+            "route": "income",
             "permissions": []
           },
           {
-            "label": "Biznes ma'lumotlari",
+            "label": "Joylashuv",
             "icon": "pi pi-stop",
-            "type": "sub",
-            "route": "business-info",
-            "items": [
-              {
-                "label": "Joylashuv",
-                "icon": "pi pi-stop",
-                "type": "link",
-                "route": "locations",
-                "permissions": []
-              }
-            ],
+            "type": "link",
+            "route": "locations",
             "permissions": []
           }
         ],
@@ -92,4 +83,6 @@
     "permissions": []
   }
 ]
+
+
 
