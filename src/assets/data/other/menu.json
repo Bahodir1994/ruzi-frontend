@@ -52,14 +52,14 @@
             "label": "Kirim",
             "icon": "pi pi-stop",
             "type": "link",
-            "route": "income",
+            "route": "purchase-order",
             "permissions": []
           },
           {
             "label": "Joylashuv",
             "icon": "pi pi-stop",
             "type": "link",
-            "route": "locations",
+            "route": "warehouse",
             "permissions": []
           }
         ],

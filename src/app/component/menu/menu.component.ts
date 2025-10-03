@@ -16,10 +16,7 @@ import {Badge} from 'primeng/badge';
   standalone: true,
   selector: 'app-menu',
   imports: [
-    TieredMenu,
     Ripple,
-    Badge,
-    NgIf,
     NgClass,
     RouterLink,
     RouterLinkActive,

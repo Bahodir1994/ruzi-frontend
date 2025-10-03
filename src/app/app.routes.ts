@@ -3,10 +3,11 @@ import {Admin} from './layout/admin/admin';
 import {AuthGuard} from './configuration/authentication/auth.guard';
 import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
-import {Locations} from './modules/settings/account/business-info/locations/locations';
 import {Category} from './modules/items/category/category';
 import {Item} from './modules/items/item/item';
 import {Unit} from './modules/items/unit/unit';
+import {Warehouse} from './modules/settings/account/business-info/warehouse/warehouse';
+import {PurchaseOrder} from './modules/settings/account/business-info/purchase-order/purchase-order';
 
 export const routes: Routes = [
   {
@@ -83,8 +84,18 @@ export const routes: Routes = [
             },
             children: [
               {
-                path: 'locations',
-                component: Locations,
+                path: 'purchase-order',
+                component: PurchaseOrder,
+                canActivate: [AuthGuard],
+                data: {
+                  roles: [],
+                  title: 'Kirim',
+                  breadcrumb: 'Kirim'
+                }
+              },
+              {
+                path: 'warehouse',
+                component: Warehouse,
                 canActivate: [AuthGuard],
                 data: {
                   roles: [],

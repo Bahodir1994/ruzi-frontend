@@ -315,4 +315,23 @@ export const apiConfigData: ApiUrls[] = [
       }
     ]
   },
+  {
+    module: "purchase-order",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-purchase-order/data-table-main",
+        method: "post",
+        label: "purchase_order_table",
+        comment: "kirim asosy jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
+  },
 ]
