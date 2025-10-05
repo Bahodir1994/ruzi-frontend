@@ -1,5 +1,6 @@
 <div class="w-full flex justify-start py-2">
   <div class="flex w-full justify-between items-center">
+    <!-- 🔍 Qidiruv maydoni -->
     <div class="flex">
       <p-icon-field iconPosition="right" class="pr-2">
         <p-inputicon class="pi pi-search"></p-inputicon>
@@ -14,12 +15,13 @@
       </p-icon-field>
     </div>
 
-    @if (permissions['add_new_warehouse']) {
+    <!-- ➕ Yangi ta'minotchi qo‘shish tugmasi -->
+    @if (permissions['add_supplier']) {
       <p-button
         (click)="openDialog()"
         size="small"
         icon="pi pi-plus"
-        label="Yangi ombor qo‘shish"
+        label="Yangi ta’minotchi"
         styleClass="shadow shadow-blue-500/50"
         [outlined]="true"
       />
@@ -27,10 +29,11 @@
   </div>
 </div>
 
+<!-- 📋 Jadval -->
 <p-table
   size="small"
-  #dataTableWarehouse
-  [value]="warehouseModel"
+  #dataTableSuppliers
+  [value]="supplierModel"
   dataKey="id"
   [rowHover]="true"
   [rows]="10"
@@ -43,83 +46,73 @@
   scrollHeight="75vh"
   [filterDelay]="0"
 >
+  <!-- Jadval sarlavhalari -->
   <ng-template pTemplate="header">
     <tr class="border shadow h-[60px]">
       <th pSortableColumn="name" class="text-center text-nowrap sort-header">
-        Ombor nomi
+        Ta’minotchi nomi
         <p-sortIcon field="name"/>
       </th>
-      <th pSortableColumn="address" class="text-center text-nowrap sort-header">
-        Manzili
-        <p-sortIcon field="address"/>
+      <th pSortableColumn="phone" class="text-center text-nowrap sort-header">
+        Telefon
+        <p-sortIcon field="phone"/>
       </th>
-      <th pSortableColumn="type" class="text-center text-nowrap sort-header">
-        Turi
-        <p-sortIcon field="type"/>
+      <th pSortableColumn="email" class="text-center text-nowrap sort-header">
+        Email
+        <p-sortIcon field="email"/>
       </th>
-      <th pSortableColumn="status" class="text-center text-nowrap sort-header">
-        Holati
-        <p-sortIcon field="status"/>
+      <th pSortableColumn="contactPerson" class="text-center text-nowrap sort-header">
+        Aloqa shaxsi
+        <p-sortIcon field="contactPerson"/>
+      </th>
+      <th pSortableColumn="inn" class="text-center text-nowrap sort-header">
+        INN / STIR
+        <p-sortIcon field="inn"/>
+      </th>
+      <th class="text-center text-nowrap sort-header">
+        Bank hisob raqami
       </th>
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-row let-i="rowIndex">
+  <!-- Jadval satrlari -->
+  <ng-template pTemplate="body" let-row>
     <tr style="height:49px">
       <td class="text-nowrap text-center font-medium">{{ row.name }}</td>
-      <td class="text-nowrap text-center">{{ row.address || '-' }}</td>
-      <td class="text-nowrap text-center">
-        @switch (row.type) {
-          @case ('MAIN') {
-            <span class="text-blue-600 font-medium">Markaziy</span>
-          }
-          @case ('BRANCH') {
-            <span class="text-green-600 font-medium">Filial</span>
-          }
-          @case ('MOBILE') {
-            <span class="text-orange-500 font-medium">Mobil</span>
-          }
-          @default {
-            <span class="text-gray-400">-</span>
-          }
-        }
-      </td>
-      <td class="text-nowrap text-center">
-        <span [ngClass]="{
-          'text-green-600 font-semibold': row.status === 'ACTIVE',
-          'text-red-500 font-semibold': row.status === 'INACTIVE'
-        }">
-          {{ row.status }}
-        </span>
-      </td>
+      <td class="text-nowrap text-center">{{ row.phone || '-' }}</td>
+      <td class="text-nowrap text-center">{{ row.email || '-' }}</td>
+      <td class="text-nowrap text-center">{{ row.contactPerson || '-' }}</td>
+      <td class="text-nowrap text-center">{{ row.inn || '-' }}</td>
+      <td class="text-nowrap text-center">{{ row.bankAccount || '-' }}</td>
     </tr>
   </ng-template>
 
+  <!-- Bo‘sh jadval xabari -->
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td [attr.colspan]="4" class="mx-auto">
+      <td [attr.colspan]="6" class="mx-auto">
         <div class="flex flex-col items-center justify-center p-6 text-gray-500">
           <i class="pi pi-info-circle text-3xl mb-2"></i>
-          <span>Omborlar topilmadi</span>
+          <span>Ta’minotchilar topilmadi</span>
         </div>
       </td>
     </tr>
   </ng-template>
 </p-table>
 
+<!-- 🪟 Modal oynasi -->
 <p-dialog
-  [(visible)]="visibleWarehouseOrderModal"
+  [(visible)]="visibleSupplierModal"
   [modal]="true"
   [draggable]="false"
   [resizable]="true"
   [closable]="true"
-  [maximizable]="false"
   [dismissableMask]="true"
-  [style]="{ width: '60vw', height: '80vh' }"
+  [style]="{ width: '60vw', height: '70vh' }"
   [baseZIndex]="10000"
 >
-  <ng-template pTemplate="header">Yangi ombor</ng-template>
+  <ng-template pTemplate="header">Yangi ta’minotchi</ng-template>
   <ng-template pTemplate="content">
-    <!-- bu yerda ombor qo‘shish yoki tahrirlash form bo‘ladi -->
+    <!-- bu yerda supplier qo‘shish yoki tahrirlash form bo‘ladi -->
   </ng-template>
 </p-dialog>

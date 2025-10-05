@@ -1,13 +1,11 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {TableFilterEvent, TableModule} from 'primeng/table';
+import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {ItemService} from './item.service';
 import {PermissionService} from '../../../service/validations/permission.service';
-import {FilterMetadata, SortEvent} from 'primeng/api';
 import {firstValueFrom} from 'rxjs';
 import {ItemModel} from './item-model';
 import {Dialog} from 'primeng/dialog';
-import {DatePicker} from 'primeng/datepicker';
 import {FormsModule} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
 import {Button} from 'primeng/button';
@@ -69,11 +67,14 @@ export class Item {
     private itemService: ItemService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService
-  ) {}
+  ) {
+  }
+
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
   }
+
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(Item, 'add_new_product', status)
@@ -94,6 +95,7 @@ export class Item {
       this.isLoading = false;
     }
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;

@@ -61,6 +61,13 @@
             "type": "link",
             "route": "warehouse",
             "permissions": []
+          },
+          {
+            "label": "Ta'minotchilar",
+            "icon": "pi pi-stop",
+            "type": "link",
+            "route": "supplier",
+            "permissions": []
           }
         ],
         "permissions": []
@@ -73,13 +80,6 @@
     "icon": "pi pi-calculator",
     "type": "link",
     "route": "cashbox",
-    "permissions": []
-  },
-  {
-    "label": "Analtika",
-    "icon": "pi pi-calculator",
-    "type": "link",
-    "route": "analytics",
     "permissions": []
   }
 ]

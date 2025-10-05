@@ -4,12 +4,12 @@ import {DatatableService} from '../../../../../component/datatables/datatable.se
 import {ApiConfigService} from '../../../../../configuration/resursurls/apiConfig.service';
 import {DataTableInput, DataTableOutput} from '../../../../../component/datatables/datatable-input.model';
 import {Observable} from 'rxjs';
-import {PurchaseOrderModel} from './purchase-order.model';
+import {WarehouseModel} from './warehouse.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PurchaseOrderService {
+export class WarehouseService {
   private moduleUrl!: FindResultApiUrl;
 
   constructor(
@@ -19,13 +19,13 @@ export class PurchaseOrderService {
   }
 
   /* -tables- */
-  data_table_main(dataTableInput: DataTableInput): Observable<DataTableOutput<PurchaseOrderModel>> {
-    this.apiConfigService.loadConfigAndGetResultUrl('purchase-order', 'purchase_order_table').subscribe(value => {
+  data_table_main(dataTableInput: DataTableInput): Observable<DataTableOutput<WarehouseModel>> {
+    this.apiConfigService.loadConfigAndGetResultUrl('warehouse', 'warehouse_table').subscribe(value => {
       if (value) {
         this.moduleUrl = value;
       }
     })
 
-    return this.datatableService.getData<PurchaseOrderModel>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
+    return this.datatableService.getData<WarehouseModel>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
   }
 }

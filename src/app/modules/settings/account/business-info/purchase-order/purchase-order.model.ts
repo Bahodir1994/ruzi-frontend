@@ -1,4 +1,4 @@
-import {Warehouse} from '../warehouse/warehouse.model';
+import {WarehouseModel} from '../warehouse/warehouse.model';
 
 export interface PurchaseOrderModel {
   id: string;
@@ -10,7 +10,7 @@ export interface PurchaseOrderModel {
   // supplier: Supplier;
 
   /** Ombor */
-  warehouse: Warehouse;
+  warehouse: WarehouseModel;
 
   /** Buyurtma yaratilgan sana */
   createdAt?: string; // ISO formatdagi LocalDate

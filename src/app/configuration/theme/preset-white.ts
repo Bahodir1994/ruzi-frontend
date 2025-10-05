@@ -16,6 +16,9 @@ const PresetWhiteBlue = definePreset(Aura, {
       900: '{blue.900}',
       950: '{blue.950}'
     }
+  },
+  components: {
+    tieredmenu: {}
   }
 });
 

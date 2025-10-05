@@ -1,6 +1,6 @@
 <div
   class="h-full shadow-md transition-all duration-300 ease-in-out rounded-tr-lg bg-white dark:bg-slate-900"
-  [ngClass]="{'w-80': visible,'w-20': !visible}">
+  [ngClass]="{'w-80': visible,'w-16': !visible}">
   <div class="flex flex-col h-full">
     <div class="overflow-y-auto">
       <ul class="list-none p-2 m-0">
@@ -83,7 +83,9 @@
                               class="pi pi-chevron-{{ isActiveRoute(menu_data.route + '/' + menu_data_sub.route) ? 'down' : 'right' }} ml-auto"></i>
                           </a>
                           <ul
-                            class="list-none py-0 pl-2 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                            class="list-none py-0 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out"
+                            [ngClass]="visible? 'pl-2': 'pl-0'"
+                          >
                             @for (menu_data_sub2 of menu_data_sub.items; track $index; let i = $index) {
                               <li>
                                 @if (menu_data_sub2.type === 'link') {
@@ -91,7 +93,7 @@
                                     pRipple
                                     [routerLink]="menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route"
                                     [routerLinkActive]="'active-router-link'"
-                                    class="hover:bg-ruziblue hover:text-white flex items-center cursor-pointer p-3 my-3 rounded-border duration-150 transition-colors p-ripple">
+                                    class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
                                     <i class="{{menu_data_sub.icon}} pl-1 mr-2" [ngClass]="visible? 'mr-2': 'ml-0'"></i>
                                     <span
                                       class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
@@ -141,6 +143,8 @@
                               </li>
                             }
                           </ul>
+                          <!-- qolgani dropdownli menu bop ketishi kerak-->
+
                         }
                       </li>
                     }
@@ -154,3 +158,6 @@
     </div>
   </div>
 </div>
+
+
+

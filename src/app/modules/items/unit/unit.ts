@@ -1,7 +1,5 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {ItemModel} from '../item/item-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
-import {ItemService} from '../item/item.service';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {UnitModel} from './unit-model';
@@ -58,11 +56,14 @@ export class Unit {
     private unitService: UnitService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService
-  ) {}
+  ) {
+  }
+
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
   }
+
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(Unit, 'add_new_product', status)
@@ -83,6 +84,7 @@ export class Unit {
       this.isLoading = false;
     }
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;

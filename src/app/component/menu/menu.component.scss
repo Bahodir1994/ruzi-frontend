@@ -99,16 +99,14 @@ a {
   }
 }
 
-
-
 ::ng-deep .custom-sidebar-menu {
-  width: 250px;            /* Sidebar kengligi */
-  height: 100vh;           /* Ekran bo‘yi */
-  position: fixed;         /* Chap tomonga yopishtiramiz */
+  width: 250px; /* Sidebar kengligi */
+  height: 100vh; /* Ekran bo‘yi */
+  position: fixed; /* Chap tomonga yopishtiramiz */
   top: 0;
   left: 0;
   border-right: 1px solid #ddd;
   background: #fff;
-  overflow-y: auto;        /* Scroll bo‘lishi uchun */
+  overflow-y: auto; /* Scroll bo‘lishi uchun */
   z-index: 1000;
 }

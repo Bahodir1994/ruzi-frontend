@@ -1,4 +1,4 @@
-export interface Warehouse {
+export interface WarehouseModel {
   id: string;
 
   /** Ombor nomi */

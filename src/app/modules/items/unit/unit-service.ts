@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {FindResultApiUrl} from '../../../configuration/resursurls/apiConfigDto';
 import {DatatableService} from '../../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../../configuration/resursurls/apiConfig.service';

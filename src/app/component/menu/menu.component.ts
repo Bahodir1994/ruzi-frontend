@@ -1,15 +1,11 @@
 import {ChangeDetectorRef, Component, inject, Input, OnInit} from '@angular/core';
-import {NgClass, NgIf} from '@angular/common';
+import {NgClass} from '@angular/common';
 import {Ripple} from 'primeng/ripple';
 import {StyleClass} from 'primeng/styleclass';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {MenuAs} from '../../service/sidebar/sidebarDto';
 import {SidebarService} from '../../service/sidebar/sidebar.service';
 import {AuthService} from '../../configuration/authentication/auth.service';
-import { MenuItem } from 'primeng/api';
-import {Menu} from 'primeng/menu';
-import {TieredMenu} from 'primeng/tieredmenu';
-import {Badge} from 'primeng/badge';
 
 
 @Component({
@@ -27,9 +23,7 @@ import {Badge} from 'primeng/badge';
 })
 export class MenuComponent implements OnInit {
   @Input({required: true}) visible!: boolean;
-  isSidebarOpen = false;
 
-  menuItem: MenuItem[] | undefined;
   items: MenuAs[] = [];
   userRoles: Set<string> = new Set();
 
@@ -47,9 +41,6 @@ export class MenuComponent implements OnInit {
 
     this.sidebarService.menuItems$.subscribe(items => {
       this.items = this.filterMenu(items);
-      this.menuItem = items;
-      console.log('this.menuItem')
-      console.log(this.menuItem)
       this.cdr.detectChanges();
     });
   }
@@ -80,15 +71,6 @@ export class MenuComponent implements OnInit {
     return currentUrl.startsWith('/' + path);
   }
 
-  isActiveRoute1(route: string): boolean {
-    return this.router.isActive(route, {
-      paths: 'subset',
-      queryParams: 'ignored',
-      fragment: 'ignored',
-      matrixParams: 'ignored'
-    });
-  }
-
   isParentActive(menu_data: any): boolean {
     if (this.isActiveRoute(menu_data.route)) {
       return true;
@@ -97,7 +79,5 @@ export class MenuComponent implements OnInit {
       route: string;
     }) => this.isActiveRoute(menu_data.route + '/' + subItem.route));
   }
-
-  protected readonly Number = Number;
 
 }

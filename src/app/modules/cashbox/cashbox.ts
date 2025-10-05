@@ -1,19 +1,40 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  signal,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
 import {Splitter} from 'primeng/splitter';
-import {Button} from 'primeng/button';
+import {Button, ButtonDirective} from 'primeng/button';
 import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
-import {NgForOf} from '@angular/common';
+import {CurrencyPipe, NgClass, NgForOf} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
 import {Car} from '../../domain/car';
 import {Toolbar} from 'primeng/toolbar';
 import {InputText} from 'primeng/inputtext';
+import {DataView} from 'primeng/dataview';
+import {SelectButton} from 'primeng/selectbutton';
+import {Tag} from 'primeng/tag';
 
-interface Column {
-  field: string;
-  header: string;
+export interface Product {
+  id?: string;
+  code?: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  quantity?: number;
+  inventoryStatus?: string;
+  category?: string;
+  image?: string;
+  rating?: number;
 }
+
 
 @Component({
   selector: 'app-cashbox',
@@ -25,7 +46,13 @@ interface Column {
     Toolbar,
     InputText,
     RouterLink,
-    NgForOf
+    NgForOf,
+    DataView,
+    SelectButton,
+    NgClass,
+    Tag,
+    ButtonDirective,
+    CurrencyPipe
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -43,30 +70,39 @@ export class Cashbox implements OnInit, AfterViewInit {
     }
   }
 
+  layout: "list" | "grid" = "grid";
 
-  cars!: Car[];
+  products = signal<any>([]);
 
-  virtualCars!: Car[];
+  options = ['list', 'grid'];
 
-  cols!: Column[];
 
   constructor(private carService: CarService) {
   }
 
   ngOnInit() {
-    this.cols = [
-      {field: 'id', header: 'Id'},
-      {field: 'vin', header: 'Vin'},
-      {field: 'year', header: 'Year'},
-      {field: 'brand', header: 'Brand'},
-      {field: 'color', header: 'Color'}
-    ];
-
-    this.cars = Array.from({length: 10000}).map((_, i) => this.carService.generateCar(i + 1));
-    this.virtualCars = Array.from({length: 10000});
+    this.carService.getProducts().then((data) => {
+      this.products.set([...data.slice(0,12)]);
+    });
   }
 
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
+  }
+
+  getSeverity(product: Product) {
+    switch (product.inventoryStatus) {
+      case 'INSTOCK':
+        return 'success';
+
+      case 'LOWSTOCK':
+        return 'warn';
+
+      case 'OUTOFSTOCK':
+        return 'danger';
+
+      default:
+        return null;
+    }
   }
 }

@@ -6,9 +6,7 @@ import {InputText} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
-import {UnitModel} from '../../../../items/unit/unit-model';
 import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
-import {UnitService} from '../../../../items/unit/unit-service';
 import {PermissionService} from '../../../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {PurchaseOrderModel} from './purchase-order.model';
@@ -53,13 +51,25 @@ export class PurchaseOrder {
     search: {value: '', regex: false},
     order: [{column: 1, dir: 'desc'}],
     columns: [
-      { data: 'orderNumber', name: 'orderNumber', searchable: true, orderable: true, search: { value: '', regex: false } },
-      { data: 'supplier.name', name: 'supplier', searchable: true, orderable: false, search: { value: '', regex: false } },
-      { data: 'warehouse.name', name: 'warehouse', searchable: true, orderable: false, search: { value: '', regex: false } },
-      { data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: { value: '', regex: false } },
-      { data: 'status', name: 'status', searchable: true, orderable: false, search: { value: '', regex: false } },
-      { data: 'paymentStatus', name: 'paymentStatus', searchable: true, orderable: false, search: { value: '', regex: false } },
-      { data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: true, search: { value: '', regex: false } }
+      {data: 'orderNumber', name: 'orderNumber', searchable: true, orderable: true, search: {value: '', regex: false}},
+      {data: 'supplier.name', name: 'supplier', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'warehouse.name',
+        name: 'warehouse',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
+      {data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'status', name: 'status', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'paymentStatus',
+        name: 'paymentStatus',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
+      {data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: true, search: {value: '', regex: false}}
     ]
   }
 
@@ -67,11 +77,14 @@ export class PurchaseOrder {
     private purchaseOrderService: PurchaseOrderService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService
-  ) {}
+  ) {
+  }
+
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
   }
+
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(PurchaseOrder, 'add_new_product', status)
@@ -92,6 +105,7 @@ export class PurchaseOrder {
       this.isLoading = false;
     }
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInput.start || event.rows !== this.dataTableInput.length) {
       this.dataTableInput.start = event.first;

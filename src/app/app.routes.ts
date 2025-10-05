@@ -1,13 +1,13 @@
 import {Routes} from '@angular/router';
 import {Admin} from './layout/admin/admin';
 import {AuthGuard} from './configuration/authentication/auth.guard';
-import {Analytics} from './modules/analytics/analytics';
 import {Cashbox} from './modules/cashbox/cashbox';
 import {Category} from './modules/items/category/category';
 import {Item} from './modules/items/item/item';
 import {Unit} from './modules/items/unit/unit';
 import {Warehouse} from './modules/settings/account/business-info/warehouse/warehouse';
 import {PurchaseOrder} from './modules/settings/account/business-info/purchase-order/purchase-order';
+import {Supplier} from './modules/settings/account/business-info/supplier/supplier';
 
 export const routes: Routes = [
   {
@@ -102,20 +102,20 @@ export const routes: Routes = [
                   title: 'Joylashuv',
                   breadcrumb: 'Joylashuv'
                 }
+              },
+              {
+                path: 'supplier',
+                component: Supplier,
+                canActivate: [AuthGuard],
+                data: {
+                  roles: [],
+                  title: 'Ta\'minotchi',
+                  breadcrumb: 'Ta\'minotchi'
+                }
               }
             ]
           },
         ]
-      },
-      {
-        path: 'analytics',
-        component: Analytics,
-        canActivate: [AuthGuard],
-        data: {
-          roles: [],
-          title: 'Analitika',
-          breadcrumb: 'Analitika'
-        }
       }
     ]
   },

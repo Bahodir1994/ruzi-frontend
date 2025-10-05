@@ -1,49 +1,47 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {NgClass} from '@angular/common';
-import {Button} from 'primeng/button';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
-import {PermissionService} from '../../../../../service/validations/permission.service';
-import {firstValueFrom} from 'rxjs';
-import {WarehouseModel} from './warehouse.model';
-import {WarehouseService} from './warehouse.service';
+import {SupplierModel} from './supplier.model';
 import {Dialog} from 'primeng/dialog';
-import {FormsModule} from '@angular/forms';
+import {PrimeTemplate} from 'primeng/api';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
-import {PrimeTemplate} from 'primeng/api';
-import {TableModule} from 'primeng/table';
+import {FormsModule} from '@angular/forms';
+import {Button} from 'primeng/button';
+import {firstValueFrom} from 'rxjs';
+import {SupplierService} from './supplier.service';
+import {PermissionService} from '../../../../../service/validations/permission.service';
 
 @Component({
-  selector: 'app-warehouse',
+  selector: 'app-supplier',
   imports: [
-    Button,
-    NgClass,
     Dialog,
-    FormsModule,
+    PrimeTemplate,
     IconField,
     InputIcon,
     InputText,
-    PrimeTemplate,
+    FormsModule,
+    Button,
     TableModule
   ],
-  templateUrl: './warehouse.html',
+  templateUrl: './supplier.html',
   standalone: true,
-  styleUrl: './warehouse.scss'
+  styleUrl: './supplier.scss'
 })
-export class Warehouse {
+export class Supplier {
   public permissions: Record<string, boolean> = {};
-  visibleWarehouseOrderModal = false;
+  visibleSupplierModal = false;
 
   openDialog() {
-    this.visibleWarehouseOrderModal = true;
+    this.visibleSupplierModal = true;
   }
 
   totalRecords: number = 0;
   searchValue: string | undefined;
   isLoading: boolean = true;
 
-  warehouseModel: WarehouseModel[] = [];
+  supplierModel: SupplierModel[] = [];
   dataTableInput: DataTableInput = {
     draw: 0,
     start: 0,
@@ -59,23 +57,37 @@ export class Warehouse {
         search: {value: '', regex: false}
       },
       {
-        data: 'address',
-        name: 'address',
+        data: 'phone',
+        name: 'phone',
         searchable: true,
         orderable: false,
         search: {value: '', regex: false}
       },
       {
-        data: 'type',
-        name: 'type',
+        data: 'email',
+        name: 'email',
         searchable: true,
         orderable: false,
         search: {value: '', regex: false}
       },
       {
-        data: 'status',
-        name: 'status',
+        data: 'contactPerson',
+        name: 'contactPerson',
         searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
+      {
+        data: 'inn',
+        name: 'inn',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
+      {
+        data: 'bankAccount',
+        name: 'bankAccount',
+        searchable: false,
         orderable: false,
         search: {value: '', regex: false}
       }
@@ -83,7 +95,7 @@ export class Warehouse {
   };
 
   constructor(
-    private warehouseService: WarehouseService,
+    private supplierService: SupplierService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService
   ) {
@@ -96,7 +108,7 @@ export class Warehouse {
 
   permission(status: string) {
     this.permissions = {
-      add_new_product: this.permissionService.canAccess(Warehouse, 'add_new_product', status)
+      add_supplier: this.permissionService.canAccess(Supplier, 'add_supplier', status)
     };
   }
 
@@ -106,8 +118,8 @@ export class Warehouse {
       this.dataTableInput.search.value = this.searchValue;
     }
     try {
-      const data = await firstValueFrom(this.warehouseService.data_table_main(this.dataTableInput));
-      this.warehouseModel = data.data as WarehouseModel[];
+      const data = await firstValueFrom(this.supplierService.data_table_main(this.dataTableInput));
+      this.supplierModel = data.data as SupplierModel[];
       this.totalRecords = data.recordsFiltered;
       this.cdr.detectChanges();
     } finally {
