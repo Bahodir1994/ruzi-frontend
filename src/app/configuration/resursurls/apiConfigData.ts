@@ -127,6 +127,25 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       }
     ]
+  },
+  {
+    module: "stock",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-stock/data-table-main",
+        method: "post",
+        label: "stock_table",
+        comment: "stock asosy jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
   }
 
 ]

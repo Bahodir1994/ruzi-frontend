@@ -16,13 +16,15 @@
                 placeholder="Tovarlarni qidirish..."
                 class="flex-1 px-4 focus:ring-0 focus:outline-none"
                 [style]="{border: '0px', background: 'transparent', fontSize: '30px'}"
+                [(ngModel)]="searchValue"
+                (input)="loadData()"
               />
             </div>
             <div class="flex justify-around align-middle my-auto">
-              <p-button [text]="true" severity="info">
+              <p-button [text]="true">
                 <i class="pi pi-list" style="font-size: 2rem"></i>
               </p-button>
-              <p-button [text]="true" severity="info">
+              <p-button [text]="true" >
                 <i class="pi pi-tags" style="font-size: 2rem"></i>
               </p-button>
               <p-selectButton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
@@ -33,9 +35,19 @@
             </div>
           </div>
         </div>
-
         <div class="flex-1 overflow-y-auto p-2">
-          <p-dataView #dv [value]="products()" [layout]="layout">
+          <p-dataView
+            #dv [value]="stockView"
+            [layout]="layout"
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [totalRecords]="totalRecords"
+            [paginator]="true"
+            [lazy]="true"
+            (onLazyLoad)="pageChange($event)"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="{totalPages} saxifa, jami {totalRecords} ta ma`lumot"
+          >
             <ng-template #list let-items>
               <div *ngFor="let item of items; let first = first">
                 <div
@@ -45,12 +57,12 @@
                   <div class="md:w-40 relative">
                     <img
                       class="block xl:block mx-auto rounded w-full"
-                      [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                      [alt]="item.name"
+                      [src]="item.imageUrl"
+                      [alt]="item.categoryName"
                     />
                     <p-tag
-                      [value]="item.inventoryStatus"
-                      [severity]="getSeverity(item)"
+                      [value]="item.categoryName"
+                      [severity]="'success'"
                       class="absolute dark:!bg-surface-900"
                       [style.left.px]="4"
                       [style.top.px]="4"
@@ -59,30 +71,29 @@
                   <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                     <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                       <div>
-                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category }}</span>
-                        <div class="text-lg font-medium mt-2">{{ item.name }}</div>
+                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.categoryName }}</span>
+                        <div class="text-lg font-medium mt-2">{{ item.itemName }}</div>
                       </div>
                       <div class="bg-surface-100 p-1" style="border-radius: 30px">
                         <div
-                          class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                          class="bg-surface-0 flex items-center gap-1 justify-center py-1 px-2"
                           style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
                         >
-                          <span class="text-surface-900 font-medium text-sm">{{ item.rating }}</span>
-                          <i class="pi pi-star-fill text-yellow-500"></i>
+                          <span class="text-surface-900 font-medium text-sm">{{ item.barcode }}</span>
+                          <i class="pi pi-barcode text-yellow-500"></i>
                         </div>
                       </div>
                     </div>
                     <div class="flex flex-col md:items-end gap-8">
-                      <span class="text-xl font-semibold">{{ item.price | currency: 'USD' }}</span>
+                      <span class="text-xl font-semibold">{{ item.salePrice | number: '1.2-2'}}</span>
                       <div class="flex flex-row-reverse md:flex-row gap-2">
-                        <button pButton icon="pi pi-heart" [outlined]="true"></button>
-                        <button
-                          pButton
-                          icon="pi pi-shopping-cart"
-                          label="Buy Now"
-                          [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
+                        <p-button icon="pi pi-info" [outlined]="true"></p-button>
+                        <p-button
+                          icon="pi pi-warehouse"
+                          label="mavjud: {{item.quantity + ' ' + item.unitName}}"
+                          [disabled]="item.quantity === 0"
                           class="flex-auto md:flex-initial whitespace-nowrap"
-                        ></button>
+                        ></p-button>
                       </div>
                     </div>
                   </div>
@@ -97,48 +108,24 @@
                       <div class="relative mx-auto">
                         <img
                           class="rounded w-full"
-                          [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image"
-                          [alt]="product.name"
+                          [src]="product.imageUrl"
+                          [alt]="product.categoryName"
                           style="max-width: 300px"
                         />
                         <p-tag
-                          [value]="product.inventoryStatus"
-                          [severity]="getSeverity(product)"
+                          [value]="product.categoryName"
+                          [severity]="'success'"
                           class="absolute dark:!bg-surface-900"
                           [style.left.px]="4"
                           [style.top.px]="4"
                         />
                       </div>
                     </div>
-                    <div class="pt-6">
+                    <div class="pt-1">
                       <div class="flex flex-row justify-between products-start gap-2">
                         <div>
-                                    <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{
-                                        product.category
-                                      }}</span>
-                          <div class="text-lg font-medium mt-1">{{ product.name }}</div>
-                        </div>
-                        <div class="bg-surface-100 p-1" style="border-radius: 30px; height:100%">
-                          <div
-                            class="bg-surface-0 flex products-center gap-2 justify-center py-1 px-2"
-                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                          >
-                            <span class="text-surface-900 font-medium text-sm">{{ product.rating }}</span>
-                            <i class="pi pi-star-fill text-yellow-500"></i>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex flex-col gap-6 mt-6">
-                        <span class="text-2xl font-semibold">{{ product.price | currency: 'USD' }}</span>
-                        <div class="flex gap-2">
-                          <button
-                            pButton
-                            icon="pi pi-shopping-cart"
-                            label="Buy Now"
-                            [disabled]="product.inventoryStatus === 'OUTOFSTOCK'"
-                            class="flex-auto whitespace-nowrap"
-                          ></button>
-                          <button pButton icon="pi pi-heart" outlined></button>
+                          <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{product.itemName}}</span>
+                          <div class="text-lg font-medium mt-1">{{ product.purchasePrice }} SO'M</div>
                         </div>
                       </div>
                     </div>
@@ -154,17 +141,34 @@
       <p-toolbar class="h-[80px] border-b-2 !items-center !py-0 border-gray-700 shadow-md rounded-none">
         <ng-template #start>
           <div class="flex items-center gap-2">
-            <p-button text severity="secondary">
-              <i class="pi pi-user rounded-lg border-2 p-2" style="font-size: 2rem"></i>
+            <p-button [text]="true" pTooltip="Mijozlar ro'yxati" >
+              <i class="pi pi-address-book" style="font-size: 2rem"></i>
+            </p-button>
+            <p-button [text]="true" pTooltip="Xamkorlar">
+              <i class="pi pi-user" style="font-size: 2rem"></i>
             </p-button>
           </div>
         </ng-template>
         <ng-template #center>
-          <span class="text-3xl font-bold">Savatdagi tovarlar</span>
+          <div class="flex flex-col leading-tight">
+            <!-- Line 1 -->
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold">Savat №: PO-001</span>
+              <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-700">Ochiq</span>
+            </div>
+
+            <!-- Line 2 -->
+            <div class="flex flex-wrap items-center gap-x-3 text-sm text-slate-600">
+              <span class="truncate">Sotuvchi: Abdullaev Laziz</span>
+              <span class="select-none">•</span>
+              <time datetime="2025-05-15T17:55">2025-05-15 17:55</time>
+            </div>
+          </div>
         </ng-template>
+
         <ng-template #end>
           <div class="flex justify-end gap-6">
-            <p-button [text]="true" severity="info">
+            <p-button [text]="true" pTooltip="Savatni tozalash">
               <i class="pi pi-trash" style="font-size: 2rem"></i>
             </p-button>
           </div>
