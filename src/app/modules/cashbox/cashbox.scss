@@ -1,0 +1,20 @@
+/* cashbox.scss yoki global styles.scss ichida */
+.p-dataview-custom {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.p-dataview-custom:hover {
+  background-color: var(--p-surface-hover); /* PrimeNG theme variabli */
+  cursor: pointer;
+}
+
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.p-button:active i {
+  animation: pulse 0.15s ease-in-out;
+}

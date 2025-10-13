@@ -146,6 +146,56 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       }
     ]
+  },
+  {
+    module: "cart",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-cart/create",
+        method: "post",
+        label: "create_cart",
+        comment: "cart sessiya yaratish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/add-item",
+        method: "post",
+        label: "add_item",
+        comment: "cart sessiyada tovar qoshish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/update-item",
+        method: "post",
+        label: "update_item",
+        comment: "cart sessiyada tovar ni ozgartirish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/get-item",
+        method: "get",
+        label: "get_item",
+        comment: "cart sessiya id boyicha  tovarlar ni olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
   }
+
 
 ]

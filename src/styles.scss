@@ -13,6 +13,7 @@ html, body {
   --link-color: var(--p-primary-600);
   --link-hover-color: var(--p-primary-700);
   --link-hover-bg: color-mix(in srgb, var(--p-primary-600), transparent 85%);
+  --p-surface-hover: color-mix(in srgb, var(--p-surface-200), transparent 60%);
 
   --body-bg: var(--p-surface-50);
   --body-text-color: var(--p-surface-900);
@@ -27,6 +28,7 @@ html, body {
   --link-color: var(--p-primary-400);
   --link-hover-color: var(--p-primary-300);
   --link-hover-bg: color-mix(in srgb, var(--p-primary-400), transparent 80%);
+  --p-surface-hover: color-mix(in srgb, var(--p-surface-700), transparent 40%);
 
 
   --body-bg: var(--p-surface-950);

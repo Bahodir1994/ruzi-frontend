@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
 import {SupplierModel} from './supplier.model';
 import {Dialog} from 'primeng/dialog';

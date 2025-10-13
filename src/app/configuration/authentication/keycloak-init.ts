@@ -7,8 +7,9 @@ export function initializer(keycloak: KeycloakService): () => Promise<boolean> {
     config: environment.keycloak,
     loadUserProfileAtStartUp: true,
     initOptions: {
-      onLoad: 'check-sso', // Включает авто-проверку сессии
-      silentCheckSsoRedirectUri: '/silent-check-sso.html',
+      redirectUri: window.location.origin,
+      onLoad: 'check-sso',
+      silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
       checkLoginIframe: true,
     }
   };

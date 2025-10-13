@@ -1,3 +1,6 @@
+import {WarehouseModel} from '../settings/account/business-info/warehouse/warehouse.model';
+import {ItemModel} from '../items/item/item-model';
+
 export interface StockView {
   /** Stock ma'lumotlari */
   stockId: string;                  // Stock jadvalidagi id
@@ -31,3 +34,47 @@ export interface StockView {
   /** Multi-tenant qo‘llab-quvvatlash uchun */
   clientId?: string;
 }
+
+export interface CartSession {
+  id: string;
+  cartNumber: string;
+  status: 'OPEN' | 'CHECKED_OUT' | 'CANCELLED';
+  createdAt: string;
+  closedAt?: string | null;
+
+  customerName?: string | null;
+  customerId?: number | null;
+
+  totalAmount: number;
+  paidAmount: number;
+  paymentType: 'CASH' | 'CARD' | 'MIXED';
+
+  createdByUser: string;
+
+  warehouse: WarehouseModel;
+  items: CartItem[];
+}
+
+export interface AddCartItemDto {
+  sessionId: string;
+  purchaseOrderItemId: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface UpdateCartItemDto {
+  cartItemId: string;
+  newQuantity: number;
+}
+
+export interface CartItem {
+  cartItemId: string;
+  purchaseOrderItemId: string;
+  itemName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  available: number;
+  warehouseName: string;
+}
+
