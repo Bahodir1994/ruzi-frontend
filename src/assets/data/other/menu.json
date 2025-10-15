@@ -50,21 +50,21 @@
         "items": [
           {
             "label": "Kirim",
-            "icon": "pi pi-stop",
+            "icon": "pi pi-circle",
             "type": "link",
             "route": "purchase-order",
             "permissions": []
           },
           {
             "label": "Joylashuv",
-            "icon": "pi pi-stop",
+            "icon": "pi pi-circle",
             "type": "link",
             "route": "warehouse",
             "permissions": []
           },
           {
             "label": "Ta'minotchilar",
-            "icon": "pi pi-stop",
+            "icon": "pi pi-circle",
             "type": "link",
             "route": "supplier",
             "permissions": []

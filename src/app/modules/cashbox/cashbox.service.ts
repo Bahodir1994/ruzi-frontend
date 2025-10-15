@@ -75,6 +75,45 @@ export class CashboxService {
     );
   }
 
+  delete_item(id: string): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'delete_item').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+  delete_cart(id: string): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'delete_cart').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+  cancel_cart(id: string): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'cancel_cart').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
   /* -tables- */
   data_table_main(dataTableInput: DataTableInput): Observable<DataTableOutput<StockView>> {
     this.apiConfigService.loadConfigAndGetResultUrl('stock', 'stock_table').subscribe(value => {

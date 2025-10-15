@@ -193,6 +193,36 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-cart/delete-item",
+        method: "delete",
+        label: "delete_item",
+        comment: "cart sessiya da cart item boyicha ochirish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/delete-cart",
+        method: "delete",
+        label: "delete_cart",
+        comment: "cart sessiya ochirish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/cancel-cart",
+        method: "update",
+        label: "cancel_cart",
+        comment: "cart sessiya bekor qilish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
       }
     ]
   }

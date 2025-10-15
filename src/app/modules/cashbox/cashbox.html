@@ -1,12 +1,12 @@
 <div class="flex h-screen w-screen">
-  <p-splitter class="w-full" [panelSizes]="[55, 45]">
+  <p-splitter class="w-full" [panelSizes]="[60, 40]" [minSizes]="[60, 40]">
     <ng-template #panel>
       <div class="flex flex-col h-full">
-        <div class="p-2 border-b bg-white dark:bg-surface-900 flex-none">
+        <div class="p-1 shadow-sm flex-none bg-[var(--p-primary-color)]">
           <div class="flex justify-between">
             <div class="flex items-center w-[700px] gap-2">
-              <p-button text severity="secondary">
-                <i class="pi pi-star rounded-lg border-2 p-2" style="font-size: 2rem"></i>
+              <p-button>
+                <i class="pi pi-star rounded-lg" style="font-size: 2rem"></i>
               </p-button>
               <input
                 #searchInput
@@ -15,23 +15,41 @@
                 pSize="large"
                 placeholder="Tovarlarni qidirish..."
                 class="flex-1 px-4 focus:ring-0 focus:outline-none"
-                [style]="{border: '0px', background: 'transparent', fontSize: '30px'}"
+                [style]="{border: '0px', background: 'transparent', fontSize: '25px'}"
                 [(ngModel)]="searchValue"
                 (input)="loadData()"
               />
             </div>
             <div class="flex justify-around align-middle my-auto">
-              <p-button [text]="true">
+              <p-button>
                 <i class="pi pi-list" style="font-size: 2rem"></i>
               </p-button>
-              <p-button [text]="true">
+              <p-button>
                 <i class="pi pi-tags" style="font-size: 2rem"></i>
               </p-button>
-              <p-selectButton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
-                <ng-template #item let-item>
-                  <i class="pi " [ngClass]="{ 'pi-bars': item === 'list', 'pi-table': item === 'grid' }"></i>
-                </ng-template>
-              </p-selectButton>
+              <div class="flex items-center border rounded gap-1">
+                <!-- List tugma -->
+                <p-button
+                  pRipple
+                  [ngClass]="{ '!text-[var(--p-primary-color)]': layout === 'list' }"
+                  (click)="layout = 'list'"
+                  pTooltip="Ro‘yxat ko‘rinishi"
+                  tooltipPosition="bottom"
+                >
+                  <i class="pi pi-bars text-2xl"></i>
+                </p-button>
+
+                <!-- Grid tugma -->
+                <p-button
+                  pRipple
+                  [ngClass]="{ '!text-[var(--p-primary-color)]': layout === 'grid' }"
+                  (click)="layout = 'grid'"
+                  pTooltip="Katalog ko‘rinishi"
+                  tooltipPosition="bottom"
+                >
+                  <i class="pi pi-table text-2xl"></i>
+                </p-button>
+              </div>
             </div>
           </div>
         </div>
@@ -203,58 +221,51 @@
       </div>
     </ng-template>
     <ng-template #panel>
-      <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-3 border-b border-gray-300 bg-white dark:bg-surface-900 shadow-sm">
-        <!-- Chap qism -->
+      <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-2 shadow-sm bg-[var(--p-primary-color)]">
         <div class="flex items-center gap-3">
-          <p-button [text]="true" pTooltip="Mijozlar ro'yxati" class="!p-0">
-            <i class="pi pi-address-book text-2xl sm:text-3xl" style="font-size: 2rem"></i>
+          <p-button pTooltip="Mijozlar ro'yxati" tooltipPosition="bottom">
+            <i class="pi pi-address-book" style="font-size: 2rem"></i>
           </p-button>
-          <p-button [text]="true" pTooltip="Xamkorlar" class="!p-0">
-            <i class="pi pi-user text-2xl sm:text-3xl" style="font-size: 2rem"></i>
+          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom">
+            <i class="pi pi-user" style="font-size: 2rem"></i>
           </p-button>
         </div>
 
-        <!-- O‘rta qism -->
         <div class="flex flex-col items-start sm:items-center text-center sm:flex-1">
           <div class="flex flex-wrap items-center justify-center gap-2">
-            <span class="text-xl sm:text-2xl md:text-3xl font-bold">Savat № {{ cartSessionModel?.cartNumber }}</span>
+            <span class="text-xl sm:text-2xl md:text-xl font-bold" [ngStyle]="{ color: 'var(--p-primary-contrast-color)' }">№ {{ cartSessionModel?.cartNumber }}</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-700 uppercase tracking-wide">
-        {{ cartSessionModel?.status }}
-      </span>
+              {{ cartSessionModel?.status }}
+            </span>
           </div>
-
-          <div class="flex flex-wrap items-center justify-center text-xs sm:text-sm text-gray-500 gap-1">
+          <div class="flex flex-wrap items-center justify-center text-xs sm:text-sm gap-1" [ngStyle]="{ color: 'var(--p-primary-contrast-color)' }">
             <span>Sotuvchi:</span>
-            <span class="font-medium text-gray-700 dark:text-gray-300">{{ cartSessionModel?.createdByUser }}</span>
+            <span class="font-medium">{{ cartSessionModel?.createdByUser }}</span>
             <span class="hidden sm:inline select-none">•</span>
             <time class="truncate">{{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}</time>
           </div>
         </div>
-
-        <!-- O‘ng qism -->
         <div class="flex items-center gap-2">
-          <p-button [text]="true" pTooltip="Yangi savat yaratish" class="!p-0">
-            <i class="pi pi-plus-circle text-2xl sm:text-3xl" style="font-size: 2rem"></i>
-          </p-button>
-          <p-button [text]="true" pTooltip="Savatni tozalash" class="!p-0" (click)="clearCart()">
-            <i class="pi pi-trash text-2xl sm:text-3xl text-red-500" style="font-size: 2rem"></i>
+          <p-menu #menu [model]="menuItems" [popup]="true" />
+          <p-button (click)="menu.toggle($event)">
+            <i class="pi pi pi-cog" style="font-size: 2rem"></i>
           </p-button>
         </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
         <p-orderList
           [value]="cartItems"
-          [dragdrop]="false"
+          [dragdrop]="true"
           [responsive]="true"
-          scrollHeight="calc(100vh - 180px)"
-          dataKey="cartItemId"
-          class="w-full">
+          scrollHeight="calc(100vh - 160px)"
+          controlsPosition="right"
+          class="w-full !border-0 !shadow-none !outline-none !ring-0"
+        >
           <ng-template let-item #item>
-            <div class="flex justify-between w-full items-center bg-white dark:bg-surface-900 p-2
-               rounded-xl shadow-sm border border-gray-200 dark:border-surface-700 hover:shadow-md transition-all">
+            <div class="flex justify-between w-full">
               <!-- Chap: Nomi va birlik narxi -->
               <div class="flex flex-col flex-1 min-w-[180px]">
-                <span class="font-semibold text-md truncate">{{ item.itemName }}</span>
+                <span class="font-semibold truncate">{{ item.itemName }}</span>
                 <span class="text-sm text-gray-500">{{ item.unitPrice | number: '1.2-2' }} soʻm / dona</span>
               </div>
               <!-- O‘ng: miqdor + narx + o‘chirish bitta qatorda -->
@@ -262,10 +273,10 @@
                 <!-- Miqdor boshqaruvi -->
                 <div class="flex items-center gap-2">
                   <p-button
+                    size="small"
                     icon="pi pi-minus"
                     [rounded]="true"
                     [outlined]="true"
-                    class="!text-xl !w-10 !h-10"
                     [disabled]="item.quantity <= 1"
                     (mousedown)="startHold(decrease.bind(this, item))"
                     (mouseup)="stopHold()"
@@ -273,13 +284,13 @@
                     (touchstart)="startHold(decrease.bind(this, item))"
                     (touchend)="stopHold()"
                   ></p-button>
-                  <span class="text-2xl font-semibold w-10 text-center select-none">
+                  <span class="font-semibold w-10 text-center select-none">
                     {{ item.quantity }}
                   </span>
                   <p-button
                     icon="pi pi-plus"
+                    size="small"
                     [rounded]="true"
-                    class="!text-xl !w-10 !h-10"
                     (mousedown)="startHold(increase.bind(this, item))"
                     (mouseup)="stopHold()"
                     (mouseleave)="stopHold()"
@@ -288,29 +299,27 @@
                   ></p-button>
                 </div>
                 <!-- Umumiy narx -->
-                <div class="min-w-[100px] text-right font-bold text-xl text-emerald-600">
+                <div class="min-w-[100px] text-right font-bold text-md text-emerald-600">
                   {{ item.lineTotal | number: '1.2-2' }}
                 </div>
-
                 <!-- O‘chirish tugmasi -->
                 <p-button
                   [rounded]="true"
                   [outlined]="true"
                   severity="danger"
                   icon="pi pi-times"
-                  class="!text-red-600 !text-2xl"
-                  (click)="removeItem(item)"
+                  size="small"
+                  (click)="removeItem(item.cartItemId)"
                 ></p-button>
               </div>
             </div>
           </ng-template>
         </p-orderList>
       </div>
-      <!-- Jami va to‘lash -->
-      <footer
-        class="sticky bottom-0 w-full bg-white dark:bg-surface-900 border-t border-gray-300 shadow-inner p-4 flex flex-wrap justify-between items-center gap-3">
+      <footer class="sticky bottom-0 w-full border-t shadow-inner px-2 flex flex-wrap justify-between items-center gap-3 "
+      >
         <div>
-          <div class="text-sm text-gray-500">Jami summa:</div>
+          <div class="text-sm">Jami summa:</div>
           <div class="text-2xl font-bold text-emerald-600">
             {{ subtotal() | number:'1.2-2' }} so‘m
           </div>
@@ -337,4 +346,8 @@
   >
     <i class="pi pi-shop p-5" style="font-size: 2.5rem"></i>
   </p-button>
+  <div class="absolute bottom-4 shadow-xl rounded-3xl left-32 p-4 bg-white dark:bg-gray-700">
+    <theme-switcher [toTop]="true"/>
+  </div>
 </div>
+

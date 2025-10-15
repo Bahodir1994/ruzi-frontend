@@ -9,13 +9,12 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import {Splitter} from 'primeng/splitter';
-import {Button, ButtonDirective} from 'primeng/button';
+import {Button} from 'primeng/button';
 import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
-import {DatePipe, DecimalPipe, NgClass, NgForOf} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgStyle} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
-import {Toolbar} from 'primeng/toolbar';
 import {InputText} from 'primeng/inputtext';
 import {DataView} from 'primeng/dataview';
 import {SelectButton} from 'primeng/selectbutton';
@@ -28,6 +27,10 @@ import {Tooltip} from 'primeng/tooltip';
 import {CashBoxWebsocketService} from './cashbox.websocket';
 import {OrderList} from 'primeng/orderlist';
 import {Ripple} from 'primeng/ripple';
+import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
+import {SplitButton} from 'primeng/splitbutton';
+import {Menu} from 'primeng/menu';
+import {DeviceDetectorService} from 'ngx-device-detector';
 
 @Component({
   selector: 'app-cashbox',
@@ -39,14 +42,16 @@ import {Ripple} from 'primeng/ripple';
     InputText,
     RouterLink,
     DataView,
-    SelectButton,
     NgClass,
     Tag,
     DecimalPipe,
     Tooltip,
     DatePipe,
     OrderList,
-    Ripple
+    Ripple,
+    ThemeSwitcher,
+    NgStyle,
+    Menu
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -55,6 +60,10 @@ import {Ripple} from 'primeng/ripple';
   encapsulation: ViewEncapsulation.None
 })
 export class Cashbox implements OnInit, AfterViewInit {
+  isMobile = false;
+  isTablet = false;
+  isDesktop = false;
+
   @ViewChild('searchInput') searchInput!: ElementRef;
 
   @HostListener('document:keydown', ['$event'])
@@ -77,6 +86,7 @@ export class Cashbox implements OnInit, AfterViewInit {
   }
 
   cartSessionModel?: CartSession;
+  selectedItem?: CartItem[] | [];
   cartItems?: CartItem[] | [];
 
   layout: "grid" | "list" = "list";
@@ -120,12 +130,22 @@ export class Cashbox implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private deviceService: DeviceDetectorService,
     private cdr: ChangeDetectorRef,
     private cashBoxService: CashboxService,
     private cashBoxWebSocketService: CashBoxWebsocketService,
   ) {}
 
   ngOnInit() {
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
+    this.isDesktop = this.deviceService.isDesktop();
+    console.log({
+      isMobile: this.isMobile,
+      isTablet: this.isTablet,
+      isDesktop: this.isDesktop
+    });
+
     /** 1- LocalStorage dan eski sessiya ID ni o‘qish */
     const savedSessionId = localStorage.getItem("activeCartSessionId")
 
@@ -186,6 +206,7 @@ export class Cashbox implements OnInit, AfterViewInit {
         localStorage.setItem("activeCartSessionId", this.cartSessionModel.id);
         this.cartItems = [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isLoading = false;
@@ -277,14 +298,65 @@ export class Cashbox implements OnInit, AfterViewInit {
     }
   }
 
-  removeItem(item: any) {
-
+  removeItem(cartItemId: string) {
+    firstValueFrom(this.cashBoxService.delete_item(cartItemId))
+      .then(res => {
+        if (res.success) {
+          this.getActiveCartSessionItem(this.cartSessionModel!.id).then(r => null)
+          this.cdr.detectChanges();
+        }
+      })
   }
 
   checkout() {
   }
 
-  clearCart() {
+  menuItems = [
+    {
+      label: 'Yangi savat',
+      icon: 'pi pi-plus-circle',
+      command: () => this.openCustomers()
+    },
+    {
+      label: 'Savatni tozalash',
+      icon: 'pi pi-trash',
+      command: () => this.clearCart()
+    },
+    { separator: true },
+    {
+      label: 'Savatni bekor qilish',
+      icon: 'pi pi-times-circle',
+      command: () => this.cancelCart()
+    }
+  ];
 
+  openCustomers() {
+    console.log('👥 Mijozlar oynasi ochildi');
+  }
+
+  openPartners() {
+    console.log('🤝 Xamkorlar ro‘yxati ochildi');
+  }
+
+  createNewCart() {
+    console.log('🆕 Yangi savat yaratildi');
+  }
+
+  clearCart() {
+    firstValueFrom(this.cashBoxService.delete_cart(this.cartSessionModel!.id))
+      .then(res => {
+        if (res.success) {
+          this.onNewCartClick();
+        }
+      })
+  }
+
+  cancelCart() {
+    firstValueFrom(this.cashBoxService.cancel_cart(this.cartSessionModel!.id))
+      .then(res => {
+        if (res.success) {
+          this.onNewCartClick();
+        }
+      })
   }
 }

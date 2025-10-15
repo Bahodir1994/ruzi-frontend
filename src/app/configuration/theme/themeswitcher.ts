@@ -1,6 +1,6 @@
 import {CommonModule, DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {Component, computed, effect, inject, PLATFORM_ID, signal} from '@angular/core';
+import {Component, computed, effect, inject, Input, PLATFORM_ID, signal} from '@angular/core';
 import {$t, updatePreset, updateSurfacePalette} from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import Lara from '@primeuix/themes/lara';
@@ -60,7 +60,14 @@ export interface ColorOption {
         >
           <i class="pi pi-palette dark:text-white"></i>
         </button>
-        <div class="absolute top-[2.5rem] right-0 hidden w-[18rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex origin-top z-10">
+        <div
+          class="absolute hidden w-[18rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex z-10"
+          [ngClass]="{
+            'top-[2.5rem] right-full ml-2 origin-bottom-left': !toTop,
+            'bottom-[2.5rem] left-full ml-2 origin-bottom-right': toTop
+          }"
+        >
+
           <div class="flex-col justify-start items-start gap-2 inline-flex pr-4">
             <span class="text-sm font-medium">Primary Colors</span>
             <div class="self-stretch justify-start items-start gap-2 inline-flex flex-wrap">
@@ -71,9 +78,9 @@ export interface ColorOption {
                   (click)="updateColors($event, 'primary', primaryColor)"
                   class="outline outline-2 outline-offset-1 outline-transparent cursor-pointer p-0 rounded-[50%] w-5 h-5"
                   [ngStyle]="{
-                                        'background-color': primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500'],
-                                        'outline-color': selectedPrimaryColor() === primaryColor.name ? 'var(--p-primary-color)' : ''
-                                    }"
+                                      'background-color': primaryColor.name === 'noir' ? 'var(--text-color)' : primaryColor.palette['500'],
+                                      'outline-color': selectedPrimaryColor() === primaryColor.name ? 'var(--p-primary-color)' : ''
+                                  }"
                 ></button>
               }
             </div>
@@ -112,6 +119,8 @@ export interface ColorOption {
     </ul>`
 })
 export class ThemeSwitcher {
+  @Input() toTop = false;
+
   private readonly STORAGE_KEY = 'themeSwitcherState';
 
   document = inject(DOCUMENT);
