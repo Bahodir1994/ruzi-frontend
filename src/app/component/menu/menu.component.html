@@ -94,7 +94,9 @@
                                     [routerLink]="menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route"
                                     [routerLinkActive]="'active-router-link'"
                                     class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
-                                    <i class="{{menu_data_sub.icon}} pl-1 mr-2" [ngClass]="visible? 'mr-2': 'ml-0'"></i>
+                                    @if(!visible){
+                                      <i class="{{menu_data_sub2.icon}} pl-1 mr-2 ml-0" style="font-size: 1rem"></i>
+                                    }
                                     <span
                                       class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
                                       [class.opacity-0]="!visible"
@@ -143,8 +145,6 @@
                               </li>
                             }
                           </ul>
-                          <!-- qolgani dropdownli menu bop ketishi kerak-->
-
                         }
                       </li>
                     }

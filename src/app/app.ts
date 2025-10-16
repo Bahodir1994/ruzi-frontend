@@ -9,6 +9,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {LanguageService} from './service/translate/language.service';
 import {Title} from '@angular/platform-browser';
 import {filter, map} from 'rxjs';
+import {DeviceDetectorService} from 'ngx-device-detector';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,12 @@ import {filter, map} from 'rxjs';
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
+  isMobile = false;
+  isTablet = false;
+  isDesktop = false;
 
   constructor(
+    private deviceService: DeviceDetectorService,
     private primeng: PrimeNG,
     private titleService: Title,
     private router: Router,
@@ -34,6 +39,15 @@ export class App implements OnInit {
   }
 
   ngOnInit() {
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
+    this.isDesktop = this.deviceService.isDesktop();
+    console.log({
+      isMobile: this.isMobile,
+      isTablet: this.isTablet,
+      isDesktop: this.isDesktop
+    });
+
     this.languageService.initLanguage();
     this.authService.startTokenRefresh();
     this.primengLocale.setLocale(this.languageService.getCurrentLanguage())

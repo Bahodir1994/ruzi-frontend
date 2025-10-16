@@ -11,6 +11,16 @@ import {Supplier} from './modules/settings/account/business-info/supplier/suppli
 
 export const routes: Routes = [
   {
+    path: 'cashbox',
+    component: Cashbox,
+    canActivate: [AuthGuard],
+    data: {
+      roles: [],
+      title: 'Kassa',
+      breadcrumb: 'Kassa'
+    }
+  },
+  {
     path: '',
     component: Admin,
     canActivate: [AuthGuard],
@@ -118,15 +128,5 @@ export const routes: Routes = [
         ]
       }
     ]
-  },
-  {
-    path: 'cashbox',
-    component: Cashbox,
-    canActivate: [AuthGuard],
-    data: {
-      roles: [],
-      title: 'Kassa',
-      breadcrumb: 'Kassa'
-    }
   }
 ];
