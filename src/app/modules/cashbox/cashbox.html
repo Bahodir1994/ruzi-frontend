@@ -224,9 +224,9 @@
       <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-2 shadow-sm bg-[var(--p-primary-color)]">
         <div class="flex items-center gap-3">
           <p-button pTooltip="Mijozlar ro'yxati" tooltipPosition="bottom">
-            <i class="pi pi-address-book" style="font-size: 2rem"></i>
+            <i class="pi pi-address-book" style="font-size: 2rem" (click)="opCustomers.toggle($event)"></i>
           </p-button>
-          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom">
+          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (click)="opReferrers.toggle($event)" >
             <i class="pi pi-user" style="font-size: 2rem"></i>
           </p-button>
         </div>
@@ -351,3 +351,26 @@
   </div>
 </div>
 
+<p-popover #opCustomers>
+  <ng-template #content>
+    <p-listbox
+      [options]="customers!"
+      [(ngModel)]="selectedCustomers"
+      optionLabel="name"
+      [filter]="true"
+      class="w-full md:w-56"
+    />
+  </ng-template>
+</p-popover>
+
+<p-popover #opReferrers>
+  <ng-template #content>
+    <p-listbox
+      [options]="referrers!"
+      [(ngModel)]="selectedReferrers"
+      optionLabel="name"
+      [filter]="true"
+      class="w-full md:w-56"
+    />
+  </ng-template>
+</p-popover>

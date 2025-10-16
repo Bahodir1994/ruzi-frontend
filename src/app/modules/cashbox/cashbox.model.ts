@@ -78,3 +78,13 @@ export interface CartItem {
   warehouseName: string;
 }
 
+export interface Customer {
+  id: number;
+  name: string
+}
+
+export interface Referrer {
+  id: number;
+  name: string
+}
+

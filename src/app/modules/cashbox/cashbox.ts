@@ -22,7 +22,7 @@ import {Tag} from 'primeng/tag';
 import {CashboxService} from './cashbox.service';
 import {firstValueFrom} from 'rxjs';
 import {DataTableInput} from '../../component/datatables/datatable-input.model';
-import {AddCartItemDto, CartItem, CartSession, StockView} from './cashbox.model';
+import {AddCartItemDto, CartItem, CartSession, Customer, Referrer, StockView} from './cashbox.model';
 import {Tooltip} from 'primeng/tooltip';
 import {CashBoxWebsocketService} from './cashbox.websocket';
 import {OrderList} from 'primeng/orderlist';
@@ -31,6 +31,10 @@ import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 import {SplitButton} from 'primeng/splitbutton';
 import {Menu} from 'primeng/menu';
 import {DeviceDetectorService} from 'ngx-device-detector';
+import {Dock} from 'primeng/dock';
+import {MenuItem} from 'primeng/api';
+import {Popover} from 'primeng/popover';
+import {Listbox} from 'primeng/listbox';
 
 @Component({
   selector: 'app-cashbox',
@@ -51,7 +55,9 @@ import {DeviceDetectorService} from 'ngx-device-detector';
     Ripple,
     ThemeSwitcher,
     NgStyle,
-    Menu
+    Menu,
+    Popover,
+    Listbox
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -86,11 +92,34 @@ export class Cashbox implements OnInit, AfterViewInit {
   }
 
   cartSessionModel?: CartSession;
-  selectedItem?: CartItem[] | [];
   cartItems?: CartItem[] | [];
+  customers?: Customer[] | [];
+  referrers?: Referrer[] | [];
+
+  selectedCustomers?: Customer[] | [];
+  selectedReferrers?: Referrer[] | [];
+
 
   layout: "grid" | "list" = "list";
   options = ['list', 'grid'];
+  menuItems = [
+    {
+      label: 'Yangi savat',
+      icon: 'pi pi-plus-circle',
+      command: () => this.createNewCart()
+    },
+    {
+      label: 'Savatni tozalash',
+      icon: 'pi pi-trash',
+      command: () => this.clearCart()
+    },
+    { separator: true },
+    {
+      label: 'Savatni bekor qilish',
+      icon: 'pi pi-times-circle',
+      command: () => this.cancelCart()
+    }
+  ];
 
   totalRecords: number = 0;
   searchValue: string | undefined;
@@ -174,7 +203,6 @@ export class Cashbox implements OnInit, AfterViewInit {
       });
     });
   }
-
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
   }
@@ -191,6 +219,14 @@ export class Cashbox implements OnInit, AfterViewInit {
       this.cdr.detectChanges();
     } finally {
       this.isLoading = false;
+    }
+  }
+  async getActiveCartSessionItem(id: string) {
+    const response = await firstValueFrom(this.cashBoxService.get_item(id))
+
+    if (response.success && response.data) {
+      this.cartItems = response.data as CartItem[];
+      this.cdr.detectChanges();
     }
   }
 
@@ -213,7 +249,6 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
-
   updateStockRow(updated: any) {
     const idx = this.stockView.findIndex(x => x.stockId === updated.stockId);
     if (idx !== -1) {
@@ -223,7 +258,6 @@ export class Cashbox implements OnInit, AfterViewInit {
     }
     this.cdr.detectChanges();
   }
-
   onSelectItem(item: StockView) {
     this.isLoading = true;
 
@@ -248,16 +282,6 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
-
-  async getActiveCartSessionItem(id: string) {
-    const response = await firstValueFrom(this.cashBoxService.get_item(id))
-
-    if (response.success && response.data) {
-      this.cartItems = response.data as CartItem[];
-      this.cdr.detectChanges();
-    }
-  }
-
   increase(item: CartItem) {
     const dto = { cartItemId: item.cartItemId, newQuantity: item.quantity + 1 };
     this.cashBoxService.update_item(dto).subscribe({
@@ -269,7 +293,6 @@ export class Cashbox implements OnInit, AfterViewInit {
       error: (err) => alert('Xatolik: ' + err.error.message)
     });
   }
-
   decrease(item: CartItem) {
     if (item.quantity <= 1) return;
     const dto = { cartItemId: item.cartItemId, newQuantity: item.quantity - 1 };
@@ -282,14 +305,12 @@ export class Cashbox implements OnInit, AfterViewInit {
       error: (err) => alert('Xatolik: ' + err.error.message)
     });
   }
-
   subtotal(): number {
     if (!this.cartItems || this.cartItems.length === 0) {
       return 0;
     }
     return this.cartItems.reduce((sum, it) => sum + (it.lineTotal || 0), 0);
   }
-
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;
@@ -297,7 +318,6 @@ export class Cashbox implements OnInit, AfterViewInit {
       this.loadData().then(r => null);
     }
   }
-
   removeItem(cartItemId: string) {
     firstValueFrom(this.cashBoxService.delete_item(cartItemId))
       .then(res => {
@@ -307,41 +327,18 @@ export class Cashbox implements OnInit, AfterViewInit {
         }
       })
   }
-
   checkout() {
   }
-
-  menuItems = [
-    {
-      label: 'Yangi savat',
-      icon: 'pi pi-plus-circle',
-      command: () => this.openCustomers()
-    },
-    {
-      label: 'Savatni tozalash',
-      icon: 'pi pi-trash',
-      command: () => this.clearCart()
-    },
-    { separator: true },
-    {
-      label: 'Savatni bekor qilish',
-      icon: 'pi pi-times-circle',
-      command: () => this.cancelCart()
-    }
-  ];
 
   openCustomers() {
     console.log('👥 Mijozlar oynasi ochildi');
   }
-
-  openPartners() {
+  openReferrers() {
     console.log('🤝 Xamkorlar ro‘yxati ochildi');
   }
-
   createNewCart() {
     console.log('🆕 Yangi savat yaratildi');
   }
-
   clearCart() {
     firstValueFrom(this.cashBoxService.delete_cart(this.cartSessionModel!.id))
       .then(res => {
@@ -350,7 +347,6 @@ export class Cashbox implements OnInit, AfterViewInit {
         }
       })
   }
-
   cancelCart() {
     firstValueFrom(this.cashBoxService.cancel_cart(this.cartSessionModel!.id))
       .then(res => {
