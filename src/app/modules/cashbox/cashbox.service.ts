@@ -75,6 +75,19 @@ export class CashboxService {
     );
   }
 
+  get_customers(): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('customer', 'get_customers').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
   delete_item(id: string): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'delete_item').pipe(
       switchMap(value => {

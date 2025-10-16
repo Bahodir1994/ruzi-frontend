@@ -35,6 +35,7 @@ import {Dock} from 'primeng/dock';
 import {MenuItem} from 'primeng/api';
 import {Popover} from 'primeng/popover';
 import {Listbox} from 'primeng/listbox';
+import {AutoFocus} from 'primeng/autofocus';
 
 @Component({
   selector: 'app-cashbox',
@@ -51,13 +52,13 @@ import {Listbox} from 'primeng/listbox';
     DecimalPipe,
     Tooltip,
     DatePipe,
-    OrderList,
     Ripple,
     ThemeSwitcher,
     NgStyle,
     Menu,
     Popover,
-    Listbox
+    Listbox,
+    AutoFocus
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -70,11 +71,29 @@ export class Cashbox implements OnInit, AfterViewInit {
   isTablet = false;
   isDesktop = false;
 
+  @ViewChild('opCustomers') opCustomers!: any;
+  @ViewChild(Listbox) listbox!: Listbox;
   @ViewChild('searchInput') searchInput!: ElementRef;
+
+  popoverOpen = false;
+  onPopoverShow() {
+    this.popoverOpen = true;
+
+    /** listbox ichidagi filter inputni topish */
+    setTimeout(() => {
+      const input = (this.listbox?.el.nativeElement as HTMLElement)
+        .querySelector('input.p-inputtext');
+      if (input) (input as HTMLInputElement).focus();
+    }, 50);
+  }
+  onPopoverHide() {
+    this.popoverOpen = false;
+  }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.searchInput) {
+    /** Agar popover yopiq bo‘lsa — tashqi searchInput fokus oladi */
+    if (!this.popoverOpen && this.searchInput) {
       this.searchInput.nativeElement.focus();
     }
   }
@@ -98,7 +117,6 @@ export class Cashbox implements OnInit, AfterViewInit {
 
   selectedCustomers?: Customer[] | [];
   selectedReferrers?: Referrer[] | [];
-
 
   layout: "grid" | "list" = "list";
   options = ['list', 'grid'];
@@ -202,6 +220,9 @@ export class Cashbox implements OnInit, AfterViewInit {
         this.updateStockRow(updatedStock);
       });
     });
+
+    /** mijozlar royxatini chaqirish*/
+    this.openCustomers();
   }
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
@@ -330,20 +351,28 @@ export class Cashbox implements OnInit, AfterViewInit {
   checkout() {
   }
 
-  openCustomers() {
-    console.log('👥 Mijozlar oynasi ochildi');
+  async openCustomers() {
+    const response = await firstValueFrom(this.cashBoxService.get_customers())
+
+    if (response.success && response.data) {
+      this.customers = response.data as Customer[];
+      this.cdr.detectChanges();
+    }
   }
-  openReferrers() {
+  async openReferrers() {
     console.log('🤝 Xamkorlar ro‘yxati ochildi');
   }
+  addCustomerToCard() {}
+  addReferrerToCard() {}
+
   createNewCart() {
-    console.log('🆕 Yangi savat yaratildi');
+    this.onNewCartClick();
   }
   clearCart() {
     firstValueFrom(this.cashBoxService.delete_cart(this.cartSessionModel!.id))
       .then(res => {
         if (res.success) {
-          this.onNewCartClick();
+          this.getActiveCartSessionItem(this.cartSessionModel!.id);
         }
       })
   }

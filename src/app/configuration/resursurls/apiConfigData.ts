@@ -225,7 +225,23 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       }
     ]
+  },
+  {
+    module: "customer",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-customer/get-customers",
+        method: "get",
+        label: "get_customers",
+        comment: "mijozlar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }]
   }
-
-
 ]

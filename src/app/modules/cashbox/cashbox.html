@@ -1,5 +1,5 @@
 <div class="flex h-screen w-screen">
-  <p-splitter class="w-full" [panelSizes]="[60, 40]" [minSizes]="[60, 40]">
+  <p-splitter class="w-full" gutterSize="10" panelStyleClass="shadow-lg" [panelSizes]="[60, 40]" [minSizes]="[60, 40]" [style]="{border: '0!important'}">
     <ng-template #panel>
       <div class="flex flex-col h-full">
         <div class="p-1 shadow-sm flex-none bg-[var(--p-primary-color)]">
@@ -223,8 +223,8 @@
     <ng-template #panel>
       <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-2 shadow-sm bg-[var(--p-primary-color)]">
         <div class="flex items-center gap-3">
-          <p-button pTooltip="Mijozlar ro'yxati" tooltipPosition="bottom">
-            <i class="pi pi-address-book" style="font-size: 2rem" (click)="opCustomers.toggle($event)"></i>
+          <p-button pTooltip="Mijozlar ro'yxati" (click)="opCustomers.toggle($event)" tooltipPosition="bottom">
+            <i class="pi pi-address-book" style="font-size: 2rem"></i>
           </p-button>
           <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (click)="opReferrers.toggle($event)" >
             <i class="pi pi-user" style="font-size: 2rem"></i>
@@ -253,12 +253,10 @@
         </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
-        <p-orderList
-          [value]="cartItems"
+        <p-list-box
+          [options]="cartItems!"
           [dragdrop]="true"
-          [responsive]="true"
           scrollHeight="calc(100vh - 160px)"
-          controlsPosition="right"
           class="w-full !border-0 !shadow-none !outline-none !ring-0"
         >
           <ng-template let-item #item>
@@ -314,7 +312,7 @@
               </div>
             </div>
           </ng-template>
-        </p-orderList>
+        </p-list-box>
       </div>
       <footer class="sticky bottom-0 w-full border-t shadow-inner px-2 flex flex-wrap justify-between items-center gap-3 "
       >
@@ -351,15 +349,32 @@
   </div>
 </div>
 
-<p-popover #opCustomers>
+<p-popover #opCustomers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()" class="bg-[var(--p-primary-color)]">
   <ng-template #content>
     <p-listbox
       [options]="customers!"
       [(ngModel)]="selectedCustomers"
-      optionLabel="name"
+      optionValue="id"
       [filter]="true"
-      class="w-full md:w-56"
-    />
+      class="w-full min-w-72"
+      (onFocus)="openCustomers()"
+    >
+      <ng-template #filter>
+        <input pInputText type="search" pSize="small" class="w-full" [pAutoFocus]="true">
+      </ng-template>
+      <ng-template #item let-customer>
+        <div class="flex items-center w-full gap-2">
+          <i class="pi pi-user"></i>
+          <div>
+            <span class="font-medium">{{ customer.fullName }}</span>
+            <div class="text-sm text-muted-color">{{ customer.phoneNumber }}</div>
+          </div>
+          <div class="flex items-end gap-2 text-muted-color ml-auto text-sm">
+            <span>{{ customer.clientCode }}</span>
+          </div>
+        </div>
+      </ng-template>
+    </p-listbox>
   </ng-template>
 </p-popover>
 
