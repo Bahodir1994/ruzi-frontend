@@ -15,7 +15,6 @@
                 pSize="large"
                 placeholder="Tovarlarni qidirish..."
                 class="flex-1 px-4 focus:ring-0 focus:outline-none"
-                [style]="{border: '0px', background: 'transparent', fontSize: '25px'}"
                 [(ngModel)]="searchValue"
                 (input)="loadData()"
               />
@@ -216,43 +215,90 @@
                 }
               </div>
             </ng-template>
+            <ng-template #emptymessage>
+              <div class="flex flex-col items-center justify-center py-10 text-center text-gray-500">
+                <i class="pi pi-box text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-2xl font-semibold mb-2 text-gray-600">Tovar topilmadi</h3>
+                <p class="text-gray-400 text-base">
+                  Qidiruv natijasiga mos tovar mavjud emas. Boshqa kalit so‘zni kiriting.
+                </p>
+                <p-button
+                  label="Qayta urinish"
+                  icon="pi pi-refresh"
+                  class="mt-4 p-button-outlined p-button-sm"
+                  (onClick)="searchValue=''; loadData()"
+                ></p-button>
+              </div>
+            </ng-template>
           </p-dataView>
         </div>
       </div>
     </ng-template>
     <ng-template #panel>
-      <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-2 shadow-sm bg-[var(--p-primary-color)]">
-        <div class="flex items-center gap-3">
-          <p-button pTooltip="Mijozlar ro'yxati" (click)="opCustomers.toggle($event)" tooltipPosition="bottom">
+      <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-1 shadow-sm bg-[var(--p-primary-color)]">
+          <p-button pTooltip="Mijozlar ro'yxati" (onClick)="onPopoverHide()" (click)="opReferrers?.hide(); opCustomers.toggle($event)" tooltipPosition="bottom">
             <i class="pi pi-address-book" style="font-size: 2rem"></i>
           </p-button>
-          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (click)="opReferrers.toggle($event)" >
+          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (onClick)="onPopoverHide()" (click)="opCustomers?.hide(); opReferrers.toggle($event)">
             <i class="pi pi-user" style="font-size: 2rem"></i>
           </p-button>
-        </div>
-
-        <div class="flex flex-col items-start sm:items-center text-center sm:flex-1">
-          <div class="flex flex-wrap items-center justify-center gap-2">
-            <span class="text-xl sm:text-2xl md:text-xl font-bold" [ngStyle]="{ color: 'var(--p-primary-contrast-color)' }">№ {{ cartSessionModel?.cartNumber }}</span>
-            <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-700 uppercase tracking-wide">
-              {{ cartSessionModel?.status }}
-            </span>
-          </div>
-          <div class="flex flex-wrap items-center justify-center text-xs sm:text-sm gap-1" [ngStyle]="{ color: 'var(--p-primary-contrast-color)' }">
-            <span>Sotuvchi:</span>
-            <span class="font-medium">{{ cartSessionModel?.createdByUser }}</span>
-            <span class="hidden sm:inline select-none">•</span>
-            <time class="truncate">{{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}</time>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <p-menu #menu [model]="menuItems" [popup]="true" />
+          <p-menu #menu [model]="menuItems" [popup]="true"></p-menu>
           <p-button (click)="menu.toggle($event)">
-            <i class="pi pi pi-cog" style="font-size: 2rem"></i>
+            <i class="pi pi-cog" style="font-size: 2rem"></i>
           </p-button>
-        </div>
+          <div class="flex flex-col items-end lg:items-end text-center lg:flex-1">
+            <!-- To‘liq ma'lumot (katta ekranlarda ko‘rinadi) -->
+            <div class="hidden lg:flex flex-col items-center justify-center gap-1">
+              <div class="flex flex-wrap items-center justify-center gap-2">
+              <span class="text-xl sm:text-xl font-bold text-[var(--p-primary-contrast-color)]">
+                № {{ cartSessionModel?.cartNumber }}
+              </span>
+              <span
+                class="px-2 text-xs rounded-full bg-emerald-100 text-emerald-700 uppercase tracking-wide">
+                {{ cartSessionModel?.status }}
+              </span>
+              </div>
+              <div
+                class="flex flex-wrap items-center justify-center text-xs sm:text-sm gap-1 text-[var(--p-primary-contrast-color)]">
+                <span>Sotuvchi:</span>
+                <span class="font-medium">{{ cartSessionModel?.createdByUser }}</span>
+                <span class="hidden sm:inline select-none">•</span>
+                <time class="truncate">{{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}</time>
+              </div>
+            </div>
+            <!-- “i” info tugma (≤1024 px bo‘lganda ko‘rinadi) -->
+            <div class="flex lg:hidden items-center justify-center">
+              <p-button
+                size="small"
+                pTooltip="№ {{ cartSessionModel?.cartNumber }} | {{ cartSessionModel?.status }} | {{ cartSessionModel?.createdByUser }} | {{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-center max-w-[260px]"
+              >
+                <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+              </p-button>
+            </div>
+          </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
+        <div class="flex justify-start">
+          @if (cartSessionModel && cartSessionModel.customer != null){
+            <p-chip
+              label="{{ cartSessionModel.customer.fullName }}"
+              image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
+              alt="Avatar image"
+              [removable]="true"
+              (onRemove)="removeCusRefFromCart(cartSessionModel.customer.id, 'CUSTOMER')"
+            />
+          }
+          @if (cartSessionModel && cartSessionModel.referrer != null){
+            <p-chip
+              label="{{ cartSessionModel.referrer.fullName }}"
+              image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png" alt="Avatar image"
+              [removable]="true"
+              (onRemove)="removeCusRefFromCart(cartSessionModel.referrer.id, 'REFERRER')"
+            />
+          }
+        </div>
         <p-list-box
           [options]="cartItems!"
           [dragdrop]="true"
@@ -260,16 +306,19 @@
           class="w-full !border-0 !shadow-none !outline-none !ring-0"
         >
           <ng-template let-item #item>
-            <div class="flex justify-between w-full">
-              <!-- Chap: Nomi va birlik narxi -->
-              <div class="flex flex-col flex-1 min-w-[180px]">
+            <div class="flex flex-wrap justify-between w-full items-center">
+              <!-- Chap: nom va birlik narxi -->
+              <div class="flex flex-col flex-1 min-w-[150px] sm:min-w-[180px]">
                 <span class="font-semibold truncate">{{ item.itemName }}</span>
-                <span class="text-sm text-gray-500">{{ item.unitPrice | number: '1.2-2' }} soʻm / dona</span>
+                <span class="text-xs sm:text-sm text-gray-500">
+                  {{ item.unitPrice | number: '1.2-2' }} soʻm / dona
+                </span>
               </div>
-              <!-- O‘ng: miqdor + narx + o‘chirish bitta qatorda -->
-              <div class="flex items-center gap-3">
+
+              <!-- O‘ng: miqdor, narx, o‘chirish -->
+              <div class="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0 flex-wrap justify-end w-full sm:w-auto">
                 <!-- Miqdor boshqaruvi -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1 sm:gap-2">
                   <p-button
                     size="small"
                     icon="pi pi-minus"
@@ -282,7 +331,7 @@
                     (touchstart)="startHold(decrease.bind(this, item))"
                     (touchend)="stopHold()"
                   ></p-button>
-                  <span class="font-semibold w-10 text-center select-none">
+                  <span class="font-semibold w-8 sm:w-10 text-center select-none text-xs sm:text-sm">
                     {{ item.quantity }}
                   </span>
                   <p-button
@@ -296,12 +345,15 @@
                     (touchend)="stopHold()"
                   ></p-button>
                 </div>
+
                 <!-- Umumiy narx -->
-                <div class="min-w-[100px] text-right font-bold text-md text-emerald-600">
+                <div class="text-right font-bold text-emerald-600 text-sm sm:text-md min-w-[80px] sm:min-w-[100px]">
                   {{ item.lineTotal | number: '1.2-2' }}
                 </div>
+
                 <!-- O‘chirish tugmasi -->
                 <p-button
+                  class="hidden sm:inline-flex"
                   [rounded]="true"
                   [outlined]="true"
                   severity="danger"
@@ -309,8 +361,19 @@
                   size="small"
                   (click)="removeItem(item.cartItemId)"
                 ></p-button>
+
+                <!-- Mobilda ⋮ tugmasi -->
+                <p-button
+                  class="sm:hidden"
+                  [rounded]="true"
+                  [outlined]="true"
+                  icon="pi pi-ellipsis-v"
+                  size="small"
+                  (click)="removeItem(item.cartItemId)"
+                ></p-button>
               </div>
             </div>
+
           </ng-template>
         </p-list-box>
       </div>
@@ -349,19 +412,19 @@
   </div>
 </div>
 
-<p-popover #opCustomers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()" class="bg-[var(--p-primary-color)]">
+<p-popover #opCustomers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()">
   <ng-template #content>
     <p-listbox
       [options]="customers!"
-      [(ngModel)]="selectedCustomers"
       optionValue="id"
+      filterBy="fullName,clientCode"
       [filter]="true"
+      filterPlaceHolder="Mijoz qidirish..."
       class="w-full min-w-72"
-      (onFocus)="openCustomers()"
+      [checkmark]="true"
+      [highlightOnSelect]="false"
+      (onChange)="addCustomerToCard($event.value, opCustomers)"
     >
-      <ng-template #filter>
-        <input pInputText type="search" pSize="small" class="w-full" [pAutoFocus]="true">
-      </ng-template>
       <ng-template #item let-customer>
         <div class="flex items-center w-full gap-2">
           <i class="pi pi-user"></i>
@@ -375,17 +438,35 @@
         </div>
       </ng-template>
     </p-listbox>
+
   </ng-template>
 </p-popover>
 
-<p-popover #opReferrers>
+<p-popover #opReferrers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()" >
   <ng-template #content>
     <p-listbox
       [options]="referrers!"
-      [(ngModel)]="selectedReferrers"
-      optionLabel="name"
+      optionValue="id"
+      filterBy="fullName,referrerCode"
       [filter]="true"
-      class="w-full md:w-56"
-    />
+      filterPlaceHolder="Xamkor qidirish..."
+      class="w-full min-w-72"
+      [checkmark]="true"
+      [highlightOnSelect]="false"
+      (onChange)="addReferrerToCard($event.value, opReferrers)"
+    >
+      <ng-template #item let-referrer>
+        <div class="flex items-center w-full gap-2">
+          <i class="pi pi-user"></i>
+          <div>
+            <span class="font-medium">{{ referrer.fullName }}</span>
+            <div class="text-sm text-muted-color">{{ referrer.phoneNumber }}</div>
+          </div>
+          <div class="flex items-end gap-2 text-muted-color ml-auto text-sm">
+            <span>{{ referrer.referrerCode }}</span>
+          </div>
+        </div>
+      </ng-template>
+    </p-listbox>
   </ng-template>
 </p-popover>

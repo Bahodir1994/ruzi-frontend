@@ -223,7 +223,27 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
-      }
+      },
+      {
+        url: "/route-cart/add-customer-referrer",
+        method: "patch",
+        label: "add_customer_referrer",
+        comment: "savatga mijoz/xamkor qoshish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/remove-customer-referrer",
+        method: "delete",
+        label: "remove_customer_referrer",
+        comment: "savatdan mijoz/xamkor ni olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {
@@ -242,6 +262,26 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
-      }]
+      }
+    ]
+  },
+  {
+    module: "referrer",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-referrer/get-referrers",
+        method: "get",
+        label: "get_referrers",
+        comment: "xamkorlar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
+    ]
   }
 ]

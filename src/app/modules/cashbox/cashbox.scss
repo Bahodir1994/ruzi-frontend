@@ -19,3 +19,10 @@
   animation: pulse 0.15s ease-in-out;
 }
 
+.search-input {
+  color: var(--p-primary-600);
+}
+
+.search-input::placeholder {
+  color: color-mix(in srgb, #059568, transparent 40%);
+}

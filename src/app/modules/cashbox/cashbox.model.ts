@@ -42,9 +42,6 @@ export interface CartSession {
   createdAt: string;
   closedAt?: string | null;
 
-  customerName?: string | null;
-  customerId?: number | null;
-
   totalAmount: number;
   paidAmount: number;
   paymentType: 'CASH' | 'CARD' | 'MIXED';
@@ -53,6 +50,8 @@ export interface CartSession {
 
   warehouse: WarehouseModel;
   items: CartItem[];
+  referrer: Referrer;
+  customer: Customer;
 }
 
 export interface AddCartItemDto {
@@ -79,7 +78,7 @@ export interface CartItem {
 }
 
 export interface Customer {
-  id: number;
+  id: string;
   insTime: string;        // timestamp(6)
   insUser?: string;       // varchar(50)
   isDeleted: boolean;
@@ -101,8 +100,40 @@ export interface Customer {
   tin?: string;           // varchar(15)
 }
 
+/**
+ * Usta yoki referal hamkorni ifodalaydi.
+ * Backenddagi `app.ruzi.entity.app.Referrer` entitiga mos model.
+ */
 export interface Referrer {
-  id: number;
-  name: string
+  /** UUID — birlamchi identifikator */
+  id: string;
+
+  /** Qaysi klient tizimiga tegishli (multi-tenant) */
+  clientId?: string;
+
+  /** Ustaga berilgan unikal kod (masalan: USTA-001, REF-9955) */
+  referrerCode: string;
+
+  /** Usta ismi yoki tashkilot nomi */
+  fullName: string;
+
+  /** Telefon raqami yoki aloqa ma’lumoti */
+  phone?: string;
+
+  /** Joriy bonus balansi */
+  balance: number;
+
+  /** Audit ustunlari (backendda AbstractAuditingEntity dan) */
+  insUser?: string;
+  updUser?: string;
+  insTime?: string;
+  updTime?: string;
+  isDeleted?: boolean;
+}
+
+export interface AddPersonToCart {
+  id: string;
+  cardSessionId: string;
+  type?: 'CUSTOMER' | 'REFERRER' | string;
 }
 

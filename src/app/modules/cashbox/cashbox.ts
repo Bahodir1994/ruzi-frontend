@@ -22,7 +22,7 @@ import {Tag} from 'primeng/tag';
 import {CashboxService} from './cashbox.service';
 import {firstValueFrom} from 'rxjs';
 import {DataTableInput} from '../../component/datatables/datatable-input.model';
-import {AddCartItemDto, CartItem, CartSession, Customer, Referrer, StockView} from './cashbox.model';
+import {AddCartItemDto, AddPersonToCart, CartItem, CartSession, Customer, Referrer, StockView} from './cashbox.model';
 import {Tooltip} from 'primeng/tooltip';
 import {CashBoxWebsocketService} from './cashbox.websocket';
 import {OrderList} from 'primeng/orderlist';
@@ -36,6 +36,7 @@ import {MenuItem} from 'primeng/api';
 import {Popover} from 'primeng/popover';
 import {Listbox} from 'primeng/listbox';
 import {AutoFocus} from 'primeng/autofocus';
+import {Chip} from 'primeng/chip';
 
 @Component({
   selector: 'app-cashbox',
@@ -54,11 +55,10 @@ import {AutoFocus} from 'primeng/autofocus';
     DatePipe,
     Ripple,
     ThemeSwitcher,
-    NgStyle,
     Menu,
     Popover,
     Listbox,
-    AutoFocus
+    Chip
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -71,7 +71,6 @@ export class Cashbox implements OnInit, AfterViewInit {
   isTablet = false;
   isDesktop = false;
 
-  @ViewChild('opCustomers') opCustomers!: any;
   @ViewChild(Listbox) listbox!: Listbox;
   @ViewChild('searchInput') searchInput!: ElementRef;
 
@@ -172,7 +171,7 @@ export class Cashbox implements OnInit, AfterViewInit {
         searchable: true,
         orderable: false,
         search: {value: '', regex: false}
-      },
+      }
     ]
   }
 
@@ -223,6 +222,7 @@ export class Cashbox implements OnInit, AfterViewInit {
 
     /** mijozlar royxatini chaqirish*/
     this.openCustomers();
+    this.openReferrers();
   }
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
@@ -298,7 +298,6 @@ export class Cashbox implements OnInit, AfterViewInit {
         // emit event -> cart panelni yangilash
       },
       error: (err) => {
-        console.error('❌ Qo‘shishda xatolik:', err);
         this.isLoading = false;
       }
     });
@@ -353,17 +352,109 @@ export class Cashbox implements OnInit, AfterViewInit {
 
   async openCustomers() {
     const response = await firstValueFrom(this.cashBoxService.get_customers())
-
     if (response.success && response.data) {
       this.customers = response.data as Customer[];
       this.cdr.detectChanges();
     }
   }
   async openReferrers() {
-    console.log('🤝 Xamkorlar ro‘yxati ochildi');
+    const response = await firstValueFrom(this.cashBoxService.get_referrers())
+    if (response.success && response.data) {
+      this.referrers = response.data as Referrer[];
+      this.cdr.detectChanges();
+    }
   }
-  addCustomerToCard() {}
-  addReferrerToCard() {}
+
+  addCustomerToCard(id: string, popover: any) {
+    this.isLoading = true;
+
+    const dto: AddPersonToCart = {
+      id: id,
+      cardSessionId: this.cartSessionModel!.id,
+      type: 'CUSTOMER',
+    };
+    this.cashBoxService.add_customer_referrer(dto).subscribe({
+      next: (res) => {
+        firstValueFrom(this.cashBoxService.create_cart({
+          activeSessionId: this.cartSessionModel!.id,
+          forceNew: false
+        }))
+          .then(res => {
+            this.cartSessionModel = res.data as CartSession;
+
+            if (this.cartSessionModel?.id) {
+              localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+            }
+            popover.hide();
+            this.getActiveCartSessionItem(this.cartSessionModel?.id).then(r => null)
+            this.cdr.detectChanges();
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+      }
+    });
+  }
+  addReferrerToCard(id: string, popover: any) {
+    this.isLoading = true;
+
+    const dto: AddPersonToCart = {
+      id: id,
+      cardSessionId: this.cartSessionModel!.id,
+      type: 'REFERRER',
+    };
+    this.cashBoxService.add_customer_referrer(dto).subscribe({
+      next: (res) => {
+        firstValueFrom(this.cashBoxService.create_cart({
+          activeSessionId: this.cartSessionModel!.id,
+          forceNew: false
+        }))
+          .then(res => {
+            this.cartSessionModel = res.data as CartSession;
+
+            if (this.cartSessionModel?.id) {
+              localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+            }
+            popover.hide();
+            this.getActiveCartSessionItem(this.cartSessionModel?.id).then(r => null)
+            this.cdr.detectChanges();
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+      }
+    });
+  }
+  removeCusRefFromCart(id: string, type: string){
+    this.isLoading = true;
+
+    const dto: AddPersonToCart = {
+      id: id,
+      cardSessionId: this.cartSessionModel!.id,
+      type: type,
+    };
+    this.cashBoxService.remove_customer_referrer(dto).subscribe({
+      next: (res) => {
+        firstValueFrom(this.cashBoxService.create_cart({
+          activeSessionId: this.cartSessionModel!.id,
+          forceNew: false
+        }))
+          .then(res => {
+            this.cartSessionModel = res.data as CartSession;
+
+            if (this.cartSessionModel?.id) {
+              localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+            }
+
+            this.getActiveCartSessionItem(this.cartSessionModel?.id).then(r => null)
+            this.cdr.detectChanges();
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+      }
+    });
+  }
 
   createNewCart() {
     this.onNewCartClick();

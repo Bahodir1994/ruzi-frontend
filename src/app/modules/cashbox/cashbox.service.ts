@@ -4,7 +4,7 @@ import {DatatableService} from '../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../configuration/resursurls/apiConfig.service';
 import {DataTableInput, DataTableOutput} from '../../component/datatables/datatable-input.model';
 import {Observable, switchMap} from 'rxjs';
-import {AddCartItemDto, StockView, UpdateCartItemDto} from './cashbox.model';
+import {AddCartItemDto, AddPersonToCart, StockView, UpdateCartItemDto} from './cashbox.model';
 import {ResponseDto} from '../../configuration/resursurls/responseDto';
 import {HttpClient} from '@angular/common/http';
 
@@ -88,6 +88,19 @@ export class CashboxService {
     );
   }
 
+  get_referrers(): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('referrer', 'get_referrers').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
   delete_item(id: string): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'delete_item').pipe(
       switchMap(value => {
@@ -120,6 +133,32 @@ export class CashboxService {
         if (value) {
           this.moduleUrl = value;
           return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+  add_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_customer_referrer').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.patch<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, dto);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+  remove_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'remove_customer_referrer').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${dto.cardSessionId}/${dto.type}`);
         } else {
           throw new Error('URL не был получен');
         }
