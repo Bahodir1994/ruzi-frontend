@@ -80,13 +80,13 @@
                         class="rounded-md w-full h-full object-cover"
                         alt="Tovar rasmi"
                       />
-                      @if (item.categoryName){
-                        <p-tag
-                          [value]="item.categoryName"
-                          severity="success"
-                          class="absolute top-1 left-1 dark:!bg-surface-900"
-                        ></p-tag>
-                      }
+<!--                      @if (item.categoryName){-->
+<!--                        <p-tag-->
+<!--                          [value]="item.categoryName"-->
+<!--                          severity="success"-->
+<!--                          class="absolute top-1 left-1 dark:!bg-surface-900"-->
+<!--                        ></p-tag>-->
+<!--                      }-->
                     </div>
                     <!-- O‘rta: nom, kodlar, birlik -->
                     <div class="flex flex-col flex-1 overflow-hidden">
@@ -280,10 +280,10 @@
           </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
-        <div class="flex justify-start">
+        <div class="flex justify-start p-2 border-bottom">
           @if (cartSessionModel && cartSessionModel.customer != null){
             <p-chip
-              label="{{ cartSessionModel.customer.fullName }}"
+              label="Mijoz: {{ cartSessionModel.customer.fullName }}"
               image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
               alt="Avatar image"
               [removable]="true"
@@ -292,7 +292,7 @@
           }
           @if (cartSessionModel && cartSessionModel.referrer != null){
             <p-chip
-              label="{{ cartSessionModel.referrer.fullName }}"
+              label="Xamkor: {{ cartSessionModel.referrer.fullName }}"
               image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png" alt="Avatar image"
               [removable]="true"
               (onRemove)="removeCusRefFromCart(cartSessionModel.referrer.id, 'REFERRER')"
@@ -470,3 +470,13 @@
     </p-listbox>
   </ng-template>
 </p-popover>
+
+<app-payments-dialog
+  [visible]="payVisible"
+  [cartSessionId]="cartSessionModel!.id"
+  [total]="subtotal()"
+  [hasCustomer]="hasCustomer"
+  [hasReferrer]="!!cartSessionModel?.referrer"
+  [defaultRefPercent]="refPercentDefault"
+  (closed)="onPayClosed($event)">
+</app-payments-dialog>

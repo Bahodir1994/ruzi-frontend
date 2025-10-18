@@ -1,0 +1,24 @@
+/* umumiy mayda yordamchilar — sizdagi borini saqladim */
+.action-chip { font-size:.75rem; padding:.25rem .5rem; border-radius:.5rem; border:1px solid var(--p-surface-300); cursor:pointer; }
+.field-label { font-size:.875rem; opacity:.7; }
+.hint { font-size:.75rem; opacity:.6; }
+.row-card { border:1px solid var(--p-surface-300); border-radius:.75rem; padding:.5rem; }
+
+/* kalkulyator tugmasi o'lchami va bir xil ko‘rinish */
+.p-button.key { width:100%; height:3.25rem; border-radius:.6rem; }
+.p-button.key .p-button-label { font-weight:600; font-size:1rem; }
+
+/* turga qarab ozgina farqlash */
+.key--num {}
+.key--func {}
+.key--op {}           /* severity="success" color ishlaydi */
+.key--danger {}       /* severity="danger" color ishlaydi */
+
+/* kupyura tugmasi zichroq */
+.bill { height: 2.5rem; border-radius:.5rem; }
+
+.summary-chip {
+  padding: .25rem .5rem;
+  border: 1px solid var(--p-surface-300);
+  border-radius: .5rem;
+}

@@ -37,6 +37,7 @@ import {Popover} from 'primeng/popover';
 import {Listbox} from 'primeng/listbox';
 import {AutoFocus} from 'primeng/autofocus';
 import {Chip} from 'primeng/chip';
+import {PaymentsDialog} from '../payments-dialog/payments-dialog';
 
 @Component({
   selector: 'app-cashbox',
@@ -58,7 +59,8 @@ import {Chip} from 'primeng/chip';
     Menu,
     Popover,
     Listbox,
-    Chip
+    Chip,
+    PaymentsDialog
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -92,9 +94,9 @@ export class Cashbox implements OnInit, AfterViewInit {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     /** Agar popover yopiq bo‘lsa — tashqi searchInput fokus oladi */
-    if (!this.popoverOpen && this.searchInput) {
-      this.searchInput.nativeElement.focus();
-    }
+    // if (!this.popoverOpen && this.searchInput) {
+    //   this.searchInput.nativeElement.focus();
+    // }
   }
 
   private holdInterval: any;
@@ -173,6 +175,14 @@ export class Cashbox implements OnInit, AfterViewInit {
         search: {value: '', regex: false}
       }
     ]
+  }
+
+  /** To‘lov oynasi uchun: */
+  payVisible = false;
+  refPercentDefault = 2; // ixtiyoriy default bonus %
+
+  get hasCustomer(): boolean {
+    return !!this.cartSessionModel?.customer;
   }
 
   constructor(
@@ -347,8 +357,6 @@ export class Cashbox implements OnInit, AfterViewInit {
         }
       })
   }
-  checkout() {
-  }
 
   async openCustomers() {
     const response = await firstValueFrom(this.cashBoxService.get_customers())
@@ -474,5 +482,21 @@ export class Cashbox implements OnInit, AfterViewInit {
           this.onNewCartClick();
         }
       })
+  }
+
+  checkout() {
+    if (!this.cartItems || this.cartItems.length === 0) return;
+    this.payVisible = true;
+  }
+  onPayClosed(ev: { success: boolean; result?: any }) {
+    this.payVisible = false;
+
+    if (ev?.success && ev.result) {
+      // ev.result: CheckoutResultDto (paymentStatus, debt, change, va h.k.)
+      // Chek yopildi — yangi savat ochib, UI ni “nol” holatga qaytaramiz
+      this.onNewCartClick();
+      // Agar xohlasangiz: chek chop etish/kv_tasniflashni shu yerda chaqirasiz
+      // this.printReceipt(ev.result);
+    }
   }
 }
