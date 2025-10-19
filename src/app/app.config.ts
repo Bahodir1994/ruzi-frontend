@@ -1,53 +1,68 @@
-import {
-  APP_INITIALIZER,
-  ApplicationConfig,
-  importProvidersFrom,
-  provideBrowserGlobalErrorListeners,
-  provideZonelessChangeDetection
-} from '@angular/core';
+import {ApplicationConfig, importProvidersFrom, provideZonelessChangeDetection} from '@angular/core';
 import {provideRouter} from '@angular/router';
-
 import {routes} from './app.routes';
+
 import {providePrimeNG} from 'primeng/config';
-import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
-import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptors} from '@angular/common/http';
-import {keycloakInterceptor} from './configuration/interceptors/keycloak.interceptor';
-import {httpCodeInterceptor} from './configuration/interceptors/httpcode.interceptor';
-import {authInterceptor} from './configuration/interceptors/auth.interceptor';
-import {loadingInterceptor} from './configuration/interceptors/loading.interceptor';
-import {ToastModule} from 'primeng/toast';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
-import {MessageService} from 'primeng/api';
-import {LanguageService} from './service/translate/language.service';
-import {KeycloakService} from 'keycloak-angular';
-import {DialogService} from 'primeng/dynamicdialog';
-import {initializer} from './configuration/authentication/keycloak-init';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import Aura from '@primeuix/themes/aura';
+import {BrowserAnimationsModule, provideAnimations} from '@angular/platform-browser/animations';
+import {HttpClient, provideHttpClient, withInterceptors} from '@angular/common/http';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
+import {DialogService} from 'primeng/dynamicdialog';
+import {LanguageService} from './service/translate/language.service';
+
+import {
+  createInterceptorCondition,
+  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+  IncludeBearerTokenCondition,
+  includeBearerTokenInterceptor,
+  provideKeycloak
+} from 'keycloak-angular';
+import {httpCodeInterceptor} from './configuration/interceptors/httpcode.interceptor';
+
+// 🔧 token faqat API’laringizga qo‘shilsin (localhost va dev serverlar)
+const apiCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
+  urlPattern: /^(http:\/\/localhost:9050|http:\/\/192\.168\.58\.1:9050|https:\/\/api\.ruzi\.uz)(\/.*)?$/i,
+  bearerPrefix: 'Bearer'
+});
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
+const getRedirectUri = () => {
+  // Agar SPA hali route yuklanmagan bo‘lsa — localStorage orqali oldingi route’ni qayta tiklash
+  const lastRoute = localStorage.getItem('lastRoute');
+  if (lastRoute) return window.location.origin + lastRoute;
+  return window.location.href;
+};
+
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideZonelessChangeDetection(),
+    provideAnimations(),
     provideRouter(routes),
-    provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([
-      keycloakInterceptor,
-      httpCodeInterceptor,
-      authInterceptor,
-      loadingInterceptor,
-    ])),
+    provideZonelessChangeDetection(),
+    provideKeycloak({
+      config: {
+        url: 'http://localhost:8080',
+        realm: 'ruzi-realm',
+        clientId: 'ruzi'
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
+        redirectUri: window.location.href + '/'
+      }
+    }),
+    {provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: [apiCondition]},
+    provideHttpClient(withInterceptors([includeBearerTokenInterceptor, httpCodeInterceptor])),
     providePrimeNG({
       theme: {preset: Aura, options: {darkModeSelector: '.p-dark'}},
     }),
     importProvidersFrom(
       ToastModule,
-      BrowserAnimationsModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,
@@ -59,24 +74,6 @@ export const appConfig: ApplicationConfig = {
     ),
     MessageService,
     LanguageService,
-    KeycloakService,
     DialogService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (languageService: LanguageService) => () => languageService.initLanguage(),
-      deps: [LanguageService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializer,
-      deps: [KeycloakService],
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useFactory: () => loadingInterceptor,
-      multi: true
-    }
   ]
 };

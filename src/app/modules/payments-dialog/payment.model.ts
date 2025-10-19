@@ -7,7 +7,7 @@ export interface PaymentPartDto {
 }
 
 export interface CheckoutDto {
-  cartSessionId: string;
+  cartSessionId?: string;
   payments: PaymentPartDto[];
   referrerBonusPercent?: number | null;
 }

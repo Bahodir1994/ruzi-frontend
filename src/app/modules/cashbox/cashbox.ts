@@ -13,11 +13,10 @@ import {Button} from 'primeng/button';
 import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
-import {DatePipe, DecimalPipe, NgClass, NgStyle} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
 import {InputText} from 'primeng/inputtext';
 import {DataView} from 'primeng/dataview';
-import {SelectButton} from 'primeng/selectbutton';
 import {Tag} from 'primeng/tag';
 import {CashboxService} from './cashbox.service';
 import {firstValueFrom} from 'rxjs';
@@ -25,19 +24,20 @@ import {DataTableInput} from '../../component/datatables/datatable-input.model';
 import {AddCartItemDto, AddPersonToCart, CartItem, CartSession, Customer, Referrer, StockView} from './cashbox.model';
 import {Tooltip} from 'primeng/tooltip';
 import {CashBoxWebsocketService} from './cashbox.websocket';
-import {OrderList} from 'primeng/orderlist';
 import {Ripple} from 'primeng/ripple';
 import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
-import {SplitButton} from 'primeng/splitbutton';
 import {Menu} from 'primeng/menu';
 import {DeviceDetectorService} from 'ngx-device-detector';
-import {Dock} from 'primeng/dock';
-import {MenuItem} from 'primeng/api';
 import {Popover} from 'primeng/popover';
 import {Listbox} from 'primeng/listbox';
-import {AutoFocus} from 'primeng/autofocus';
 import {Chip} from 'primeng/chip';
 import {PaymentsDialog} from '../payments-dialog/payments-dialog';
+import {Dialog} from 'primeng/dialog';
+import {InputNumber} from 'primeng/inputnumber';
+import {ContextMenu} from 'primeng/contextmenu';
+import {MenuItem} from 'primeng/api';
+import {FloatLabel} from 'primeng/floatlabel';
+import {Divider} from 'primeng/divider';
 
 @Component({
   selector: 'app-cashbox',
@@ -60,7 +60,12 @@ import {PaymentsDialog} from '../payments-dialog/payments-dialog';
     Popover,
     Listbox,
     Chip,
-    PaymentsDialog
+    PaymentsDialog,
+    Dialog,
+    InputNumber,
+    ContextMenu,
+    FloatLabel,
+    Divider
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -73,10 +78,26 @@ export class Cashbox implements OnInit, AfterViewInit {
   isTablet = false;
   isDesktop = false;
 
+  @ViewChild('cm') cm!: ContextMenu;
+  @ViewChild('cmm') cmm!: ContextMenu;
   @ViewChild(Listbox) listbox!: Listbox;
   @ViewChild('searchInput') searchInput!: ElementRef;
 
+  contextMenuItems: MenuItem[] = [];
+  contextMenuCartItems: MenuItem[] = [];
+  editPriceVisible = false;
+  editQuantityVisible = false;
+  discountOnly = false;
+  editedItem: any = null;
+  editedQuantity = 0;
+  editedPrice = 0;
+  editedDiscount = 0;
+  originalPrice = 0;
+  minimalPrice = 0;
+  computedPrice = 0;
+
   popoverOpen = false;
+
   onPopoverShow() {
     this.popoverOpen = true;
 
@@ -100,6 +121,7 @@ export class Cashbox implements OnInit, AfterViewInit {
   }
 
   private holdInterval: any;
+
   startHold(action: () => any) {
     action(); // darhol bajar
     this.holdInterval = setInterval(action, 120);
@@ -116,9 +138,6 @@ export class Cashbox implements OnInit, AfterViewInit {
   customers?: Customer[] | [];
   referrers?: Referrer[] | [];
 
-  selectedCustomers?: Customer[] | [];
-  selectedReferrers?: Referrer[] | [];
-
   layout: "grid" | "list" = "list";
   options = ['list', 'grid'];
   menuItems = [
@@ -132,7 +151,7 @@ export class Cashbox implements OnInit, AfterViewInit {
       icon: 'pi pi-trash',
       command: () => this.clearCart()
     },
-    { separator: true },
+    {separator: true},
     {
       label: 'Savatni bekor qilish',
       icon: 'pi pi-times-circle',
@@ -190,7 +209,8 @@ export class Cashbox implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private cashBoxService: CashboxService,
     private cashBoxWebSocketService: CashBoxWebsocketService,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.isMobile = this.deviceService.isMobile();
@@ -201,6 +221,37 @@ export class Cashbox implements OnInit, AfterViewInit {
       isTablet: this.isTablet,
       isDesktop: this.isDesktop
     });
+
+    this.contextMenuItems = [
+      {
+        label: 'Qo‘shimcha birlikda qo‘shish',
+        icon: 'pi pi-plus-circle',
+        command: () => this.addAltUnitItem(this.editedItem)
+      }
+    ]
+    this.contextMenuCartItems = [
+      {
+        label: 'Narxni o‘zgartirish',
+        icon: 'pi pi-pencil',
+        command: () => this.openEditPrice(false)
+      },
+      {
+        label: 'Birlikni o‘zgartirish',
+        icon: 'pi pi-box',
+        command: () => this.openEditQuantity()
+      },
+      {
+        label: 'Chegirma qo‘llash',
+        icon: 'pi pi-percentage',
+        command: () => this.openEditPrice(true)
+      },
+      { separator: true },
+      {
+        label: 'O‘chirish',
+        icon: 'pi pi-trash',
+        command: () => this.removeItem(this.editedItem?.cartItemId)
+      }
+    ]
 
     /** 1- LocalStorage dan eski sessiya ID ni o‘qish */
     const savedSessionId = localStorage.getItem("activeCartSessionId")
@@ -234,6 +285,7 @@ export class Cashbox implements OnInit, AfterViewInit {
     this.openCustomers();
     this.openReferrers();
   }
+
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
   }
@@ -252,6 +304,7 @@ export class Cashbox implements OnInit, AfterViewInit {
       this.isLoading = false;
     }
   }
+
   async getActiveCartSessionItem(id: string) {
     const response = await firstValueFrom(this.cashBoxService.get_item(id))
 
@@ -280,15 +333,22 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
+
   updateStockRow(updated: any) {
     const idx = this.stockView.findIndex(x => x.stockId === updated.stockId);
     if (idx !== -1) {
       this.stockView[idx].reservedQuantity = updated.reservedQuantity;
       this.stockView[idx].availableQuantity = updated.availableQuantity;
       this.stockView[idx].quantity = updated.quantity;
+
+      // 🆕 alt birlik uchun
+      this.stockView[idx].altQuantity = updated.altQuantity;
+      this.stockView[idx].reservedAltQuantity = updated.reservedAltQuantity;
+      this.stockView[idx].availableAltQuantity = updated.availableAltQuantity;
     }
     this.cdr.detectChanges();
   }
+
   onSelectItem(item: StockView) {
     this.isLoading = true;
 
@@ -296,7 +356,8 @@ export class Cashbox implements OnInit, AfterViewInit {
       sessionId: this.cartSessionModel!.id,
       purchaseOrderItemId: item.purchaseOrderItemId,
       quantity: 1,
-      unitPrice: item.salePrice
+      unitPrice: item.salePrice,
+      unitType: 'PACK'
     };
 
     this.cashBoxService.add_item(dto).subscribe({
@@ -312,8 +373,39 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
+
+  addAltUnitItem(item: StockView) {
+    if (!item || !this.cartSessionModel) return;
+
+    // alt birlikda qo‘shish uchun quantity = 1, narx = asosiy narx / conversionRate
+    const conversionRate = item.conversionRate || 1;
+    const altPrice = item.altSalePrice? item.altSalePrice : 0.00;
+
+    const dto: AddCartItemDto = {
+      sessionId: this.cartSessionModel.id,
+      purchaseOrderItemId: item.purchaseOrderItemId,
+      quantity: 1,
+      unitPrice: altPrice,
+      unitType: 'PCS'
+    };
+
+    this.isLoading = true;
+    this.cashBoxService.add_item(dto).subscribe({
+      next: (res) => {
+        this.getActiveCartSessionItem(this.cartSessionModel!.id).then(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Qo‘shimcha birlikda qo‘shishda xatolik:', err);
+      }
+    });
+  }
+
   increase(item: CartItem) {
-    const dto = { cartItemId: item.cartItemId, newQuantity: item.quantity + 1 };
+    const dto = {cartItemId: item.cartItemId, newQuantity: item.quantity + 1};
     this.cashBoxService.update_item(dto).subscribe({
       next: (res) => {
         item.quantity++;
@@ -323,9 +415,10 @@ export class Cashbox implements OnInit, AfterViewInit {
       error: (err) => alert('Xatolik: ' + err.error.message)
     });
   }
+
   decrease(item: CartItem) {
     if (item.quantity <= 1) return;
-    const dto = { cartItemId: item.cartItemId, newQuantity: item.quantity - 1 };
+    const dto = {cartItemId: item.cartItemId, newQuantity: item.quantity - 1};
     this.cashBoxService.update_item(dto).subscribe({
       next: (res) => {
         item.quantity--;
@@ -335,12 +428,14 @@ export class Cashbox implements OnInit, AfterViewInit {
       error: (err) => alert('Xatolik: ' + err.error.message)
     });
   }
+
   subtotal(): number {
     if (!this.cartItems || this.cartItems.length === 0) {
       return 0;
     }
     return this.cartItems.reduce((sum, it) => sum + (it.lineTotal || 0), 0);
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;
@@ -348,6 +443,7 @@ export class Cashbox implements OnInit, AfterViewInit {
       this.loadData().then(r => null);
     }
   }
+
   removeItem(cartItemId: string) {
     firstValueFrom(this.cashBoxService.delete_item(cartItemId))
       .then(res => {
@@ -365,6 +461,7 @@ export class Cashbox implements OnInit, AfterViewInit {
       this.cdr.detectChanges();
     }
   }
+
   async openReferrers() {
     const response = await firstValueFrom(this.cashBoxService.get_referrers())
     if (response.success && response.data) {
@@ -378,7 +475,7 @@ export class Cashbox implements OnInit, AfterViewInit {
 
     const dto: AddPersonToCart = {
       id: id,
-      cardSessionId: this.cartSessionModel!.id,
+      cartSessionId: this.cartSessionModel!.id,
       type: 'CUSTOMER',
     };
     this.cashBoxService.add_customer_referrer(dto).subscribe({
@@ -403,12 +500,13 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
+
   addReferrerToCard(id: string, popover: any) {
     this.isLoading = true;
 
     const dto: AddPersonToCart = {
       id: id,
-      cardSessionId: this.cartSessionModel!.id,
+      cartSessionId: this.cartSessionModel!.id,
       type: 'REFERRER',
     };
     this.cashBoxService.add_customer_referrer(dto).subscribe({
@@ -433,12 +531,13 @@ export class Cashbox implements OnInit, AfterViewInit {
       }
     });
   }
-  removeCusRefFromCart(id: string, type: string){
+
+  removeCusRefFromCart(id: string, type: string) {
     this.isLoading = true;
 
     const dto: AddPersonToCart = {
       id: id,
-      cardSessionId: this.cartSessionModel!.id,
+      cartSessionId: this.cartSessionModel!.id,
       type: type,
     };
     this.cashBoxService.remove_customer_referrer(dto).subscribe({
@@ -467,6 +566,7 @@ export class Cashbox implements OnInit, AfterViewInit {
   createNewCart() {
     this.onNewCartClick();
   }
+
   clearCart() {
     firstValueFrom(this.cashBoxService.delete_cart(this.cartSessionModel!.id))
       .then(res => {
@@ -475,6 +575,7 @@ export class Cashbox implements OnInit, AfterViewInit {
         }
       })
   }
+
   cancelCart() {
     firstValueFrom(this.cashBoxService.cancel_cart(this.cartSessionModel!.id))
       .then(res => {
@@ -488,6 +589,7 @@ export class Cashbox implements OnInit, AfterViewInit {
     if (!this.cartItems || this.cartItems.length === 0) return;
     this.payVisible = true;
   }
+
   onPayClosed(ev: { success: boolean; result?: any }) {
     this.payVisible = false;
 
@@ -498,5 +600,143 @@ export class Cashbox implements OnInit, AfterViewInit {
       // Agar xohlasangiz: chek chop etish/kv_tasniflashni shu yerda chaqirasiz
       // this.printReceipt(ev.result);
     }
+  }
+
+  onContextMainMenu(event: MouseEvent, item: any) {
+    event.preventDefault();
+    this.editedItem = item;
+    this.cmm.show(event);
+  }
+
+  onContextMenu(event: MouseEvent, item: any) {
+    event.preventDefault();
+    this.editedItem = item;
+    this.cm.show(event);
+  }
+
+  openEditPrice(discountOnly = false) {
+    if (!this.editedItem) return;
+
+    this.editPriceVisible = true;
+
+    // Asl narx (salePrice mavjud bo‘lsa, o‘shani ko‘rsatamiz)
+    this.originalPrice = this.editedItem.salePrice || this.editedItem.unitPrice || 0;
+
+    // Minimal narx
+    this.minimalPrice = this.editedItem.minimalSum || 0;
+
+    // Hozirgi ishlayotgan narx
+    this.editedPrice = this.editedItem.unitPrice || this.originalPrice;
+
+    // 🧠 Agar saleDiscount summaviy bo‘lsa, foizga o‘tkazamiz
+    if (this.editedItem.saleDiscount && this.editedItem.saleDiscount > 1) {
+      const diff = this.originalPrice - this.editedPrice;
+      this.editedDiscount = diff > 0
+        ? Math.round((diff / this.originalPrice) * 100 * 100) / 100  // 2 xonagacha aniqlik
+        : 0;
+    } else {
+      // Aks holda oldingi foizni saqlaymiz
+      this.editedDiscount = this.editedItem.saleDiscount ?? 0;
+    }
+
+    this.discountOnly = discountOnly;
+    this.recalculateDiscount();
+  }
+
+  recalculateDiscount() {
+    const discountAmount = (this.editedPrice * (this.editedDiscount || 0)) / 100;
+    this.computedPrice = Math.max(0, this.editedPrice - discountAmount);
+  }
+
+  applyPriceChange() {
+    if (!this.editedItem) return;
+
+    const finalPrice = this.computedPrice;
+
+    // 🔹 Minimal narxdan past narxni tekshirish
+    if (this.minimalPrice && finalPrice < this.minimalPrice) {
+      if (!confirm(`Diqqat! Narx minimal narxdan past: ${this.minimalPrice.toLocaleString()} so‘m. Baribir davom etilsinmi?`)) {
+        return;
+      }
+    }
+
+    // 🔹 Lokal qiymatlarni yangilaymiz (frontend preview uchun)
+    this.editedItem.unitPrice = finalPrice;
+    this.editedItem.saleDiscount = this.editedDiscount;
+    this.editedItem.lineTotal = finalPrice * this.editedItem.quantity;
+
+    // 🔹 DTO tayyorlaymiz
+    const dto = {
+      cartItemId: this.editedItem.cartItemId,
+      newPrice: this.editedPrice,
+      discountPercent: this.editedDiscount
+    };
+
+    // 🔹 API chaqiramiz
+    this.cashBoxService.update_item_price(dto).subscribe({
+      next: (res) => {
+        console.log('✅ Narx yangilandi:', res);
+        this.editPriceVisible = false;
+        this.cdr.detectChanges()
+      },
+      error: (err) => {
+        console.error('❌ Xatolik narxni yangilashda:', err);
+        alert('Narxni yangilashda xatolik yuz berdi');
+      }
+    });
+  }
+
+  openEditQuantity() {
+    if (!this.editedItem) return;
+
+    this.editQuantityVisible = true;
+    this.editedQuantity = this.editedItem.quantity || 0;
+  }
+
+  applyQuantityChange() {
+    if (!this.editedItem || !this.editedQuantity) return;
+
+    const dto = {
+      cartItemId: this.editedItem.cartItemId,
+      newQuantity: this.editedQuantity
+    };
+
+    // 🔹 Backendga yuborish
+    this.cashBoxService.update_item(dto).subscribe({
+      next: (res) => {
+        console.log('✅ Miqdor yangilandi:', res);
+        this.editedItem.quantity = this.editedQuantity;
+        this.editedItem.lineTotal = this.editedItem.unitPrice * this.editedQuantity;
+        this.editQuantityVisible = false;
+        this.cdr.detectChanges();
+      },
+      // error: (err) => {
+      //   console.error('❌ Xatolik miqdorni yangilashda:', err);
+      //   alert('Miqdor yangilanmadi: ' + err.error?.message);
+      // }
+    });
+  }
+
+  formatStock(
+    availableAltQuantity?: number,
+    conversionRate?: number,
+    displayUnit?: string
+  ): string {
+    const avail = availableAltQuantity ?? 0;
+    const rate = conversionRate ?? 1;
+
+    if (avail <= 0) return `0 ${displayUnit ?? ''}`;
+
+    const packs = Math.floor(avail / rate);
+    const remainder = avail % rate;
+
+    if (packs > 0 && remainder > 0)
+      return `${packs} ${displayUnit ?? ''} ${remainder} pcs`;
+    if (packs > 0)
+      return `${packs} ${displayUnit ?? ''}`;
+    if (remainder > 0)
+      return `${remainder} pcs`;
+
+    return `0 ${displayUnit ?? ''}`;
   }
 }

@@ -15,7 +15,8 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
   const findApiConfig = (url: string, method: string) => {
     for (const module of apiConfigData) {
       for (const api of module.list) {
-        if (req.url.includes(api.url) && api.method === method) {
+        const normalizedReqUrl = req.url.split('?')[0]; // query paramsni olib tashlaymiz
+        if (normalizedReqUrl.endsWith(api.url)) {
           return api;
         }
       }
@@ -70,7 +71,7 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
         messageService.add({
           severity: 'error',
           summary: MessageEnum.CONFIRM_REJECT,
-          detail: MessageEnum.CONFIRM_REJECT_404,
+          detail: MessageEnum.CONFIRM_REJECT_500,
         });
       }
 

@@ -1,6 +1,5 @@
 import {Routes} from '@angular/router';
 import {Admin} from './layout/admin/admin';
-import {AuthGuard} from './configuration/authentication/auth.guard';
 import {Cashbox} from './modules/cashbox/cashbox';
 import {Category} from './modules/items/category/category';
 import {Item} from './modules/items/item/item';
@@ -8,12 +7,13 @@ import {Unit} from './modules/items/unit/unit';
 import {Warehouse} from './modules/settings/account/business-info/warehouse/warehouse';
 import {PurchaseOrder} from './modules/settings/account/business-info/purchase-order/purchase-order';
 import {Supplier} from './modules/settings/account/business-info/supplier/supplier';
+import {canActivateAuthGuard} from './configuration/authentication/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'cashbox',
     component: Cashbox,
-    canActivate: [AuthGuard],
+    canActivate: [canActivateAuthGuard],
     data: {
       roles: [],
       title: 'Kassa',
@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: '',
     component: Admin,
-    canActivate: [AuthGuard],
+    canActivate: [canActivateAuthGuard],
     data: {
       breadcrumb: 'Asosiy'
     },
@@ -41,6 +41,7 @@ export const routes: Routes = [
           {
             path: 'item',
             component: Item,
+            canActivate: [canActivateAuthGuard],
             data: {
               roles: [],
               title: 'Tovarlar to`plami',
@@ -96,7 +97,7 @@ export const routes: Routes = [
               {
                 path: 'purchase-order',
                 component: PurchaseOrder,
-                canActivate: [AuthGuard],
+                canActivate: [canActivateAuthGuard],
                 data: {
                   roles: [],
                   title: 'Kirim',
@@ -106,7 +107,7 @@ export const routes: Routes = [
               {
                 path: 'warehouse',
                 component: Warehouse,
-                canActivate: [AuthGuard],
+                canActivate: [canActivateAuthGuard],
                 data: {
                   roles: [],
                   title: 'Joylashuv',
@@ -116,7 +117,7 @@ export const routes: Routes = [
               {
                 path: 'supplier',
                 component: Supplier,
-                canActivate: [AuthGuard],
+                canActivate: [canActivateAuthGuard],
                 data: {
                   roles: [],
                   title: 'Ta\'minotchi',

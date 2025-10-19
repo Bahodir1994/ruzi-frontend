@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {AuthService} from '../../configuration/authentication/auth.service';
 import {Category} from '../../modules/items/category/category';
 import {Item} from '../../modules/items/item/item';
@@ -7,7 +7,7 @@ import {Unit} from '../../modules/items/unit/unit';
 @Injectable({
   providedIn: 'root'
 })
-export class PermissionService {
+export class PermissionService implements OnInit{
   private userRoles: string[] = [];
 
   private permissions = new Map<Function, Record<string, {
@@ -40,9 +40,7 @@ export class PermissionService {
     ]
   ]);
 
-  constructor(private authService: AuthService) {
-    this.userRoles = this.authService.loadUserRoles().map(role => role.code);
-  }
+  constructor(private authService: AuthService) {}
 
   canAccess(component: Function, key: string, status: string): boolean {
     const permission = this.permissions.get(component)?.[key];
@@ -55,6 +53,11 @@ export class PermissionService {
     }
 
     return hasRole;
+  }
+
+  async ngOnInit() {
+    const roles = await this.authService.loadUserRoles();
+    this.userRoles = roles.map(r => r.code);
   }
 
 }

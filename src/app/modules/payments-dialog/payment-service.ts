@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AddPaymentDto, AddPaymentResultDto, CheckoutDto, CheckoutResultDto} from './payment.model';
 
@@ -8,7 +8,8 @@ import {AddPaymentDto, AddPaymentResultDto, CheckoutDto, CheckoutResultDto} from
 export class PaymentService {
   private base = '/route-cart';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   checkout(body: CheckoutDto) {
     return this.http.post<{ status: number; message: string; data: CheckoutResultDto }>(

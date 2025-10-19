@@ -68,87 +68,94 @@
             <ng-template #list let-items>
               @for (item of items; track item.stockId; let first = $first) {
                 <div
-                    pRipple
-                    class="flex items-center gap-4 p-4 border-b border-surface-200 dark:border-surface-700
+                  pRipple
+                  class="flex items-center gap-4 p-4 border-b border-surface-200 dark:border-surface-700
                      hover:bg-[var(--p-surface-hover)] cursor-pointer transition-all"
-                    (click)="onSelectItem(item)"
-                  >
-                    <!-- Chap: rasm -->
-                    <div class="w-20 h-20 flex-shrink-0 relative">
-                      <img
-                        [src]="item.imageUrl || 'assets/no-image.png'"
-                        class="rounded-md w-full h-full object-cover"
-                        alt="Tovar rasmi"
-                      />
-<!--                      @if (item.categoryName){-->
-<!--                        <p-tag-->
-<!--                          [value]="item.categoryName"-->
-<!--                          severity="success"-->
-<!--                          class="absolute top-1 left-1 dark:!bg-surface-900"-->
-<!--                        ></p-tag>-->
-<!--                      }-->
-                    </div>
-                    <!-- O‘rta: nom, kodlar, birlik -->
-                    <div class="flex flex-col flex-1 overflow-hidden">
-                      <div class="flex items-center justify-between">
+                  (click)="onSelectItem(item)"
+                  #rowItem
+                  (contextmenu)="onContextMainMenu($event, item)"
+                >
+                  <!-- Chap: rasm -->
+                  <div class="w-20 h-20 flex-shrink-0 relative">
+                    <img
+                      [src]="item.imageUrl || 'assets/no-image.png'"
+                      class="rounded-md w-full h-full object-cover"
+                      alt="Tovar rasmi"
+                    />
+                    <!--                      @if (item.categoryName){-->
+                    <!--                        <p-tag-->
+                    <!--                          [value]="item.categoryName"-->
+                    <!--                          severity="success"-->
+                    <!--                          class="absolute top-1 left-1 dark:!bg-surface-900"-->
+                    <!--                        ></p-tag>-->
+                    <!--                      }-->
+                  </div>
+                  <!-- O‘rta: nom, kodlar, birlik -->
+                  <div class="flex flex-col flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between">
                         <span class="font-semibold text-lg truncate text-surface-900 dark:text-surface-0">
                           {{ item.itemName }}
                         </span>
-                        <span class="text-xs px-2 py-0.5 bg-surface-100 dark:bg-surface-700 rounded font-mono text-gray-600 dark:text-gray-300">{{ item.itemCode }}</span>
-                      </div>
-                      <div class="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                        <i class="pi pi-barcode text-yellow-500"></i>
-                        <span>{{ item.barcode || '–' }}</span>
-                        <span class="text-gray-400">•</span>
-                        <span>{{ item.unitName }}</span>
-                        <span class="text-gray-400">•</span>
-                        <span>{{ item.warehouseName }}</span>
-                      </div>
-                      <div class="mt-1 text-xs text-gray-400">
-                        Partiya: {{ item.batchNumber || '—' }}
-                        @if (item.expiryDate){
-                          <span>• Yaroqlilik: {{ item.expiryDate | date:'dd.MM.yyyy' }}</span>
-                        }
-                      </div>
+                      <span
+                        class="text-xs px-2 py-0.5 bg-surface-100 dark:bg-surface-700 rounded font-mono text-gray-600 dark:text-gray-300">{{ item.itemCode }}</span>
                     </div>
-                    <!-- O‘ng: narx va qoldiq -->
-                    <div class="flex flex-col items-end min-w-[140px]">
-                      <div class="font-bold text-xl text-emerald-600">
-                        {{ item.salePrice | number:'1.2-2' }} soʻm
-                      </div>
-
-                      <div class="flex items-center gap-1 text-sm mt-1">
-                        <i class="pi pi-box text-sky-500"></i>
-                        <span>Qoldiq:</span>
-                        <span
-                          class="font-semibold text-surface-900 dark:text-surface-0">{{ item.availableQuantity }}</span>
-                      </div>
-
-                      @if(item.reservedQuantity > 0){
-                        <div class="text-xs text-orange-500">
-                          (Rezerv: {{ item.reservedQuantity }})
-                        </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                      <i class="pi pi-barcode text-yellow-500"></i>
+                      <span>{{ item.barcode || '–' }}</span>
+                      <span class="text-gray-400">•</span>
+                      <span>{{ item.unitName }}</span>
+                      <span class="text-gray-400">•</span>
+                      <span>{{ item.warehouseName }}</span>
+                    </div>
+                    <div class="mt-1 text-xs text-gray-400">
+                      Partiya: {{ item.batchNumber || '—' }}
+                      @if (item.expiryDate) {
+                        <span>• Yaroqlilik: {{ item.expiryDate | date:'dd.MM.yyyy' }}</span>
                       }
                     </div>
                   </div>
+                  <!-- O‘ng: narx va qoldiq -->
+                  <div class="flex flex-col items-end min-w-[140px]">
+                    <div class="font-bold text-xl text-emerald-600">
+                      {{ item.salePrice | number:'1.2-2' }} soʻm
+                    </div>
+
+                    <div class="flex items-center gap-1 text-sm mt-1">
+                      <i class="pi pi-box text-sky-500"></i>
+                      <span>Qoldiq:</span>
+
+                      <span class="font-semibold text-surface-900 dark:text-surface-0">
+                        {{ formatStock(item.availableAltQuantity, item.conversionRate, item.altUnitName || item.unitName) }}
+                      </span>
+                    </div>
+
+                    @if (item.reservedQuantity > 0) {
+                      <div class="text-xs text-orange-500">
+                        (Rezerv: {{ item.reservedQuantity }})
+                      </div>
+                    }
+                  </div>
+                </div>
               }
             </ng-template>
             <ng-template #grid let-items>
               <div class="grid grid-cols-12 gap-4">
                 @for (product of items; track product.itemId) {
-                  <div class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 p-2">
+                  <div class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 p-2" #rowItem
+                       (contextmenu)="onContextMainMenu($event, product)">
                     <div
                       pRipple
                       class="flex flex-col rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 shadow-sm hover:shadow-md transition-all cursor-pointer h-full"
                       (click)="onSelectItem(product)">
                       <!-- Rasm va kategoriya tag -->
-                      <div class="relative bg-surface-50 dark:bg-surface-800 flex justify-center items-center rounded-t-xl p-4">
+                      <div
+                        class="relative bg-surface-50 dark:bg-surface-800 flex justify-center items-center rounded-t-xl p-4">
                         <img
                           class="rounded-md object-contain max-h-[180px]"
                           [src]="product.imageUrl || 'assets/no-image.png'"
                           [alt]="product.itemName"
                         />
-                        @if (product.categoryName){
+                        @if (product.categoryName) {
                           <p-tag
                             [value]="product.categoryName"
                             severity="success"
@@ -156,7 +163,7 @@
                           ></p-tag>
                         }
                         <!-- Chegirma belgisi -->
-                        @if(product.discount && product.discount > 0){
+                        @if (product.discount && product.discount > 0) {
                           <p-tag
                             [value]="product.discount + '%'"
                             severity="danger"
@@ -182,31 +189,35 @@
                         <!-- Ombor va partiya -->
                         <div class="text-xs text-gray-500 flex flex-col">
                           <span>Ombor: {{ product.warehouseName }}</span>
-                          @if(product.batchNumber){
+                          @if (product.batchNumber) {
                             <span>Partiya: {{ product.batchNumber }}</span>
                           }
-                          @if(product.expiryDate){
+                          @if (product.expiryDate) {
                             <span>Yaroqlilik: {{ product.expiryDate | date:'dd.MM.yyyy' }}</span>
                           }
                         </div>
 
                         <!-- Narx, birlik va qoldiq -->
-                        <div class="flex justify-between items-end mt-auto pt-2 border-t border-gray-200 dark:border-surface-700">
+                        <div
+                          class="flex justify-between items-end mt-auto pt-2 border-t border-gray-200 dark:border-surface-700">
                           <div class="flex flex-col text-sm">
                             <span class="text-gray-400">Narx</span>
-                            <span class="font-bold text-lg text-emerald-600">{{ product.salePrice | number:'1.2-2' }} soʻm</span>
+                            <span class="font-bold text-lg text-emerald-600">{{ product.salePrice | number:'1.2-2' }}
+                              soʻm</span>
                           </div>
                           <div class="flex flex-col text-right text-sm">
                             <div>
                               <span class="text-gray-400">Qoldiq:</span>
                               <span
                                 [ngClass]="{
-                                  'text-red-500 font-semibold': product.availableQuantity < 3,
-                                  'text-surface-900 dark:text-surface-0 font-semibold': product.availableQuantity >= 3
-                                }"
-                              >{{ product.availableQuantity ?? (product.quantity - product.reservedQuantity) }}</span>
+                                    'text-red-500 font-semibold': product.availableAlt < 3,
+                                    'text-surface-900 dark:text-surface-0 font-semibold': product.availableAlt >= 3
+                                  }"
+                                                          >
+                                  {{ formatStock(product.availableAltQuantity, product.conversionRate, product.altUnitName || product.unitName) }}
+                                </span>
                             </div>
-                            <span class="text-gray-500 text-xs">({{ product.unitName }})</span>
+                            <span class="text-gray-500 text-xs">({{ product.altUnitName || 'pack/pcs' }})</span>
                           </div>
                         </div>
                       </div>
@@ -231,25 +242,28 @@
               </div>
             </ng-template>
           </p-dataView>
+          <p-contextMenu #cmm [model]="contextMenuItems" [baseZIndex]="1000"></p-contextMenu>
         </div>
       </div>
     </ng-template>
     <ng-template #panel>
       <div class="flex flex-wrap justify-between items-center gap-4 px-4 py-1 shadow-sm bg-[var(--p-primary-color)]">
-          <p-button pTooltip="Mijozlar ro'yxati" (onClick)="onPopoverHide()" (click)="opReferrers?.hide(); opCustomers.toggle($event)" tooltipPosition="bottom">
-            <i class="pi pi-address-book" style="font-size: 2rem"></i>
-          </p-button>
-          <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (onClick)="onPopoverHide()" (click)="opCustomers?.hide(); opReferrers.toggle($event)">
-            <i class="pi pi-user" style="font-size: 2rem"></i>
-          </p-button>
-          <p-menu #menu [model]="menuItems" [popup]="true"></p-menu>
-          <p-button (click)="menu.toggle($event)">
-            <i class="pi pi-cog" style="font-size: 2rem"></i>
-          </p-button>
-          <div class="flex flex-col items-end lg:items-end text-center lg:flex-1">
-            <!-- To‘liq ma'lumot (katta ekranlarda ko‘rinadi) -->
-            <div class="hidden lg:flex flex-col items-center justify-center gap-1">
-              <div class="flex flex-wrap items-center justify-center gap-2">
+        <p-button pTooltip="Mijozlar ro'yxati" (onClick)="onPopoverHide()"
+                  (click)="opReferrers?.hide(); opCustomers.toggle($event)" tooltipPosition="bottom">
+          <i class="pi pi-address-book" style="font-size: 2rem"></i>
+        </p-button>
+        <p-button pTooltip="Xamkorlar" tooltipPosition="bottom" (onClick)="onPopoverHide()"
+                  (click)="opCustomers?.hide(); opReferrers.toggle($event)">
+          <i class="pi pi-user" style="font-size: 2rem"></i>
+        </p-button>
+        <p-menu #menu [model]="menuItems" [popup]="true"></p-menu>
+        <p-button (click)="menu.toggle($event)">
+          <i class="pi pi-cog" style="font-size: 2rem"></i>
+        </p-button>
+        <div class="flex flex-col items-end lg:items-end text-center lg:flex-1">
+          <!-- To‘liq ma'lumot (katta ekranlarda ko‘rinadi) -->
+          <div class="hidden lg:flex flex-col items-center justify-center gap-1">
+            <div class="flex flex-wrap items-center justify-center gap-2">
               <span class="text-xl sm:text-xl font-bold text-[var(--p-primary-contrast-color)]">
                 № {{ cartSessionModel?.cartNumber }}
               </span>
@@ -257,31 +271,31 @@
                 class="px-2 text-xs rounded-full bg-emerald-100 text-emerald-700 uppercase tracking-wide">
                 {{ cartSessionModel?.status }}
               </span>
-              </div>
-              <div
-                class="flex flex-wrap items-center justify-center text-xs sm:text-sm gap-1 text-[var(--p-primary-contrast-color)]">
-                <span>Sotuvchi:</span>
-                <span class="font-medium">{{ cartSessionModel?.createdByUser }}</span>
-                <span class="hidden sm:inline select-none">•</span>
-                <time class="truncate">{{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}</time>
-              </div>
             </div>
-            <!-- “i” info tugma (≤1024 px bo‘lganda ko‘rinadi) -->
-            <div class="flex lg:hidden items-center justify-center">
-              <p-button
-                size="small"
-                pTooltip="№ {{ cartSessionModel?.cartNumber }} | {{ cartSessionModel?.status }} | {{ cartSessionModel?.createdByUser }} | {{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}"
-                tooltipPosition="bottom"
-                tooltipStyleClass="text-center max-w-[260px]"
-              >
-                <i class="pi pi-info-circle" style="font-size: 2rem"></i>
-              </p-button>
+            <div
+              class="flex flex-wrap items-center justify-center text-xs sm:text-sm gap-1 text-[var(--p-primary-contrast-color)]">
+              <span>Sotuvchi:</span>
+              <span class="font-medium">{{ cartSessionModel?.createdByUser }}</span>
+              <span class="hidden sm:inline select-none">•</span>
+              <time class="truncate">{{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}</time>
             </div>
           </div>
+          <!-- “i” info tugma (≤1024 px bo‘lganda ko‘rinadi) -->
+          <div class="flex lg:hidden items-center justify-center">
+            <p-button
+              size="small"
+              pTooltip="№ {{ cartSessionModel?.cartNumber }} | {{ cartSessionModel?.status }} | {{ cartSessionModel?.createdByUser }} | {{ cartSessionModel?.createdAt | date:'yy-MM-dd HH:mm' }}"
+              tooltipPosition="bottom"
+              tooltipStyleClass="text-center max-w-[260px]"
+            >
+              <i class="pi pi-info-circle" style="font-size: 2rem"></i>
+            </p-button>
+          </div>
+        </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
         <div class="flex justify-start p-2 border-bottom">
-          @if (cartSessionModel && cartSessionModel.customer != null){
+          @if (cartSessionModel && cartSessionModel.customer != null) {
             <p-chip
               label="Mijoz: {{ cartSessionModel.customer.fullName }}"
               image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
@@ -290,7 +304,7 @@
               (onRemove)="removeCusRefFromCart(cartSessionModel.customer.id, 'CUSTOMER')"
             />
           }
-          @if (cartSessionModel && cartSessionModel.referrer != null){
+          @if (cartSessionModel && cartSessionModel.referrer != null) {
             <p-chip
               label="Xamkor: {{ cartSessionModel.referrer.fullName }}"
               image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png" alt="Avatar image"
@@ -306,7 +320,9 @@
           class="w-full !border-0 !shadow-none !outline-none !ring-0"
         >
           <ng-template let-item #item>
-            <div class="flex flex-wrap justify-between w-full items-center">
+            <div class="flex flex-wrap justify-between w-full items-center"
+                 #rowItem
+                 (contextmenu)="onContextMenu($event, item)">
               <!-- Chap: nom va birlik narxi -->
               <div class="flex flex-col flex-1 min-w-[150px] sm:min-w-[180px]">
                 <span class="font-semibold truncate">{{ item.itemName }}</span>
@@ -373,11 +389,13 @@
                 ></p-button>
               </div>
             </div>
-
           </ng-template>
         </p-list-box>
+
+        <p-contextMenu #cm [model]="contextMenuCartItems" [baseZIndex]="1000"></p-contextMenu>
       </div>
-      <footer class="sticky bottom-0 w-full border-t shadow-inner px-2 flex flex-wrap justify-between items-center gap-3 "
+      <footer
+        class="sticky bottom-0 w-full border-t shadow-inner px-2 flex flex-wrap justify-between items-center gap-3 "
       >
         <div>
           <div class="text-sm">Jami summa:</div>
@@ -438,11 +456,10 @@
         </div>
       </ng-template>
     </p-listbox>
-
   </ng-template>
 </p-popover>
 
-<p-popover #opReferrers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()" >
+<p-popover #opReferrers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()">
   <ng-template #content>
     <p-listbox
       [options]="referrers!"
@@ -471,12 +488,116 @@
   </ng-template>
 </p-popover>
 
-<app-payments-dialog
-  [visible]="payVisible"
-  [cartSessionId]="cartSessionModel!.id"
-  [total]="subtotal()"
-  [hasCustomer]="hasCustomer"
-  [hasReferrer]="!!cartSessionModel?.referrer"
-  [defaultRefPercent]="refPercentDefault"
-  (closed)="onPayClosed($event)">
-</app-payments-dialog>
+<!-- Narx o‘zgartirish / chegirma qo‘llash -->
+<p-dialog [(visible)]="editPriceVisible" header="Narxni o‘zgartirish" [modal]="true" [style]="{width:'380px'}">
+  <div class="p-fluid space-y-3">
+    <!-- Asl narx -->
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-gray-500">Asl narx:</span>
+      <span class="font-semibold">{{ originalPrice | number:'1.2-2' }} so‘m</span>
+    </div>
+
+    <!-- Minimal narx -->
+    @if(minimalPrice && minimalPrice > 0){
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-500">Minimal narx:</span>
+        <span [ngClass]="{'text-amber-600 font-medium': editedPrice < minimalPrice}">
+        {{ minimalPrice | number:'1.2-2' }} so‘m
+      </span>
+      </div>
+    }
+
+    <p-divider></p-divider>
+
+    <!-- Yangi narx -->
+    <p-floatlabel variant="in">
+      <p-inputNumber
+        class="w-full"
+        [(ngModel)]="editedPrice"
+        [disabled]="discountOnly"
+        [mode]="'currency'"
+        [currency]="'UZS'"
+        [min]="0"
+        locale="en-US"
+        (onInput)="recalculateDiscount()"
+      />
+      <label>Yangi narx</label>
+    </p-floatlabel>
+
+    <!-- Chegirma (%) -->
+    <p-floatlabel variant="in">
+      <p-inputNumber
+        class="w-full"
+        [(ngModel)]="editedDiscount"
+        [min]="0"
+        [max]="100"
+        locale="en-US"
+        (onInput)="recalculateDiscount()"
+      />
+      <label>Chegirma (%)</label>
+    </p-floatlabel>
+
+    <!-- Natijaviy narx preview -->
+    <div class="flex justify-between mt-2 border-t pt-2">
+      <span class="text-sm text-gray-500">Hisoblangan narx:</span>
+      <span class="text-emerald-600 font-bold">{{ computedPrice | number:'1.2-2' }} so‘m</span>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Bekor" icon="pi pi-times" (click)="editPriceVisible=false" class="p-button-text"></p-button>
+    <p-button label="Saqlash" icon="pi pi-check" (click)="applyPriceChange()" [disabled]="!editedItem"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="editQuantityVisible"
+  header="Birlikni o‘zgartirish"
+  [modal]="true"
+  [style]="{ width: '320px' }"
+>
+  <div class="p-fluid">
+    <p-floatlabel variant="in">
+      <p-inputNumber
+        [(ngModel)]="editedQuantity"
+        [min]="0"
+        [maxFractionDigits]="3"
+        [step]="0.01"
+        mode="decimal"
+        locale="en-US"
+        inputId="qtyInput"
+        id="qtyInput"
+        class="w-full"
+      />
+      <label for="qtyInput">Yangi miqdor</label>
+    </p-floatlabel>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Bekor"
+      icon="pi pi-times"
+      (click)="editQuantityVisible=false"
+      class="p-button-text"
+    ></p-button>
+    <p-button
+      label="Saqlash"
+      icon="pi pi-check"
+      (click)="applyQuantityChange()"
+      [disabled]="!editedQuantity || editedQuantity <= 0"
+    ></p-button>
+  </ng-template>
+</p-dialog>
+
+
+@if(cartSessionModel){
+  <app-payments-dialog
+    [visible]="payVisible"
+    [cartSessionId]="cartSessionModel.id"
+    [total]="subtotal()"
+    [hasCustomer]="hasCustomer"
+    [hasReferrer]="!!cartSessionModel.referrer"
+    [defaultRefPercent]="refPercentDefault"
+    (closed)="onPayClosed($event)">
+  </app-payments-dialog>
+}

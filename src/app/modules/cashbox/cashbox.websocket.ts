@@ -1,9 +1,9 @@
-import { Client, IMessage } from '@stomp/stompjs';
+import {Client, IMessage} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class CashBoxWebsocketService {
   private stompClient!: Client;
 

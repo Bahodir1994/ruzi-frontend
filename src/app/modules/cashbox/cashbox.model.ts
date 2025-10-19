@@ -1,5 +1,4 @@
 import {WarehouseModel} from '../settings/account/business-info/warehouse/warehouse.model';
-import {ItemModel} from '../items/item/item-model';
 
 export interface StockView {
   /** Stock ma'lumotlari */
@@ -31,6 +30,18 @@ export interface StockView {
   categoryName?: string;
   imageUrl?: string;
 
+
+  /** 🆕 Qo‘shimcha birlik (alt unit) ma'lumotlari */
+  altUnitName?: string;             // Qo‘shimcha birlik nomi (masalan, “pack”)
+  altUnitCode?: string;             // Qo‘shimcha birlik kodi (agar mavjud bo‘lsa)
+  conversionRate?: number;          // 1 asosiy birlik = N qo‘shimcha birlik
+  altQuantity?: number;             // Qo‘shimcha birlikdagi qoldiq
+  reservedAltQuantity?: number;     // Rezervdagi alt birlik miqdori
+  availableAlt?: number;            // Mavjud alt birlik (altQuantity - reservedAltQuantity)
+  availableAltQuantity?: number;    // <-- API dan kelgani shu!
+  altSalePrice?: number;            // Qo‘shimcha birlik narxi (salePrice * conversionRate)
+
+
   /** Multi-tenant qo‘llab-quvvatlash uchun */
   clientId?: string;
 }
@@ -59,6 +70,7 @@ export interface AddCartItemDto {
   purchaseOrderItemId: string;
   quantity: number;
   unitPrice: number;
+  unitType: string;
 }
 
 export interface UpdateCartItemDto {
@@ -71,11 +83,26 @@ export interface CartItem {
   purchaseOrderItemId: string;
   itemName: string;
   quantity: number;
-  unitPrice: number;
+  unitPrice: number;      // joriy (sotuvdagi) narx
   lineTotal: number;
   available: number;
   warehouseName: string;
+
+  // --- qo‘shimcha ma’lumotlar ---
+  salePrice?: number;         // Asl (bazaviy) sotuv narxi
+  minimalSum?: number;        // Minimal ruxsat etilgan narx
+  purchasePrice?: number;     // Xarid (ta’minotchi) narxi
+  purchaseDiscount?: number;  // Xarid paytidagi chegirma
+  saleDiscount?: number;      // Kassir tomonidan berilgan chegirma
+
+  /** 🆕 Qo‘shimcha birlik (alt unit) */
+  altUnitName?: string;        // masalan, "pack"
+  altUnitCode?: string;
+  conversionRate?: number;     // 1 alt = X asosiy birlik
+  altQuantity?: number;        // alt birlik miqdori (masalan, 2 pack)
+  altSalePrice?: number;       // alt birlik uchun sotuv narxi
 }
+
 
 export interface Customer {
   id: string;
@@ -133,7 +160,7 @@ export interface Referrer {
 
 export interface AddPersonToCart {
   id: string;
-  cardSessionId: string;
+  cartSessionId: string;
   type?: 'CUSTOMER' | 'REFERRER' | string;
 }
 

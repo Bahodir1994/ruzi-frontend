@@ -19,7 +19,8 @@ export class CashboxService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {}
+  ) {
+  }
 
   /* -crud- */
   create_cart(dto?: any): Observable<ResponseDto> {
@@ -140,6 +141,23 @@ export class CashboxService {
     );
   }
 
+  update_item_price(dto: any): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'update_item_price').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.patch<ResponseDto>(
+            `${this.moduleUrl.host}${this.moduleUrl.url}`,
+            dto
+          );
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+
   add_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_customer_referrer').pipe(
       switchMap(value => {
@@ -158,7 +176,7 @@ export class CashboxService {
       switchMap(value => {
         if (value) {
           this.moduleUrl = value;
-          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${dto.cardSessionId}/${dto.type}`);
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${dto.cartSessionId}/${dto.type}`);
         } else {
           throw new Error('URL не был получен');
         }

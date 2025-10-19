@@ -36,8 +36,9 @@ export class MenuComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
-    this.userRoles = new Set(this.authService.loadUserRoles().map(role => role.name));
+  async ngOnInit() {
+    const roles = await this.authService.loadUserRoles();
+    this.userRoles = new Set(roles.map(r => r.code));
 
     this.sidebarService.menuItems$.subscribe(items => {
       this.items = this.filterMenu(items);

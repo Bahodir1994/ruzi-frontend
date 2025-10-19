@@ -185,6 +185,16 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
+        url: "/route-cart/update-item-price",
+        method: "patch",
+        label: "update_item_price",
+        comment: "cart sessiyada tovar ni price ini ozgartirish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-cart/get-item",
         method: "get",
         label: "get_item",

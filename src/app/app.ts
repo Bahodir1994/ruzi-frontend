@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router, RouterOutlet} from '@angular/router';
-import {PrimeNG} from 'primeng/config';
-import {Toast} from 'primeng/toast';
-import {PrimengLocaleService} from './service/translate/primeng-locale.service';
-import {ApiConfigService} from './configuration/resursurls/apiConfig.service';
-import {AuthService} from './configuration/authentication/auth.service';
-import {TranslateService} from '@ngx-translate/core';
-import {LanguageService} from './service/translate/language.service';
-import {Title} from '@angular/platform-browser';
 import {filter, map} from 'rxjs';
+import {ActivatedRoute, NavigationEnd, Router, RouterOutlet} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
 import {DeviceDetectorService} from 'ngx-device-detector';
+import {PrimeNG} from 'primeng/config';
+import {Title} from '@angular/platform-browser';
+import {LanguageService} from './service/translate/language.service';
+import {TranslateService} from '@ngx-translate/core';
+import {AuthService} from './configuration/authentication/auth.service';
+import {ApiConfigService} from './configuration/resursurls/apiConfig.service';
+import {PrimengLocaleService} from './service/translate/primeng-locale.service';
+import {Toast} from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +19,7 @@ import {DeviceDetectorService} from 'ngx-device-detector';
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
+
   isMobile = false;
   isTablet = false;
   isDesktop = false;
@@ -34,23 +35,19 @@ export class App implements OnInit {
     private authService: AuthService,
     private apiConfigService: ApiConfigService,
     private primengLocale: PrimengLocaleService
-  ) {
-    this.initUserRoles();
-  }
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.isMobile = this.deviceService.isMobile();
     this.isTablet = this.deviceService.isTablet();
     this.isDesktop = this.deviceService.isDesktop();
-    console.log({
-      isMobile: this.isMobile,
-      isTablet: this.isTablet,
-      isDesktop: this.isDesktop
-    });
 
     this.languageService.initLanguage();
     this.authService.startTokenRefresh();
-    this.primengLocale.setLocale(this.languageService.getCurrentLanguage())
+    this.primengLocale.setLocale(this.languageService.getCurrentLanguage());
+
+    // ✅ foydalanuvchi rollarini olish
+    await this.initUserRoles();
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -60,21 +57,23 @@ export class App implements OnInit {
           route = route.firstChild;
         }
         return route?.snapshot.data['title'];
-      })).subscribe((title: string) => {
+      })
+    ).subscribe((title: string) => {
       if (title) {
         this.titleService.setTitle(title);
       }
     });
 
     this.translate.onLangChange.subscribe(langEvent => {
-      this.primengLocale.setLocale(langEvent.lang)
+      this.primengLocale.setLocale(langEvent.lang);
     });
+
     this.primeng.ripple.set(true);
   }
 
-  private initUserRoles() {
-    const roles = this.authService.loadUserRoles().map(role => role.code);
-    this.apiConfigService.setUserRoles(roles);
+  private async initUserRoles() {
+    const roles = await this.authService.loadUserRoles();
+    const roleCodes = roles.map(role => role.code);
+    this.apiConfigService.setUserRoles(roleCodes);
   }
-
 }
