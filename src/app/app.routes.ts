@@ -43,7 +43,7 @@ export const routes: Routes = [
             component: Item,
             canActivate: [canActivateAuthGuard],
             data: {
-              roles: [],
+              roles: ['ROLE_MANAGER', 'ROLE_CASHIER'],
               title: 'Tovarlar to`plami',
               breadcrumb: 'Tovarlar to`plami'
             }
