@@ -43,7 +43,7 @@
     "keycloak-angular": "^20.0.0",
     "keycloak-js": "^25.0.6",
     "ngx-device-detector": "^10.1.0",
-    "primeflex": "^4.0.0",
+    "primeflex": "^4  .0.0",
     "primeicons": "latest",
     "primeng": "^20.1.2",
     "process": "^0.11.10",

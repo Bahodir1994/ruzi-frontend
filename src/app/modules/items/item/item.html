@@ -11,8 +11,8 @@
         (input)="loadData()"
       />
     </p-icon-field>
-    @if (permissions['add_new_product']) {
       <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
         (click)="openDialog()"
         size="small"
         class="pr-2"
@@ -21,9 +21,13 @@
         label="Yangi tovar qo'shish"
         [outlined]="true"
       />
-    }
-    <p-button size="small" class="pr-2" styleClass="shadow shadow-blue-500/50" icon="pi pi-file-excel" label="Excel"
-              [outlined]="true"/>
+      <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
+        size="small"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-excel" label="Excel"
+        [outlined]="true"/>
   </div>
 </div>
 <p-table
@@ -156,8 +160,10 @@
   [draggable]="false"
   [resizable]="true"
   [closable]="true"
-  [maximizable]="false"
+  [maximizable]="true"
   [dismissableMask]="true"
-  [style]="{ width: '100vw', height: '100vh', margin: 0, padding: 0 }"
   [baseZIndex]="10000">
+
+
+
 </p-dialog>

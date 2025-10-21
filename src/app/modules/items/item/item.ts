@@ -13,6 +13,7 @@ import {DecimalPipe} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
+import {HasRolesDirective} from 'keycloak-angular';
 
 @Component({
   selector: 'app-item',
@@ -25,7 +26,8 @@ import {InputText} from 'primeng/inputtext';
     DecimalPipe,
     Tag,
     InputIcon,
-    InputText
+    InputText,
+    HasRolesDirective
   ],
   templateUrl: './item.html',
   standalone: true,
