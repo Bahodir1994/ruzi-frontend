@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideKeycloak({
       config: {
-        url: 'http://localhost:8080',
+        url: 'http://192.168.0.106:8080',
         realm: 'ruzi-realm',
         clientId: 'ruzi'
       },
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
       features: [
         withAutoRefreshToken({
           onInactivityTimeout: 'logout',
-          sessionTimeout: 30000
+          sessionTimeout: 600000
         })
       ],
       providers: [AutoRefreshTokenService, UserActivityService]

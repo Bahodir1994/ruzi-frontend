@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, ViewEncapsulation} from '@angular/core';
 import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {ItemService} from './item.service';
@@ -6,14 +6,25 @@ import {PermissionService} from '../../../service/validations/permission.service
 import {firstValueFrom} from 'rxjs';
 import {ItemModel} from './item-model';
 import {Dialog} from 'primeng/dialog';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
 import {Button} from 'primeng/button';
-import {DecimalPipe} from '@angular/common';
+import {DecimalPipe, NgIf} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
 import {HasRolesDirective} from 'keycloak-angular';
+import {Select} from 'primeng/select';
+import {SelectButton} from 'primeng/selectbutton';
+import {Textarea} from 'primeng/textarea';
+import {FloatLabel} from 'primeng/floatlabel';
+import {ScrollPanel} from 'primeng/scrollpanel';
+import {AnimateOnScroll} from 'primeng/animateonscroll';
+import {InputMask} from 'primeng/inputmask';
+import {InputNumber} from 'primeng/inputnumber';
+import {InputGroup} from 'primeng/inputgroup';
+import {InputGroupAddon} from 'primeng/inputgroupaddon';
+import {IftaLabel} from 'primeng/iftalabel';
 
 @Component({
   selector: 'app-item',
@@ -27,15 +38,55 @@ import {HasRolesDirective} from 'keycloak-angular';
     Tag,
     InputIcon,
     InputText,
-    HasRolesDirective
+    HasRolesDirective,
+    ReactiveFormsModule,
+    Select,
+    SelectButton,
+    Textarea,
+    FloatLabel,
+    ScrollPanel,
+    NgIf,
+    InputMask,
+    InputNumber,
+    InputGroup,
+    InputGroupAddon,
+    IftaLabel,
   ],
   templateUrl: './item.html',
   standalone: true,
-  styleUrl: './item.scss'
+  styleUrl: './item.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class Item {
+  showFloatingTitle = false;
+  itemTypeOption = [
+    { icon: 'cutlery.png', id: '001', label: 'Oziq-ovqat maxsulotlari' },
+    { icon: 'web-maintenance.png', id: '002', label: 'Qurilish materiallari' },
+    { icon: 'cutlery.png', id: '003', label: 'Elektronika tovarlari' },
+    { icon: 'web-maintenance.png', id: '004', label: 'Kiyim-Kechak maxsulotlari' },
+    { icon: 'cutlery.png', id: '005', label: 'Tibbiyot maxsulotlari' },
+    { icon: 'web-maintenance.png', id: '005', label: 'XOZ tovarlar' },
+  ];
+
+  categoryOptions = [
+    { id: '1111-aaaa', label: 'Elektronika' },
+    { id: '2222-bbbb', label: 'Aksessuarlar' },
+  ];
+
+  unitOptions = [
+    { label: 'dona', value: 'dona' },
+    { label: 'kg', value: 'kg' },
+    { label: 'l', value: 'l' },
+  ];
+
+  activeOptions = [
+    { label: 'Aktiv', value: 'true' },
+    { label: 'Nofaol', value: 'false' },
+  ];
+
   public permissions: Record<string, boolean> = {};
   visibleProductModal = false;
+  form!: FormGroup;
 
   openDialog() {
     this.visibleProductModal = true;
@@ -66,6 +117,7 @@ export class Item {
   }
 
   constructor(
+    private fb: FormBuilder,
     private itemService: ItemService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService
@@ -75,6 +127,21 @@ export class Item {
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
+
+    this.form = this.fb.group({
+      code: ['', [Validators.required, Validators.maxLength(100)]],
+      name: ['', [Validators.required, Validators.maxLength(600)]],
+      price: [undefined],
+      categoryId: ['', Validators.required],
+      isActive: ['true'],
+      primaryImageUrl: [''],
+      skuCode: ['', Validators.required],
+      barcode: [''],
+      brand: [''],
+      unit: [''],
+      description: [''],
+    });
+
   }
 
   permission(status: string) {
@@ -104,5 +171,13 @@ export class Item {
       this.dataTableInputProductModel.length = event.rows;
       this.loadData().then(r => null);
     }
+  }
+
+  get f() {
+    return this.form.controls;
+  }
+
+  onSubmit() {
+
   }
 }

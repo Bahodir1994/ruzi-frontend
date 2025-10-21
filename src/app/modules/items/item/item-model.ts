@@ -16,3 +16,17 @@ export interface ItemModel {
   unit: string | null;
   description: string | null;
 }
+
+export interface ItemRequestDto {
+  code: string;              // Mahsulot kodi
+  name: string;              // Mahsulot nomi
+  price?: string;            // Narx
+  categoryId: string;        // Kategoriya ID (UUID)
+  isActive?: string;         // "true" yoki "false"
+  primaryImageUrl?: string;  // Rasm URL
+  skuCode: string;           // SKU kodi
+  barcode?: string;          // Shtrix-kod
+  brand?: string;            // Brend nomi
+  unit?: string;             // Birlik (kg, dona, l)
+  description?: string;      // Tavsif
+}
