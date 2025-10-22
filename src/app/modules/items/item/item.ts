@@ -8,7 +8,7 @@ import {ItemModel} from './item-model';
 import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
-import {Button} from 'primeng/button';
+import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
 import {DecimalPipe, NgIf} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
@@ -25,6 +25,8 @@ import {InputNumber} from 'primeng/inputnumber';
 import {InputGroup} from 'primeng/inputgroup';
 import {InputGroupAddon} from 'primeng/inputgroupaddon';
 import {IftaLabel} from 'primeng/iftalabel';
+import {RouterLink} from '@angular/router';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-item',
@@ -48,9 +50,10 @@ import {IftaLabel} from 'primeng/iftalabel';
     NgIf,
     InputMask,
     InputNumber,
-    InputGroup,
-    InputGroupAddon,
-    IftaLabel,
+    RouterLink,
+    ButtonDirective,
+    ButtonLabel,
+    Card,
   ],
   templateUrl: './item.html',
   standalone: true,
@@ -67,18 +70,15 @@ export class Item {
     { icon: 'cutlery.png', id: '005', label: 'Tibbiyot maxsulotlari' },
     { icon: 'web-maintenance.png', id: '005', label: 'XOZ tovarlar' },
   ];
-
   categoryOptions = [
     { id: '1111-aaaa', label: 'Elektronika' },
     { id: '2222-bbbb', label: 'Aksessuarlar' },
   ];
-
   unitOptions = [
     { label: 'dona', value: 'dona' },
     { label: 'kg', value: 'kg' },
     { label: 'l', value: 'l' },
   ];
-
   activeOptions = [
     { label: 'Aktiv', value: 'true' },
     { label: 'Nofaol', value: 'false' },
@@ -88,9 +88,7 @@ export class Item {
   visibleProductModal = false;
   form!: FormGroup;
 
-  openDialog() {
-    this.visibleProductModal = true;
-  }
+  formCreateItemSubmit = false;
 
   totalRecords: number = 0;
   searchValue: string | undefined;
@@ -143,7 +141,6 @@ export class Item {
     });
 
   }
-
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(Item, 'add_new_product', status)
@@ -164,7 +161,6 @@ export class Item {
       this.isLoading = false;
     }
   }
-
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;
@@ -176,8 +172,18 @@ export class Item {
   get f() {
     return this.form.controls;
   }
+  openDialog() {
+    this.visibleProductModal = true;
+  }
 
-  onSubmit() {
+  async onSubmit() {
+    this.formCreateItemSubmit = true;
 
+    const result = await firstValueFrom(this.itemService.create_item(this.form.value));
+    if (result.success) {
+      this.formCreateItemSubmit = true;
+      this.loadData()
+      this.visibleProductModal = false;
+    }
   }
 }

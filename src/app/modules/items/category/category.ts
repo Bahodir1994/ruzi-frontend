@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener} from '@angular/core';
 import {TableFilterEvent, TableModule} from 'primeng/table';
 import {CategoryModel} from './category-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
@@ -36,6 +36,7 @@ import {Tag} from "primeng/tag";
   providers: [CategoryService]
 })
 export class Category {
+
   public permissions: Record<string, boolean> = {};
 
   showModalCategory = false;

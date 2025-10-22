@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideKeycloak({
       config: {
-        url: 'http://192.168.0.106:8080',
+        url: 'http://localhost:8080',
         realm: 'ruzi-realm',
         clientId: 'ruzi'
       },

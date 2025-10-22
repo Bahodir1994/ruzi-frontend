@@ -19,6 +19,16 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-item",
+        method: "POST",
+        label: "item_create",
+        comment: "yangi tovar qo'shish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
       }
     ]
   },

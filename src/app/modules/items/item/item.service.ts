@@ -3,8 +3,10 @@ import {FindResultApiUrl} from '../../../configuration/resursurls/apiConfigDto';
 import {DatatableService} from '../../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../../configuration/resursurls/apiConfig.service';
 import {DataTableInput, DataTableOutput} from '../../../component/datatables/datatable-input.model';
-import {Observable} from 'rxjs';
+import {Observable, switchMap} from 'rxjs';
 import {ItemModel} from './item-model';
+import {ResponseDto} from '../../../configuration/resursurls/responseDto';
+import {HttpClient} from '@angular/common/http';
 
 
 @Injectable({
@@ -14,9 +16,24 @@ export class ItemService {
   private moduleUrl!: FindResultApiUrl;
 
   constructor(
+    private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
   ) {
+  }
+
+  /* -Methods- */
+  create_item(formData: any): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_create').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.post<ResponseDto>(this.moduleUrl.host + this.moduleUrl.url, formData);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
   }
 
   /* -tables- */
