@@ -164,175 +164,269 @@
   [closable]="true"
   [maximizable]="true"
   [dismissableMask]="true"
-  [style]="{ minWidth: '50rem' }"
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ minWidth: '50rem'}"
   #dialog
   [baseZIndex]="10000">
   <ng-template #header>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <p-button severity="primary" type="submit" label="Saqlash"></p-button>
-    </form>
-    <span class="text-3xl font-bold" >
-        Yangi tovar qo'shish
-    </span>
-  </ng-template>
-  <p-scrollPanel
-    [style]="{ width: '100%', height: '85vh' }"
-  >
-    <div class="grid grid-cols-3 gap-6 max-w-6xl mx-auto">
+    <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
 
-      <!-- LEFT: MAIN FORM -->
-      <form class="col-span-2 flex flex-col gap-5" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <!-- 🏷️ Mahsulot turi -->
-        <p-floatlabel variant="in">
-          <p-select
-             id="itemType" inputId="itemType" [options]="itemTypeOption"
-            optionLabel="label" class="w-full" variant="filled" [showClear]="true">
-            <ng-template #selectedItem let-selectedOption>
-              <div class="flex items-center gap-2" *ngIf="selectedOption">
-                <img src="assets/images/icons/{{selectedOption.icon}}" style="width: 24px"/>
-                <div>{{ selectedOption.label }}</div>
-              </div>
-            </ng-template>
-            <ng-template let-opt #item>
-              <div class="flex items-center gap-2">
-                <img src="assets/images/icons/{{opt.icon}}" style="width: 18px"/>
-                <div>{{ opt.label }}</div>
-              </div>
-            </ng-template>
-          </p-select>
-          <label for="itemType">Tovar turi</label>
-        </p-floatlabel>
-
-
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <input pInputText formControlName="name" class="w-full" />
-            <label >Nomi</label>
-          </p-floatlabel>
-
-        </div>
-
-
-        <!-- 🏷️ Mahsulot kodi -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label >Mahsulot kodi</label>
-            <input pInputText formControlName="code" class="w-full" />
-          </p-floatlabel>
-        </div>
-
-        <!-- 💰 Narx -->
-        <div class="col-span-1">
-            <p-float-label variant="in">
-              <p-input-number mode="currency"  id="price" formControlName="price"  currency="UZS" class="w-full"/>
-              <label for="price">Narxi</label>
-            </p-float-label>
-        </div>
-
-
-        <!-- 🏷️ SKU kodi -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label>SKU kodi</label>
-            <input pInputText formControlName="skuCode" class="w-full" />
-          </p-floatlabel>
-        </div>
-
-        <!-- 🔢 Barcode -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label>Shtrix-kod</label>
-            <input pInputText formControlName="barcode" class="w-full" />
-          </p-floatlabel>
-        </div>
-
-        <!-- 🏭 Brend -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label>Brend</label>
-            <input pInputText formControlName="brand" class="w-full" />
-          </p-floatlabel>
-        </div>
-
-        <!-- ⚖️ Birlik -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <p-select
-              [options]="unitOptions"
-              optionLabel="label"
-              optionValue="value"
-              formControlName="unit"
-              class="w-full"
-            ></p-select>
-            <label for="itemType">O'lchov birligi</label>
-          </p-floatlabel>
-        </div>
-
-        <!-- 🖼️ Rasm URL -->
-        <div class="col-span-2">
-          <p-floatlabel variant="in">
-            <label>Asosiy rasm URL</label>
-            <input pInputText formControlName="primaryImageUrl" class="w-full" />
-          </p-floatlabel>
-        </div>
-
-        <!-- 📄 Tavsif -->
-        <div class="col-span-2">
-          <p-floatlabel variant="in">
-            <textarea pInputText id="description" formControlName="description" class="w-full" autocomplete="off" ></textarea>
-            <label for="description">Tavsif</label>
-          </p-floatlabel>
-        </div>
-
+      <!-- Chap: Saqlash -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">
+        <p-button type="submit" label="Saqlash" severity="primary"></p-button>
       </form>
 
-      <!-- RIGHT: SIDEBAR CARDS -->
-      <div class="col-span-1 flex flex-col gap-4">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <!-- Categories -->
-          <p-card header="Kategoriyasi" class="shadow-lg border-1">
-            <p class="text-xs mb-3">
-              Tovar kategoriyalari mavjud bo'lmasa
-              <a routerLink="/items/category" target="_blank" pButton>
-                <span pButtonLabel>qo'shish</span>
-              </a>
-            </p>
-            <p-select
-              [options]="categoryOptions"
-              formControlName="categoryId"
-              optionLabel="label"
-              optionValue="id"
-              class="w-full"
-            ></p-select>
-          </p-card>
-
-          <!-- Status -->
-          <p-card header="Status" class="shadow-lg my-2">
-              <div class="col-span-1">
-                <p-selectButton
-                  [options]="activeOptions"
-                  formControlName="isActive"
-                  optionLabel="label"
-                  optionValue="value"
-                ></p-selectButton>
-              </div>
-          </p-card>
-        </form>
-        <!-- (Optional) Preview -->
-        <p-card header="Rasm korinishi" class="shadow-lg my-2">
-          <div class="border rounded-md p-3 flex items-center justify-center h-32">
-            <img
-              *ngIf="form.value?.primaryImageUrl"
-              [src]="form.value?.primaryImageUrl"
-              class="max-h-28 object-contain"
-              alt="image preview"
-
-            />
-            <span *ngIf="!form.value?.primaryImageUrl" class="text-sm">No image</span>
-          </div>
-        </p-card>
+      <!-- Markaz: Sarlavha -->
+      <div class="justify-self-center text-center">
+        <span class="text-3xl font-bold">Yangi tovar qo'shish</span>
       </div>
+
+      <!-- O'ng: Checkbox -->
+      <div class="justify-self-end flex items-center gap-2 ml-2">
+        <p-multiSelect
+          [options]="actions"
+          [(ngModel)]="selectedActions"
+          optionLabel="name"
+          placeholder="Amallar"
+          [filter]="false"
+          (onChange)="onActionsChange()"
+          [maxSelectedLabels]="2" class="w-full md:w-80" />
+      </div>
+
+    </div>
+  </ng-template>
+
+  <p-scrollPanel [style]="{ width: '100%', height: '90vh' }">
+    <div class="flex w-full max-w-4xl mx-auto my-4">
+      <p class="font-bold text-xl">Tovar tavsifi</p>
+    </div>
+    <div class="grid grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <form class="col-span-2 flex flex-col gap-5" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <!-- 🏷️ Mahsulot turi -->
+          <p-floatlabel variant="in">
+            <p-select
+               id="itemType" inputId="itemType" [options]="itemTypeOption"
+              optionLabel="label" class="w-full" variant="filled" [showClear]="true">
+              <ng-template #selectedItem let-selectedOption>
+                @if(selectedOption){
+                  <div class="flex items-center gap-2">
+                    <img src="assets/images/icons/{{selectedOption.icon}}" style="width: 24px"/>
+                    <div>{{ selectedOption.label }}</div>
+                  </div>
+                }
+              </ng-template>
+              <ng-template let-opt #item>
+                <div class="flex items-center gap-2">
+                  <img src="assets/images/icons/{{opt.icon}}" style="width: 18px"/>
+                  <div>{{ opt.label }}</div>
+                </div>
+              </ng-template>
+            </p-select>
+            <label for="itemType">Tovar turi</label>
+          </p-floatlabel>
+
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <input pInputText formControlName="name" class="w-full" />
+              <label >Nomi</label>
+            </p-floatlabel>
+
+          </div>
+
+          <!-- 🏷️ Mahsulot kodi -->
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <label >Mahsulot kodi</label>
+              <input pInputText formControlName="code" class="w-full" />
+            </p-floatlabel>
+          </div>
+
+          <!-- 💰 Narx -->
+          <div class="col-span-1">
+              <p-float-label variant="in">
+                <p-input-number mode="currency"  id="price" formControlName="price"  currency="UZS" class="w-full"/>
+                <label for="price">Narxi</label>
+              </p-float-label>
+          </div>
+
+          <!-- 📄 Tavsif -->
+          <div class="col-span-2">
+            <p-floatlabel variant="in">
+              <textarea pInputText id="description" formControlName="description" class="w-full" autocomplete="off" ></textarea>
+              <label for="description">Tavsif</label>
+            </p-floatlabel>
+          </div>
+
+          <!-- 🖼️ Rasm URL -->
+          <div class="col-span-2">
+            <p-fileupload
+                name="images"
+                [customUpload]="true"
+                [multiple]="true"
+                accept="image/*"
+                (uploadHandler)="onUpload($event)"
+                (onSelect)="onSelect($event)"
+                [showUploadButton]="false"
+                [showCancelButton]="false"
+              >
+                <ng-template #header></ng-template>
+
+                <!-- CONTENT: Square uslubidagi drag&drop + gallery -->
+                <ng-template
+                  #content
+                  let-files
+                  let-chooseCallback="chooseCallback"
+                  let-removeFileCallback="removeFileCallback"
+                >
+                  <!-- Drag & Drop zona -->
+                  @if (!(((files?.length ?? 0) + (gallerySelected?.length ?? 0)) > 0)) {
+                    <div class="rounded-xl border border-dashed border-[var(--surface-border)] bg-[var(--surface-card)] p-6 text-center cursor-pointer" (click)="chooseCallback()">
+                      <div class="flex items-center justify-center gap-3 text-[var(--text-color-secondary)]">
+                        <i class="pi pi-images text-xl"></i>
+                        <span class="text-sm">Rasmlarni ko'tarib kelib tashlang,</span>
+                        <button type="button" class="text-sm text-primary underline" (click)="$event.stopPropagation(); chooseCallback();">
+                          faylarni oching
+                        </button>
+                        <span class="text-sm">yoki</span>
+                        <button type="button" class="text-sm text-primary underline" (click)="$event.stopPropagation(); openGallery();">
+                          rasmlar to'plamidan tanlang
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  <!-- Tanlangan rasmlar: local + gallery qo‘shilganlar -->
+                  <div>
+                    <div class="flex flex-wrap gap-3">
+                      <!-- LOCAL (p-fileupload) fayllar -->
+                      @for (file of files; track file.id; let i = $index) {
+                        <div class="group relative w-20 h-20 rounded-xl border border-[var(--surface-border)]
+                        bg-[var(--surface-card)] overflow-hidden">
+                          <img [src]="file.objectURL" [alt]="file.name" class="w-full h-full object-cover select-none" />
+                          <!-- hover 'X' -->
+                          <button type="button"
+                                  class="absolute inset-0 hidden group-hover:flex items-start justify-end p-1"
+                                  (click)="onRemoveFile(file, i, removeFileCallback)">
+                <span class="bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                  <i class="pi pi-times text-xs"></i>
+                </span>
+                          </button>
+                        </div>
+                      }
+                      <!-- GALLERY dan tanlanganlar -->
+                      @for (img of gallerySelected; track img.id) {
+                        <div class="group relative w-20 h-20 rounded-xl border border-[var(--surface-border)]
+                        bg-[var(--surface-card)] overflow-hidden">
+                          <img [src]="img.url" [alt]="img.name" class="w-full h-full object-cover select-none" />
+                          <button type="button"
+                                  class="absolute inset-0 hidden group-hover:flex items-start justify-end p-1"
+                                  (click)="removeFromGallery(img.id)">
+                                  <span class="bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                  <i class="pi pi-times text-xs"></i>
+                </span>
+                          </button>
+                        </div>
+                      }
+
+                      @if (((files?.length ?? 0) + (gallerySelected?.length ?? 0) > 0)) {
+                          <!-- '+' karta — qo‘shimcha qo‘shish -->
+                        <button type="button"
+                                class="w-20 h-20 rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)]
+                           flex items-center justify-center hover:bg-[var(--surface-hover)]"
+                                (click)="chooseCallback()">
+                          <i class="pi pi-plus text-lg"></i>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </ng-template>
+              </p-fileupload>
+
+            <p-floatlabel variant="in" class="pt-2">
+              <label>Asosiy rasm URL</label>
+              <input pInputText formControlName="primaryImageUrl" class="w-full" />
+            </p-floatlabel>
+          </div>
+
+          <!-- 🏷️ SKU kodi -->
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <label>SKU kodi</label>
+              <input pInputText formControlName="skuCode" class="w-full" />
+            </p-floatlabel>
+          </div>
+
+          <!-- 🔢 Barcode -->
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <label>Shtrix-kod</label>
+              <input pInputText formControlName="barcode" class="w-full" />
+            </p-floatlabel>
+          </div>
+
+          <!-- 🏭 Brend -->
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <label>Brend</label>
+              <input pInputText formControlName="brand" class="w-full" />
+            </p-floatlabel>
+          </div>
+
+          <!-- ⚖️ Birlik -->
+          <div class="col-span-1">
+            <p-floatlabel variant="in">
+              <p-select
+                [options]="unitOptions"
+                optionLabel="label"
+                optionValue="value"
+                formControlName="unit"
+                class="w-full"
+              ></p-select>
+              <label for="itemType">O'lchov birligi</label>
+            </p-floatlabel>
+          </div>
+
+        </form>
+        <div class="col-span-1 flex flex-col gap-4">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <!-- Categories -->
+            <p-panel header="Kategoriyasi">
+              <p class="flex gap-2 text-xs mb-3">
+                Tovar kategoriyalari mavjud bo'lmasa
+                <a routerLink="/items/category" target="_blank" pButton>
+                  <span pButtonLabel>qo'shish</span>
+                </a>
+              </p>
+              <p-select
+                [options]="categoryOptions"
+                formControlName="categoryId"
+                optionLabel="label"
+                optionValue="id"
+                class="w-full"
+              ></p-select>
+            </p-panel>
+
+            <!-- Status -->
+            <p-panel header="Status">
+                <div class="col-span-1">
+                  <p-selectButton
+                    [options]="activeOptions"
+                    formControlName="isActive"
+                    optionLabel="label"
+                    optionValue="value"
+                  ></p-selectButton>
+                </div>
+            </p-panel>
+          </form>
+          <!-- (Optional) Preview -->
+          <p-panel header="Rasm korinishi">
+            <div class="rounded-md p-3 flex items-center justify-center h-32">
+              @if(form.value?.primaryImageUrl) {
+                <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>
+              } @else if (!form.value?.primaryImageUrl){
+                <span class="text-sm">Rasm topilmadi</span>
+              }
+            </div>
+          </p-panel>
+        </div>
     </div>
   </p-scrollPanel>
 </p-dialog>
