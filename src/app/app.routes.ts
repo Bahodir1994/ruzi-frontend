@@ -8,6 +8,7 @@ import {Warehouse} from './modules/settings/account/business-info/warehouse/ware
 import {PurchaseOrder} from './modules/settings/account/business-info/purchase-order/purchase-order';
 import {Supplier} from './modules/settings/account/business-info/supplier/supplier';
 import {canActivateAuthGuard} from './configuration/authentication/auth.guard';
+import {Image} from './modules/items/image/image';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,15 @@ export const routes: Routes = [
               roles: [],
               title: 'Kategoriyalar',
               breadcrumb: 'Kategoriyalar'
+            }
+          },
+          {
+            path: 'image',
+            component: Image,
+            data: {
+              roles: [],
+              title: 'Rasmlar katalogi',
+              breadcrumb: 'Rasmlar katalogi'
             }
           },
           {

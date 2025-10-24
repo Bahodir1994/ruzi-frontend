@@ -20,6 +20,13 @@
         "permissions": []
       },
       {
+        "label": "Rasmlar katalogi",
+        "icon": "pi pi-stop",
+        "type": "link",
+        "route": "image",
+        "permissions": []
+      },
+      {
         "label": "O'lchov birligi",
         "icon": "pi pi-stop",
         "type": "link",

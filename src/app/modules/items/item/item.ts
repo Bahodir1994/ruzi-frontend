@@ -65,7 +65,6 @@ interface Actions {
     ButtonLabel,
     Panel,
     FileUpload,
-    Checkbox,
     MultiSelect
   ],
   templateUrl: './item.html',
