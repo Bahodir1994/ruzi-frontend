@@ -3,20 +3,28 @@ import {inject} from '@angular/core';
 import {catchError, tap, throwError} from 'rxjs';
 import {ValidationService} from '../../service/validations/validation.service';
 import {FormStateService} from '../../service/states/form-state.service';
-import {MessageService} from 'primeng/api';
+import {MessageService, ToastMessageOptions} from 'primeng/api';
 import {MessageEnum} from '../../component/enums/MessageEnum';
 import {apiConfigData} from '../resursurls/apiConfigData';
+import {TranslateService} from '@ngx-translate/core';
+
+const activeMessages = new Map<string, number>();
 
 export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
   const validationService = inject(ValidationService);
   const formStateService = inject(FormStateService);
   const messageService = inject(MessageService);
+  const translateService = inject(TranslateService);
 
   const findApiConfig = (url: string, method: string) => {
+    const normalizedUrl = url.split('?')[0].replace(/\/+$/, '');
     for (const module of apiConfigData) {
       for (const api of module.list) {
-        const normalizedReqUrl = req.url.split('?')[0]; // query paramsni olib tashlaymiz
-        if (normalizedReqUrl.endsWith(api.url)) {
+        const apiUrl = api.url.replace(/\/+$/, '');
+        if (
+          normalizedUrl.endsWith(apiUrl) &&
+          api.method.toLowerCase() === method.toLowerCase()
+        ) {
           return api;
         }
       }
@@ -24,55 +32,69 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
     return null;
   };
 
+  const showUniqueToast = (msg: ToastMessageOptions) => {
+    const key = `${msg.severity}|${msg.summary}|${msg.detail}`;
+    const now = Date.now();
+    if (activeMessages.has(key) && now - (activeMessages.get(key) || 0) < 2000) return;
+    activeMessages.set(key, now);
+    messageService.add(msg);
+    setTimeout(() => activeMessages.delete(key), 5000);
+  };
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const apiConfig = findApiConfig(req.url, req.method);
-      //const forms = formStateService.getForms();
 
-      if (apiConfig?.showWarning && error.status === 400) {
-        const forms = formStateService.getForms();
+      if (apiConfig?.showWarning) {
+        let msg: ToastMessageOptions | null = null;
 
-        for (const form of forms) {
-          validationService.handleApiErrors(error.error.data.errors, form);
+        switch (error.status) {
+          case 400:
+            const forms = formStateService.getForms();
+            for (const form of forms) {
+              validationService.handleApiErrors(error.error.data?.errors, form);
+            }
+            msg = {
+              severity: 'error',
+              summary: MessageEnum.CONFIRM_REJECT,
+              detail: MessageEnum.CONFIRM_REJECT_400,
+            };
+            break;
+
+          case 403:
+            msg = {
+              severity: 'error',
+              summary: MessageEnum.CONFIRM_REJECT,
+              detail: error.error.message,
+            };
+            break;
+
+          case 422:
+            msg = {
+              severity: 'error',
+              summary: MessageEnum.CONFIRM_REJECT,
+              detail: error.error.message,
+            };
+            break;
+
+          case 404:
+            msg = {
+              severity: 'error',
+              summary: MessageEnum.CONFIRM_REJECT,
+              detail: MessageEnum.CONFIRM_REJECT_404,
+            };
+            break;
+
+          case 500:
+            msg = {
+              severity: 'error',
+              summary: MessageEnum.CONFIRM_REJECT,
+              detail: MessageEnum.CONFIRM_REJECT_500,
+            };
+            break;
         }
 
-        messageService.add({
-          severity: 'error',
-          summary: MessageEnum.CONFIRM_REJECT,
-          detail: MessageEnum.CONFIRM_REJECT_400,
-        });
-      }
-
-      if (apiConfig?.showWarning && error.status === 403) {
-        messageService.add({
-          severity: 'error',
-          summary: MessageEnum.CONFIRM_REJECT,
-          detail: error.error.message,
-        });
-      }
-
-      if (apiConfig?.showWarning && error.status === 422) {
-        messageService.add({
-          severity: 'error',
-          summary: MessageEnum.CONFIRM_REJECT,
-          detail: error.error.message,
-        });
-      }
-
-      if (apiConfig?.showWarning && error.status === 404) {
-        messageService.add({
-          severity: 'error',
-          summary: MessageEnum.CONFIRM_REJECT,
-          detail: MessageEnum.CONFIRM_REJECT_404,
-        });
-      }
-
-      if (apiConfig?.showWarning && error.status === 500) {
-        messageService.add({
-          severity: 'error',
-          summary: MessageEnum.CONFIRM_REJECT,
-          detail: MessageEnum.CONFIRM_REJECT_500,
-        });
+        if (msg) showUniqueToast(msg);
       }
 
       return throwError(() => error);
@@ -83,16 +105,18 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
 
         if (apiConfig?.showSuccess) {
           if (event.status === 200) {
-            messageService.add({
-              severity: 'success',
-              summary: MessageEnum.CONFIRM_SUCCESS,
-              detail: MessageEnum.CONFIRM_SUCCESS_200,
+            showUniqueToast({
+              icon: 'pi pi-check-circle text-green-600',
+              severity: 'contrast',
+              summary: translateService.instant(MessageEnum.CONFIRM_SUCCESS),
+              detail: translateService.instant(MessageEnum.CONFIRM_SUCCESS_200),
             });
           }
 
           if (event.status === 204) {
-            messageService.add({
-              severity: 'success',
+            showUniqueToast({
+              icon: 'pi pi-check-circle text-green-600',
+              severity: 'contrast',
               summary: MessageEnum.CONFIRM_SUCCESS,
               detail: MessageEnum.CONFIRM_SUCCESS_204,
             });
@@ -101,7 +125,7 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
           if (event.status === 302) {
             const redirectUrl = event.headers.get('Location');
             if (redirectUrl) {
-              window.location.href = redirectUrl;  // Foydalanuvchini Magic Linkga yo'naltirish
+              window.location.href = redirectUrl;
             }
           }
         }

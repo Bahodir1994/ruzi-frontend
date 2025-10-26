@@ -7,7 +7,7 @@ import {Unit} from '../../modules/items/unit/unit';
 @Injectable({
   providedIn: 'root'
 })
-export class PermissionService implements OnInit{
+export class PermissionService implements OnInit {
   private userRoles: string[] = [];
 
   private permissions = new Map<Function, Record<string, {
@@ -40,7 +40,8 @@ export class PermissionService implements OnInit{
     ]
   ]);
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+  }
 
   canAccess(component: Function, key: string, status: string): boolean {
     const permission = this.permissions.get(component)?.[key];

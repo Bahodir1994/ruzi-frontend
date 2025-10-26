@@ -108,6 +108,7 @@ export class Cashbox implements OnInit, AfterViewInit {
       if (input) (input as HTMLInputElement).focus();
     }, 50);
   }
+
   onPopoverHide() {
     this.popoverOpen = false;
   }
@@ -126,6 +127,7 @@ export class Cashbox implements OnInit, AfterViewInit {
     action(); // darhol bajar
     this.holdInterval = setInterval(action, 120);
   }
+
   stopHold() {
     if (this.holdInterval) {
       clearInterval(this.holdInterval);
@@ -245,7 +247,7 @@ export class Cashbox implements OnInit, AfterViewInit {
         icon: 'pi pi-percentage',
         command: () => this.openEditPrice(true)
       },
-      { separator: true },
+      {separator: true},
       {
         label: 'O‘chirish',
         icon: 'pi pi-trash',
@@ -379,7 +381,7 @@ export class Cashbox implements OnInit, AfterViewInit {
 
     // alt birlikda qo‘shish uchun quantity = 1, narx = asosiy narx / conversionRate
     const conversionRate = item.conversionRate || 1;
-    const altPrice = item.altSalePrice? item.altSalePrice : 0.00;
+    const altPrice = item.altSalePrice ? item.altSalePrice : 0.00;
 
     const dto: AddCartItemDto = {
       sessionId: this.cartSessionModel.id,

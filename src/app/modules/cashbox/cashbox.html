@@ -1,5 +1,6 @@
 <div class="flex h-screen w-screen">
-  <p-splitter class="w-full" gutterSize="10" panelStyleClass="shadow-lg" [panelSizes]="[60, 40]" [minSizes]="[60, 40]" [style]="{border: '0!important'}">
+  <p-splitter class="w-full" gutterSize="10" panelStyleClass="shadow-lg" [panelSizes]="[60, 40]" [minSizes]="[60, 40]"
+              [style]="{border: '0!important'}">
     <ng-template #panel>
       <div class="flex flex-col h-full">
         <div class="p-1 shadow-sm flex-none bg-[var(--p-primary-color)]">
@@ -213,7 +214,7 @@
                                     'text-red-500 font-semibold': product.availableAlt < 3,
                                     'text-surface-900 dark:text-surface-0 font-semibold': product.availableAlt >= 3
                                   }"
-                                                          >
+                              >
                                   {{ formatStock(product.availableAltQuantity, product.conversionRate, product.altUnitName || product.unitName) }}
                                 </span>
                             </div>
@@ -498,7 +499,7 @@
     </div>
 
     <!-- Minimal narx -->
-    @if(minimalPrice && minimalPrice > 0){
+    @if (minimalPrice && minimalPrice > 0) {
       <div class="flex items-center justify-between">
         <span class="text-sm text-gray-500">Minimal narx:</span>
         <span [ngClass]="{'text-amber-600 font-medium': editedPrice < minimalPrice}">
@@ -590,7 +591,7 @@
 </p-dialog>
 
 
-@if(cartSessionModel){
+@if (cartSessionModel) {
   <app-payments-dialog
     [visible]="payVisible"
     [cartSessionId]="cartSessionModel.id"

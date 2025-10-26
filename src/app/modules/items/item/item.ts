@@ -9,29 +9,20 @@ import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
 import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
-import {DecimalPipe, NgForOf, NgIf} from '@angular/common';
+import {DecimalPipe} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
 import {HasRolesDirective} from 'keycloak-angular';
 import {Select} from 'primeng/select';
 import {SelectButton} from 'primeng/selectbutton';
-import {Textarea} from 'primeng/textarea';
 import {FloatLabel} from 'primeng/floatlabel';
 import {ScrollPanel} from 'primeng/scrollpanel';
-import {AnimateOnScroll} from 'primeng/animateonscroll';
-import {InputMask} from 'primeng/inputmask';
 import {InputNumber} from 'primeng/inputnumber';
-import {InputGroup} from 'primeng/inputgroup';
-import {InputGroupAddon} from 'primeng/inputgroupaddon';
-import {IftaLabel} from 'primeng/iftalabel';
 import {RouterLink} from '@angular/router';
-import {Card} from 'primeng/card';
 import {Panel} from 'primeng/panel';
-import {Badge} from 'primeng/badge';
 import {FileUpload} from 'primeng/fileupload';
 import {PrimeNG} from 'primeng/config';
-import {Checkbox} from 'primeng/checkbox';
 import {MultiSelect} from 'primeng/multiselect';
 
 type GalleryItem = { id: string; url: string; name: string; createdAt: string };
@@ -74,30 +65,30 @@ interface Actions {
 })
 export class Item {
   itemTypeOption = [
-    { icon: 'cutlery.png', id: '001', label: 'Oziq-ovqat maxsulotlari' },
-    { icon: 'web-maintenance.png', id: '002', label: 'Qurilish materiallari' },
-    { icon: 'cutlery.png', id: '003', label: 'Elektronika tovarlari' },
-    { icon: 'web-maintenance.png', id: '004', label: 'Kiyim-Kechak maxsulotlari' },
-    { icon: 'cutlery.png', id: '005', label: 'Tibbiyot maxsulotlari' },
-    { icon: 'web-maintenance.png', id: '005', label: 'XOZ tovarlar' },
+    {icon: 'cutlery.png', id: '001', label: 'Oziq-ovqat maxsulotlari'},
+    {icon: 'web-maintenance.png', id: '002', label: 'Qurilish materiallari'},
+    {icon: 'cutlery.png', id: '003', label: 'Elektronika tovarlari'},
+    {icon: 'web-maintenance.png', id: '004', label: 'Kiyim-Kechak maxsulotlari'},
+    {icon: 'cutlery.png', id: '005', label: 'Tibbiyot maxsulotlari'},
+    {icon: 'web-maintenance.png', id: '005', label: 'XOZ tovarlar'},
   ];
   categoryOptions = [
-    { id: '1111-aaaa', label: 'Elektronika' },
-    { id: '2222-bbbb', label: 'Aksessuarlar' },
+    {id: '1111-aaaa', label: 'Elektronika'},
+    {id: '2222-bbbb', label: 'Aksessuarlar'},
   ];
   unitOptions = [
-    { label: 'dona', value: 'dona' },
-    { label: 'kg', value: 'kg' },
-    { label: 'l', value: 'l' },
+    {label: 'dona', value: 'dona'},
+    {label: 'kg', value: 'kg'},
+    {label: 'l', value: 'l'},
   ];
   activeOptions = [
-    { label: 'Aktiv', value: 'true' },
-    { label: 'Nofaol', value: 'false' },
+    {label: 'Aktiv', value: 'true'},
+    {label: 'Nofaol', value: 'false'},
   ];
 
   files = [];
-  totalSize : number = 0;
-  totalSizePercent : number = 0;
+  totalSize: number = 0;
+  totalSizePercent: number = 0;
 
   public permissions: Record<string, boolean> = {};
 
@@ -165,6 +156,7 @@ export class Item {
     });
 
   }
+
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(Item, 'add_new_product', status)
@@ -185,6 +177,7 @@ export class Item {
       this.isLoading = false;
     }
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
       this.dataTableInputProductModel.start = event.first;
@@ -196,23 +189,26 @@ export class Item {
   get hasNY(): boolean {
     return this.selectedActions?.some(a => a.code === 'NY') ?? false;
   }
+
   disableIfPrereqMissing = (opt: any): boolean => {
     return opt.code === 'RM' && !this.hasNY;
   };
+
   onActionsChange() {
     if (!this.hasNY) {
       this.selectedActions = (this.selectedActions ?? []).filter(a => a.code !== 'RM');
     }
   }
+
   openDialog() {
     this.visibleProductModal = true;
   }
 
   galleryAll: GalleryItem[] = [
     // demo ma'lumotlar (backenddan olasiz)
-    { id: '1', url: '/assets/demo/food1.jpg', name: 'caesar_salad.png', createdAt: '2025-08-18' },
-    { id: '2', url: '/assets/demo/steak.png',        name: 'steak.png',        createdAt: '2025-08-18' },
-    { id: '3', url: '/assets/demo/burger.png',       name: 'burger.png',       createdAt: '2025-08-18' },
+    {id: '1', url: '/assets/demo/food1.jpg', name: 'caesar_salad.png', createdAt: '2025-08-18'},
+    {id: '2', url: '/assets/demo/steak.png', name: 'steak.png', createdAt: '2025-08-18'},
+    {id: '3', url: '/assets/demo/burger.png', name: 'burger.png', createdAt: '2025-08-18'},
   ];
   galleryFiltered: GalleryItem[] = [...this.galleryAll];
   gallerySelected: GalleryItem[] = []; // tanlangan (UIga qo'shilgan) rasmlar
@@ -221,27 +217,30 @@ export class Item {
   galleryVisible = false;
   galleryQuery = '';
   sortOptions = [
-    { label: 'Newest', value: 'newest' },
-    { label: 'Oldest', value: 'oldest' },
-    { label: 'A → Z',  value: 'az'     },
-    { label: 'Z → A',  value: 'za'     },
+    {label: 'Newest', value: 'newest'},
+    {label: 'Oldest', value: 'oldest'},
+    {label: 'A → Z', value: 'az'},
+    {label: 'Z → A', value: 'za'},
   ];
-  sortValue: 'newest'|'oldest'|'az'|'za' = 'newest';
+  sortValue: 'newest' | 'oldest' | 'az' | 'za' = 'newest';
 
   // ---- FILEUPLOAD HANDLERS ----
   onSelect(e: any) {
     // bu yerda faqat preview ko'rsatiladi; uploadni keyin o'zingiz API bilan qilasiz
     // e.files — p-fileupload ichidagi local fayllar
   }
+
   onUpload(e: any) {
     // kerak bo'lsa backendga yuborasiz (FormData bilan)
     // const form = new FormData();
     // for (const f of e.files) form.append('files', f, f.name);
     // this.http.post('/api/upload', form).subscribe();
   }
+
   onRemoveFile(file: any, index: number, removeFileCallback: (index: number) => void) {
     removeFileCallback(index);
   }
+
   // ---- GALLERY DIALOG ----
   openGallery() {
     this.picked.clear();
@@ -250,6 +249,7 @@ export class Item {
     this.sortValue = 'newest';
     this.galleryVisible = true;
   }
+
   filterGallery() {
     const q = this.galleryQuery.trim().toLowerCase();
     const base = [...this.galleryAll];
@@ -257,29 +257,44 @@ export class Item {
       q ? base.filter(x => x.name.toLowerCase().includes(q)) : base;
     this.sortGallery();
   }
+
   sortGallery() {
     const arr = [...this.galleryFiltered];
     switch (this.sortValue) {
-      case 'newest': arr.sort((a,b)=> b.createdAt.localeCompare(a.createdAt)); break;
-      case 'oldest': arr.sort((a,b)=> a.createdAt.localeCompare(b.createdAt)); break;
-      case 'az':     arr.sort((a,b)=> a.name.localeCompare(b.name)); break;
-      case 'za':     arr.sort((a,b)=> b.name.localeCompare(a.name)); break;
+      case 'newest':
+        arr.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        break;
+      case 'oldest':
+        arr.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        break;
+      case 'az':
+        arr.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'za':
+        arr.sort((a, b) => b.name.localeCompare(a.name));
+        break;
     }
     this.galleryFiltered = arr;
   }
+
   togglePick(id: string) {
     this.picked.has(id) ? this.picked.delete(id) : this.picked.add(id);
   }
+
   applyPicked() {
     const toAdd = this.galleryAll.filter(x => this.picked.has(x.id));
     // dublikat bo'lmasin
     const existing = new Set(this.gallerySelected.map(x => x.id));
-    toAdd.forEach(x => { if (!existing.has(x.id)) this.gallerySelected.push(x); });
+    toAdd.forEach(x => {
+      if (!existing.has(x.id)) this.gallerySelected.push(x);
+    });
     this.galleryVisible = false;
   }
+
   removeFromGallery(id: string) {
     this.gallerySelected = this.gallerySelected.filter(x => x.id !== id);
   }
+
   // "Upload new images" — dialogdan ham fayl tanlatish (p-fileupload ni trigger qilish)
   triggerFileFromDialog() {
     this.galleryVisible = false; // ixtiyoriy
@@ -292,22 +307,29 @@ export class Item {
   choose(event: any, callback: () => void) {
     callback();
   }
-  onRemoveTemplatingFile(event: any, file: { size: any; }, removeFileCallback: (arg0: any, arg1: any) => void, index: any) {
+
+  onRemoveTemplatingFile(event: any, file: {
+    size: any;
+  }, removeFileCallback: (arg0: any, arg1: any) => void, index: any) {
     removeFileCallback(event, index);
     this.totalSize -= parseInt(this.formatSize(file.size));
     this.totalSizePercent = this.totalSize / 10;
   }
+
   onClearTemplatingUpload(clear: () => void) {
     clear();
     this.totalSize = 0;
     this.totalSizePercent = 0;
   }
+
   onSelectedFiles(event: any) {
     this.files = event.currentFiles;
   }
+
   uploadEvent(callback: () => void) {
     callback();
   }
+
   formatSize(bytes: number) {
     const k = 1024;
     const dm = 3;

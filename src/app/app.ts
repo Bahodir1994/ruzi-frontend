@@ -35,7 +35,8 @@ export class App implements OnInit {
     private authService: AuthService,
     private apiConfigService: ApiConfigService,
     private primengLocale: PrimengLocaleService
-  ) {}
+  ) {
+  }
 
   async ngOnInit() {
     this.isMobile = this.deviceService.isMobile();

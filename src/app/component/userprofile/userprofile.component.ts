@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { ToastModule } from "primeng/toast";
-import { ConfirmPopupModule } from "primeng/confirmpopup";
-import { Button } from "primeng/button";
-import { ConfirmationService, MessageService } from "primeng/api";
-import { TagModule } from "primeng/tag";
-import { ListboxModule } from "primeng/listbox";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NgForOf, NgIf } from "@angular/common";
-import { InputIconModule } from "primeng/inputicon";
-import { Menu } from 'primeng/menu';
-import { Panel } from 'primeng/panel';
-import { Tooltip } from 'primeng/tooltip';
-import { Divider } from 'primeng/divider';
-import { ScrollPanel } from 'primeng/scrollpanel';
-import { UserGroups, UserRoleList } from './userprofile';
-import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../configuration/authentication/auth.service';
-import { KeycloakProfile } from 'keycloak-js';
+import {Component, OnInit} from '@angular/core';
+import {ToastModule} from "primeng/toast";
+import {ConfirmPopupModule} from "primeng/confirmpopup";
+import {Button} from "primeng/button";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {TagModule} from "primeng/tag";
+import {ListboxModule} from "primeng/listbox";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {NgForOf, NgIf} from "@angular/common";
+import {InputIconModule} from "primeng/inputicon";
+import {Menu} from 'primeng/menu';
+import {Panel} from 'primeng/panel';
+import {Tooltip} from 'primeng/tooltip';
+import {Divider} from 'primeng/divider';
+import {ScrollPanel} from 'primeng/scrollpanel';
+import {UserGroups, UserRoleList} from './userprofile';
+import {TranslateService} from '@ngx-translate/core';
+import {AuthService} from '../../configuration/authentication/auth.service';
+import {KeycloakProfile} from 'keycloak-js';
 
 @Component({
   selector: 'app-userprofile',
@@ -51,7 +51,8 @@ export class UserprofileComponent implements OnInit {
   constructor(
     protected authService: AuthService,
     private translateService: TranslateService
-  ) {}
+  ) {
+  }
 
   async ngOnInit() {
     try {

@@ -1,0 +1,7 @@
+:host ::ng-deep .p-virtualscroller-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* istasangiz: center */
+  align-content: flex-start;
+  width: 100%;
+}

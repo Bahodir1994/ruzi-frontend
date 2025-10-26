@@ -59,7 +59,17 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
-      }
+      },
+      {
+        url: "/route-category/create",
+        method: "post",
+        label: "create_category",
+        comment: "guruh qoshish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {
@@ -302,6 +312,76 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       }
+    ]
+  },
+  {
+    module: "images",
+    // host: "http://192.168.224.38:9050",
+    host: "http://localhost:9050",
+    ssl: false,
+    active: true,
+    list: [
+      {
+        url: "/route-file/crud",
+        method: "post",
+        label: "create_image",
+        comment: "rasm saqlash",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-file/crud",
+        method: "get",
+        label: "read_image",
+        comment: "rasmlar ro'yxati (path lar)",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-file/crud/page",
+        method: "get",
+        label: "image_table",
+        comment: "rasmlar ro'yxati (page)",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-file/crud",
+        method: "get",
+        label: "download_image",
+        comment: "rasmni yukloab olish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-file/crud",
+        method: "patch",
+        label: "patch_image",
+        comment: "rasm nomini ozgartirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-file/crud",
+        method: "delete",
+        label: "delete_image",
+        comment: "rasmni o'chirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      }
+
     ]
   }
 ]

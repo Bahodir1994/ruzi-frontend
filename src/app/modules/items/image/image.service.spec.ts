@@ -1,13 +1,13 @@
 import {TestBed} from '@angular/core/testing';
 
-import {PrimengLocaleService} from './primeng-locale.service';
+import {ImageService} from './image.service';
 
-describe('PrimengLocaleService', () => {
-  let service: PrimengLocaleService;
+describe('ImageService', () => {
+  let service: ImageService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PrimengLocaleService);
+    service = TestBed.inject(ImageService);
   });
 
   it('should be created', () => {
