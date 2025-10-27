@@ -43,6 +43,8 @@ import {ImageService} from '../image/image.service';
 import {FileUpload} from 'primeng/fileupload';
 import {Select} from 'primeng/select';
 import {RouterLink} from '@angular/router';
+import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
+import {FormStateService} from '../../../service/states/form-state.service';
 
 @Component({
   selector: 'app-category',
@@ -56,7 +58,6 @@ import {RouterLink} from '@angular/router';
     TableModule,
     FormsModule,
     Card,
-    Tag,
     Dialog,
     HasRolesDirective,
     Menu,
@@ -74,6 +75,7 @@ import {RouterLink} from '@angular/router';
     RouterLink,
     ButtonLabel,
     ButtonDirective,
+    ImageFallbackDirective,
   ],
   templateUrl: './category.html',
   standalone: true,
@@ -85,10 +87,14 @@ export class Category {
   actions: MenuItem[] = [];
 
   form!: FormGroup;
+  formSubmitted = false;
   showModalCategory = false;
   showModalSelectItem = false;
   showModalSelectImage = false;
   loadingSelectItem = false;
+
+  isEditMode = false;
+  editingId: string | null = null;
 
   dateStart: Date = new Date();
   dateEnd: Date = new Date();
@@ -148,6 +154,7 @@ export class Category {
     private cdr: ChangeDetectorRef,
     private imageService: ImageService,
     private categoryService: CategoryService,
+    private formStateService: FormStateService,
     private fb: FormBuilder
   ) {}
 
@@ -167,6 +174,8 @@ export class Category {
     this.form = this.fb.group({
       code: ['', [Validators.required, Validators.maxLength(100)]]
     });
+    this.formStateService.setForm(this.form);
+    this.form.updateValueAndValidity();
   }
 
   async loadDataTable() {
@@ -356,21 +365,37 @@ export class Category {
   }
 
   onSubmit() {
+    this.formSubmitted = true;
     if (this.form.invalid) return;
+
+    const primaryImageUrl =
+      this.selectedImages.length > 0
+        ? `${this.selectedImages[0].parentId}/${this.selectedImages[0].docName}`
+        : null;
 
     const itemIds = this.selectedItemModel.map(item => item.id);
     const data = {
+      id: this.editingId,
       ...this.form.value,
       items: itemIds,
-      primaryImageUrl: this.selectedImages[0].parentId + '/' + this.selectedImages[0].docName
+      primaryImageUrl
     }
 
-    this.categoryService.create(data).subscribe({
-      next: () => {
-        this.loadDataTable().then(value => null);
-        this.showModalCategory = false;
-      }
-    });
+    if (this.isEditMode){
+      this.categoryService.update(data).subscribe({
+        next: () => {
+          this.loadDataTable().then(value => null);
+          this.showModalCategory = false;
+        }
+      });
+    } else {
+      this.categoryService.create(data).subscribe({
+        next: () => {
+          this.loadDataTable().then(value => null);
+          this.showModalCategory = false;
+        }
+      });
+    }
   }
 
   toggleMenu(event: Event, menu: any) {
@@ -386,6 +411,48 @@ export class Category {
   openSelectImage() {
     this.showModalSelectImage = true;
     this.readImageList();
+  }
+
+  openCreateCategory() {
+    this.isEditMode = false;
+    this.editingId = null;
+    this.form.reset();
+    this.selectedItemModel = [];
+    this.selectedImages = [];
+    this.showModalCategory = true;
+  }
+
+  resetCategoryDialog() {
+    this.isEditMode = false;
+    this.editingId = null;
+    this.form.reset();
+    this.selectedImages = [];
+    this.selectedItemModel = [];
+  }
+
+  openEditCategory(category: CategoryModel) {
+    this.isEditMode = true;
+    this.editingId = category.id;
+    this.showModalCategory = true;
+
+    // formga mavjud qiymatlarni yuklaymiz
+    this.form.patchValue({
+      code: category.code,
+    });
+
+    // agar rasm va item’lar bor bo‘lsa
+    if (category.primaryImageUrl) {
+      this.selectedImages = [
+        {
+          parentId: category.primaryImageUrl.split('/')[0],
+          docName: category.primaryImageUrl.split('/')[1],
+        },
+      ];
+    }
+
+    if (category.items) {
+      this.selectedItemModel = category.items;
+    }
   }
 
   getVisibleNames(): string {

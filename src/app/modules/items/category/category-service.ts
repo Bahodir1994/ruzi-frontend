@@ -36,6 +36,20 @@ export class CategoryService {
     );
   }
 
+  update(formData: any): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('category', 'update_category').pipe(
+      switchMap(value => {
+        if (!value) throw new Error('URL не был получен');
+        this.moduleUrl = value;
+
+        return this.http.patch<ResponseDto>(
+          `${this.moduleUrl.host}${this.moduleUrl.url}`,
+          formData
+        );
+      })
+    );
+  }
+
   create(formData: any): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('category', 'create_category').pipe(
       switchMap(value => {

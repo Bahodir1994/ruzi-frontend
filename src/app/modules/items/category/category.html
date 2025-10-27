@@ -26,7 +26,7 @@
     }
   </ng-template>
   @if(categoryModel.length === 0){
-      <div
+    <div
         class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
       >
         <i class="pi pi-folder mb-3 text-gray-500" style="font-size: 4rem;"></i>
@@ -40,8 +40,7 @@
           styleClass="shadow shadow-blue-500/50"
           icon="pi pi-file-plus"
           label="Yangi guruh qo'shish"
-          (onClick)="dialog.maximize()"
-          (click)="showModalCategory = true"
+          (onClick)="dialog.maximize(); openCreateCategory()"
         />
       </div>
   } @else {
@@ -71,41 +70,47 @@
     scrollHeight="650px"
     class=""
   >
+    <ng-template pTemplate="header">
+      <tr>
+        <th colspan="2">
+          <div class="flex items-center gap-2">
+            Nomi
+          </div>
+        </th>
+        <th class="text-right">
+          <div class="flex justify-end pr-5 gap-2">
+            Soni
+          </div>
+        </th>
+      </tr>
+    </ng-template>
     <ng-template pTemplate="body" let-item let-i="rowIndex">
       <tr>
+        <td colspan="2">
+          <div class="flex items-center gap-3 pl-20">
+            <div class="md:w-10 h-10 w-10 relative">
+              <img
+                ngSrc="{{ imagePathPrefix + item.primaryImageUrl }}"
+                fill
+                appImageFallback="assets/images/image.png"
+                decoding="async"
+                class="object-cover rounded-md"
+              />
+            </div>
+            <span class="font-bold">{{ item.code  }}</span>
+          </div>
+        </td>
         <td>
-          <div class="grid grid-cols-12 gap-4 p-2 grid-nogutter">
-            <div class="col-span-12">
-              <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div class="md:w-20 h-20 w-20 relative">
-                  <img
-                    ngSrc="{{ imagePathPrefix + item.primaryImageUrl }}"
-                    fill
-                    decoding="async"
-                    class="object-cover rounded-md bg-[url('/assets/images/no-image.png')]"
-                  />
-                </div>
-                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                  <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                    <div>
-                      <span class="font-medium text-secondary text-sm">{{ item.code }}</span>
-                      <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.code }}</div>
-                    </div>
-                  </div>
-                  <div class="flex flex-col md:items-end gap-8">
-                    <div class="flex flex-row-reverse md:flex-row gap-2">
-                      <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ item.items.length }}
-                        ta tovar</span>
-                      <p-button
-                        size="small"
-                        icon="pi pi-shopping-cart"
-                        class="flex-auto md:flex-initial whitespace-nowrap"
-                        label="qo'shish"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div class="flex flex-col items-end gap-8 item-center">
+            <div class="flex flex-row-reverse md:flex-row gap-2 pr-20">
+              <span class="font-semibold my-auto">{{ item.items.length }} ta tovar</span>
+              <p-button
+                size="small"
+                variant="outlined"
+                icon="pi pi-pencil"
+                (onClick)="dialog.maximize(); openEditCategory(item)"
+                class="flex-auto md:flex-initial whitespace-nowrap"
+              />
             </div>
           </div>
         </td>
@@ -113,7 +118,7 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="6" class="text-center">Kategoriya topilmadi</td>
+        <td colspan="3" class="text-center">Kategoriya topilmadi</td>
       </tr>
     </ng-template>
   </p-table>
@@ -130,7 +135,9 @@
   [dismissableMask]="true"
   [style]="{ minWidth: '50rem'}"
   #dialog
-  [baseZIndex]="10000">
+  [baseZIndex]="10000"
+  (onHide)="resetCategoryDialog()"
+>
   <ng-template #header>
     <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
       <div class="flex items-center gap-2">
@@ -165,20 +172,34 @@
         </div>
       </div>
       <div class="justify-self-center text-center">
-        <span class="text-2xl font-semibold">Guruh qo'shish</span>
+        @if (isEditMode){
+          <span class="text-2xl font-semibold">Guruhni o'zgartirish</span>
+        } @else {
+          <span class="text-2xl font-semibold">Guruh qo'shish</span>
+        }
       </div>
       <div class="justify-self-end"></div>
     </div>
   </ng-template>
-
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="p-5 space-y-12 max-w-3xl mx-auto">
     <!-- CATEGORY NAME -->
     <div>
       <p-floatlabel variant="in">
-        <input class="w-full" formControlName="code" pInputText id="value2" autocomplete="off" />
+        <input
+          class="w-full"
+          formControlName="code"
+          pInputText id="value2"
+          autocomplete="off"
+          [ngClass]="{'ng-dirty ng-invalid': form.controls['code'].invalid && formSubmitted}"
+        />
         <label for="value2">Guruh nomi</label>
       </p-floatlabel>
+      @if (form.get('code')?.hasError('apiError')){
+        <small class="pl-2 py-0 my-0 p-error text-red-900">
+          {{ form.get('code')?.getError('apiError') }}
+        </small>
+      }
     </div>
     <!-- IMAGE UPLOAD -->
     <div class="w-full mx-auto items-center gap-2 justify-center border border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition">
@@ -296,7 +317,6 @@
     </div>
   </div>
   </form>
-
 </p-dialog>
 
 <p-dialog

@@ -70,6 +70,16 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
+      {
+        url: "/route-category/update",
+        method: "patch",
+        label: "update_category",
+        comment: "guruhni ozgartirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      }
     ]
   },
   {

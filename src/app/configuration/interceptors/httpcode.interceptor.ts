@@ -56,40 +56,40 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
             }
             msg = {
               severity: 'error',
-              summary: MessageEnum.CONFIRM_REJECT,
-              detail: MessageEnum.CONFIRM_REJECT_400,
+              summary: translateService.instant(MessageEnum.CONFIRM_REJECT),
+              detail: translateService.instant(MessageEnum.CONFIRM_REJECT_400),
             };
             break;
 
           case 403:
             msg = {
               severity: 'error',
-              summary: MessageEnum.CONFIRM_REJECT,
-              detail: error.error.message,
+              summary: translateService.instant(MessageEnum.CONFIRM_REJECT),
+              detail: translateService.instant(error.error.message),
             };
             break;
 
           case 422:
             msg = {
               severity: 'error',
-              summary: MessageEnum.CONFIRM_REJECT,
-              detail: error.error.message,
+              summary: translateService.instant(MessageEnum.CONFIRM_REJECT),
+              detail: translateService.instant(error.error.message),
             };
             break;
 
           case 404:
             msg = {
               severity: 'error',
-              summary: MessageEnum.CONFIRM_REJECT,
-              detail: MessageEnum.CONFIRM_REJECT_404,
+              summary: translateService.instant(MessageEnum.CONFIRM_REJECT),
+              detail: translateService.instant(MessageEnum.CONFIRM_REJECT_404),
             };
             break;
 
           case 500:
             msg = {
               severity: 'error',
-              summary: MessageEnum.CONFIRM_REJECT,
-              detail: MessageEnum.CONFIRM_REJECT_500,
+              summary: translateService.instant(MessageEnum.CONFIRM_REJECT),
+              detail: translateService.instant(MessageEnum.CONFIRM_REJECT_500),
             };
             break;
         }
@@ -117,8 +117,8 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
             showUniqueToast({
               icon: 'pi pi-check-circle text-green-600',
               severity: 'contrast',
-              summary: MessageEnum.CONFIRM_SUCCESS,
-              detail: MessageEnum.CONFIRM_SUCCESS_204,
+              summary: translateService.instant(MessageEnum.CONFIRM_SUCCESS),
+              detail: translateService.instant(MessageEnum.CONFIRM_SUCCESS_204),
             });
           }
 
