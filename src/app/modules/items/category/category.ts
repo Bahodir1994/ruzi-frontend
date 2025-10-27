@@ -6,7 +6,7 @@ import {CategoryService} from './category-service';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {FilterMetadata, MenuItem, PrimeTemplate, SortEvent} from 'primeng/api';
 import {finalize, firstValueFrom} from 'rxjs';
-import {Button, ButtonDirective} from 'primeng/button';
+import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
@@ -27,13 +27,22 @@ import {Panel} from 'primeng/panel';
 import {MultiSelect} from 'primeng/multiselect';
 import {Menu} from 'primeng/menu';
 import {Ripple} from 'primeng/ripple';
-import {NgClass} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 import {Divider} from 'primeng/divider';
 import {FloatLabel} from 'primeng/floatlabel';
 import {ToggleSwitch} from 'primeng/toggleswitch';
 import {ItemModel} from '../item/item-model';
 import {dt} from '@primeuix/themes';
 import {Tooltip} from 'primeng/tooltip';
+import {ProgressSpinner} from 'primeng/progressspinner';
+import {Checkbox} from 'primeng/checkbox';
+import {ScrollPanel} from 'primeng/scrollpanel';
+import {DocumentDto} from '../image/image.model';
+import {ResponseDto} from '../../../configuration/resursurls/responseDto';
+import {ImageService} from '../image/image.service';
+import {FileUpload} from 'primeng/fileupload';
+import {Select} from 'primeng/select';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-category',
@@ -57,6 +66,14 @@ import {Tooltip} from 'primeng/tooltip';
     FloatLabel,
     ToggleSwitch,
     Tooltip,
+    ProgressSpinner,
+    Checkbox,
+    NgOptimizedImage,
+    ScrollPanel,
+    Select,
+    RouterLink,
+    ButtonLabel,
+    ButtonDirective,
   ],
   templateUrl: './category.html',
   standalone: true,
@@ -70,6 +87,7 @@ export class Category {
   form!: FormGroup;
   showModalCategory = false;
   showModalSelectItem = false;
+  showModalSelectImage = false;
   loadingSelectItem = false;
 
   dateStart: Date = new Date();
@@ -85,6 +103,19 @@ export class Category {
   filtersItem: TableFilterEvent = {};
   isLoadingItem: boolean = true;
 
+  imagePathPrefix = 'http://localhost:9000/ruzi/thumb/';
+  searchQuery = '';
+  selectedSort: any;
+  sortOptions = [
+    {label: 'A–Z bo‘yicha', value: 'az'},
+    {label: 'Z–A bo‘yicha', value: 'za'},
+    {label: 'Sana bo‘yicha (oxirgisi birinchi)', value: 'date'}
+  ];
+  filteredImages: DocumentDto[] = [];
+  imagesList: DocumentDto[] = [];
+  selectedImages: any[] = [];
+  isLoadingImage: boolean = true;
+
   categoryModel: CategoryModel[] = [];
   dataTableInputCategoryModel: DataTableInput = {
     draw: 0,
@@ -95,7 +126,7 @@ export class Category {
     columns: [
       {data: 'id', name: 'id', searchable: false, orderable: false, search: {value: '', regex: false}},
       {data: 'code', name: 'code', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {data: 'insTime', name: 'insTime', searchable: false, orderable: false, search: {value: '', regex: false}}
+      {data: 'insTime', name: 'insTime', searchable: false, orderable: true, search: {value: '', regex: false}}
     ]
   }
 
@@ -115,6 +146,7 @@ export class Category {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private imageService: ImageService,
     private categoryService: CategoryService,
     private fb: FormBuilder
   ) {}
@@ -308,23 +340,35 @@ export class Category {
 
   }
 
+  readImageList() {
+    this.isLoadingImage = true;
+
+    this.imageService.read().subscribe({
+      next: (res: ResponseDto) => {
+        if (res.success) {
+          this.isLoadingImage = false
+          this.imagesList = res.data as DocumentDto[];
+          this.applyFilters();
+          this.cdr.detectChanges();
+        }
+      }
+    });
+  }
+
   onSubmit() {
     if (this.form.invalid) return;
-
-    this.selectedItemModel.forEach(value => {
-      console.log(value.id);
-    })
 
     const itemIds = this.selectedItemModel.map(item => item.id);
     const data = {
       ...this.form.value,
-      items: itemIds
+      items: itemIds,
+      primaryImageUrl: this.selectedImages[0].parentId + '/' + this.selectedImages[0].docName
     }
 
     this.categoryService.create(data).subscribe({
       next: () => {
         this.loadDataTable().then(value => null);
-        this.showModalSelectItem = false;
+        this.showModalCategory = false;
       }
     });
   }
@@ -339,6 +383,11 @@ export class Category {
     this.loadDataTableItem().then(value => null)
   }
 
+  openSelectImage() {
+    this.showModalSelectImage = true;
+    this.readImageList();
+  }
+
   getVisibleNames(): string {
     const names = this.selectedItemModel.map(i => i.name);
     const visible = names.slice(0, 3);
@@ -348,5 +397,53 @@ export class Category {
   getHiddenCount(): number {
     const total = this.selectedItemModel.length;
     return total > 3 ? total - 3 : 0;
+  }
+
+  applyFilters() {
+    const query = this.searchQuery.trim().toLowerCase();
+    let list = [...this.imagesList];
+
+    if (query) {
+      list = list.filter(img => (img.docName ?? '').toLowerCase().includes(query));
+    }
+
+    switch (this.selectedSort?.value) {
+      case 'az':
+        list.sort((a, b) => (a.docName ?? '').localeCompare(b.docName ?? ''));
+        break;
+
+      case 'za':
+        list.sort((a, b) => (b.docName ?? '').localeCompare(a.docName ?? ''));
+        break;
+
+      case 'date':
+        list.sort((a, b) => {
+          const da = new Date(a.fileDate ?? '').getTime();
+          const db = new Date(b.fileDate ?? '').getTime();
+          return db - da;
+        });
+        break;
+    }
+
+    this.filteredImages = list;
+  }
+
+  toggleSelection(img: any) {
+    const isSelected = this.isSelected(img);
+
+    // Agar shu rasm allaqachon tanlangan bo‘lsa — uni tozalaymiz
+    if (isSelected) {
+      this.selectedImages = [];
+    }
+    // Aks holda, avvalgi tanlovni tozalab, faqat bitta rasmni tanlaymiz
+    else {
+      this.selectedImages = [img];
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  isSelected(img: any): boolean {
+    return this.selectedImages.some((i) => i.id === img.id);
   }
 }
