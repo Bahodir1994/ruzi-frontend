@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, WritableSignal} from '@angular/core';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
@@ -11,6 +11,8 @@ import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {Dialog} from 'primeng/dialog';
 import {UnitService} from "./unit-service";
+import {HasRolesDirective} from 'keycloak-angular';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-unit',
@@ -21,7 +23,9 @@ import {UnitService} from "./unit-service";
     InputText,
     FormsModule,
     Button,
-    Dialog
+    Dialog,
+    HasRolesDirective,
+    Card
   ],
   templateUrl: './unit.html',
   standalone: true,
@@ -29,11 +33,7 @@ import {UnitService} from "./unit-service";
 })
 export class Unit {
   public permissions: Record<string, boolean> = {};
-  visibleProductModal = false;
-
-  openDialog() {
-    this.visibleProductModal = true;
-  }
+  showModalUnit = false;
 
   totalRecords: number = 0;
   searchValue: string | undefined;
@@ -51,7 +51,6 @@ export class Unit {
       {data: 'name', name: 'name', searchable: true, orderable: false, search: {value: '', regex: false}},
     ]
   }
-
   constructor(
     private unitService: UnitService,
     private cdr: ChangeDetectorRef,
@@ -61,13 +60,6 @@ export class Unit {
 
   ngOnInit(): void {
     this.loadData().then(r => null);
-    this.permission('null');
-  }
-
-  permission(status: string) {
-    this.permissions = {
-      add_new_product: this.permissionService.canAccess(Unit, 'add_new_product', status)
-    };
   }
 
   async loadData() {
@@ -91,5 +83,10 @@ export class Unit {
       this.dataTableInputProductModel.length = event.rows;
       this.loadData().then(r => null);
     }
+  }
+  openDialog() {
+    this.showModalUnit = true;
+  }
+  resetUnitDialog() {
   }
 }
