@@ -1,4 +1,4 @@
-import { ImageFallback } from './image.fallback';
+import {ImageFallback} from './image.fallback';
 
 describe('ImageFallback', () => {
   it('should create an instance', () => {

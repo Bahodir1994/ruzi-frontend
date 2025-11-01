@@ -98,6 +98,16 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-unit/data-list-main",
+        method: "get",
+        label: "unit_list",
+        comment: "o'lchov birligi asosy royxat",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
       }
     ]
   },

@@ -3,28 +3,16 @@ import {TableFilterEvent, TableModule} from 'primeng/table';
 import {CategoryModel} from './category-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {CategoryService} from './category-service';
-import {PermissionService} from '../../../service/validations/permission.service';
 import {FilterMetadata, MenuItem, PrimeTemplate, SortEvent} from 'primeng/api';
-import {finalize, firstValueFrom} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Dialog} from 'primeng/dialog';
 import {Card} from 'primeng/card';
-import {Tag} from "primeng/tag";
 import {HasRolesDirective} from 'keycloak-angular';
-import {Panel} from 'primeng/panel';
-import {MultiSelect} from 'primeng/multiselect';
 import {Menu} from 'primeng/menu';
 import {Ripple} from 'primeng/ripple';
 import {NgClass, NgOptimizedImage} from '@angular/common';
@@ -32,7 +20,6 @@ import {Divider} from 'primeng/divider';
 import {FloatLabel} from 'primeng/floatlabel';
 import {ToggleSwitch} from 'primeng/toggleswitch';
 import {ItemModel} from '../item/item-model';
-import {dt} from '@primeuix/themes';
 import {Tooltip} from 'primeng/tooltip';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Checkbox} from 'primeng/checkbox';
@@ -40,7 +27,6 @@ import {ScrollPanel} from 'primeng/scrollpanel';
 import {DocumentDto} from '../image/image.model';
 import {ResponseDto} from '../../../configuration/resursurls/responseDto';
 import {ImageService} from '../image/image.service';
-import {FileUpload} from 'primeng/fileupload';
 import {Select} from 'primeng/select';
 import {RouterLink} from '@angular/router';
 import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
@@ -156,7 +142,8 @@ export class Category {
     private categoryService: CategoryService,
     private formStateService: FormStateService,
     private fb: FormBuilder
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.actions = [
@@ -238,6 +225,7 @@ export class Category {
       this.isLoading = false;
     }
   }
+
   async loadDataTableItem() {
     this.isLoadingItem = true;
 
@@ -320,6 +308,7 @@ export class Category {
 
     this.loadDataTable().then(r => null);
   }
+
   onSort(event: SortEvent) {
     const sortField = event.field;
     const sortOrder = event.order === 1 ? 'asc' : 'desc';
@@ -331,6 +320,7 @@ export class Category {
       this.loadDataTable().then(() => null);
     }
   }
+
   pageChange(event: any) {
     if (event.first !== this.dataTableInputCategoryModel.start || event.rows !== this.dataTableInputCategoryModel.length) {
       this.dataTableInputCategoryModel.start = event.first;
@@ -345,6 +335,7 @@ export class Category {
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
   private delete() {
 
   }
@@ -381,7 +372,7 @@ export class Category {
       primaryImageUrl
     }
 
-    if (this.isEditMode){
+    if (this.isEditMode) {
       this.categoryService.update(data).subscribe({
         next: () => {
           this.loadDataTable().then(value => null);

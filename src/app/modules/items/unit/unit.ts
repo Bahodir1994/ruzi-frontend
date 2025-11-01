@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, WritableSignal} from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
-import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {UnitModel} from './unit-model';
 import {TableModule} from 'primeng/table';
@@ -51,10 +50,10 @@ export class Unit {
       {data: 'name', name: 'name', searchable: true, orderable: false, search: {value: '', regex: false}},
     ]
   }
+
   constructor(
     private unitService: UnitService,
     private cdr: ChangeDetectorRef,
-    private permissionService: PermissionService
   ) {
   }
 
@@ -84,9 +83,11 @@ export class Unit {
       this.loadData().then(r => null);
     }
   }
+
   openDialog() {
     this.showModalUnit = true;
   }
+
   resetUnitDialog() {
   }
 }

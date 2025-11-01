@@ -1,7 +1,7 @@
 <p-card class="card" xmlns="http://www.w3.org/1999/html">
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">O'lchov birligi</p>
-    @if(unitModel.length > 0){
+    @if (unitModel.length > 0) {
       <div class="flex w-full justify-between gap-2 p-4">
         <p-icon-field iconPosition="right" class="pr-2">
           <p-inputicon class="pi pi-search"></p-inputicon>
@@ -25,7 +25,7 @@
     }
   </ng-template>
 
-  @if(unitModel.length === 0){
+  @if (unitModel.length === 0) {
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
     >
@@ -43,7 +43,7 @@
         (onClick)="openDialog()"
       />
     </div>
-  }@else {
+  } @else {
     <p-table
       size="small"
       #dataTableUnit
@@ -118,6 +118,7 @@
 >
   <div class="grid grid-flow-col grid-rows-2 gap-4 text-center">
     <p class="text-xl">Taqiq</p>
-    <p class="text-red-600">Bu bo'lim vaqtincha yopilgan, qo'shimcha birliklar qo'shish uchun administratorga murojaat qiling</p>
+    <p class="text-red-600">Bu bo'lim vaqtincha yopilgan, qo'shimcha birliklar qo'shish uchun administratorga murojaat
+      qiling</p>
   </div>
 </p-dialog>

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
+import {Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/core';
 
 @Directive({
   standalone: true,
@@ -8,7 +8,8 @@ export class ImageFallbackDirective {
   @Input('appImageFallback') fallbackSrc!: string; // fallback rasmi
   private originalSrc?: string;
 
-  constructor(private el: ElementRef<HTMLImageElement>, private renderer: Renderer2) {}
+  constructor(private el: ElementRef<HTMLImageElement>, private renderer: Renderer2) {
+  }
 
   ngOnInit() {
     // asl src saqlab qo‘yamiz

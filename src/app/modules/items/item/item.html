@@ -157,7 +157,7 @@
 </p-table>
 
 <p-dialog
-  [(visible)]="visibleProductModal"
+  [(visible)]="showItemModal"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
@@ -201,7 +201,7 @@
     </div>
     <div class="grid grid-cols-3 gap-6 max-w-4xl mx-auto">
       <form class="col-span-2 flex flex-col gap-5" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <!-- 🏷️ Mahsulot turi -->
+        <!-- 🏷️ Mahsulot turi --
         <p-floatlabel variant="in">
           <p-select
             id="itemType" inputId="itemType" [options]="itemTypeOption"
@@ -222,168 +222,226 @@
             </ng-template>
           </p-select>
           <label for="itemType">Tovar turi</label>
-        </p-floatlabel>
+        </p-floatlabel>-->
 
         <div class="col-span-1">
           <p-floatlabel variant="in">
-            <input pInputText formControlName="name" class="w-full"/>
+            <input
+              pInputText
+              formControlName="name"
+              class="w-full"
+              [ngClass]="{'ng-dirty ng-invalid': form.controls['name'].invalid && formCreateItemSubmit}"
+            />
             <label>Nomi</label>
           </p-floatlabel>
-
+          @if (form.get('name')?.hasError('apiError')) {
+            <small class="pl-2 py-0 my-0 p-error text-red-900">
+              {{ form.get('name')?.getError('apiError') }}
+            </small>
+          }
         </div>
 
         <!-- 🏷️ Mahsulot kodi -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label>Mahsulot kodi</label>
-            <input pInputText formControlName="code" class="w-full"/>
-          </p-floatlabel>
-        </div>
-
         <!-- 💰 Narx -->
-        <div class="col-span-1">
-          <p-float-label variant="in">
-            <p-input-number mode="currency" id="price" formControlName="price" currency="UZS" class="w-full"/>
-            <label for="price">Narxi</label>
-          </p-float-label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+          <div class="w-full">
+            <div class="relative w-full">
+              <p-floatlabel variant="in" class="block w-full">
+                <input
+                  pInputText
+                  formControlName="code"
+                  id="code"
+                  class="w-full"
+                  [ngClass]="{'ng-dirty ng-invalid': form.controls['code'].invalid && formCreateItemSubmit}"
+                />
+                <label for="code">Mahsulot kodi</label>
+              </p-floatlabel>
+              @if (form.get('code')?.hasError('apiError')) {
+                <small class="pl-2 py-0 my-0 p-error text-red-900">
+                  {{ form.get('code')?.getError('apiError') }}
+                </small>
+              }
+            </div>
+          </div>
+          <div class="w-full">
+            <div class="relative w-full">
+              <p-floatlabel variant="in" class="block w-full">
+                <p-input-number
+                  mode="currency"
+                  id="price"
+                  formControlName="price"
+                  currency="UZS"
+                  class="w-full"
+                  [ngClass]="{'ng-dirty ng-invalid': form.controls['price'].invalid && formCreateItemSubmit}"
+                ></p-input-number>
+                <label for="price">Narxi</label>
+              </p-floatlabel>
+              @if (form.get('price')?.hasError('apiError')) {
+                <small class="pl-2 py-0 my-0 p-error text-red-900">
+                  {{ form.get('price')?.getError('apiError') }}
+                </small>
+              }
+            </div>
+          </div>
         </div>
 
         <!-- 📄 Tavsif -->
         <div class="col-span-2">
           <p-floatlabel variant="in">
-            <textarea pInputText id="description" formControlName="description" class="w-full"
-                      autocomplete="off"></textarea>
+            <textarea
+              pInputText id="description" formControlName="description" class="w-full"
+              autocomplete="off"
+              [ngClass]="{'ng-dirty ng-invalid': form.controls['description'].invalid && formCreateItemSubmit}"
+            ></textarea>
             <label for="description">Tavsif</label>
           </p-floatlabel>
+          @if (form.get('description')?.hasError('apiError')) {
+            <small class="pl-2 py-0 my-0 p-error text-red-900">
+              {{ form.get('description')?.getError('apiError') }}
+            </small>
+          }
         </div>
 
         <!-- 🖼️ Rasm URL -->
         <div class="col-span-2">
-          <p-fileupload
-            name="images"
-            [customUpload]="true"
-            [multiple]="true"
-            accept="image/*"
-            (uploadHandler)="onUpload($event)"
-            (onSelect)="onSelect($event)"
-            [showUploadButton]="false"
-            [showCancelButton]="false"
-          >
-            <ng-template #header></ng-template>
+          <div
+            [ngClass]="{'ng-dirty ng-invalid': form.controls['primaryImageUrl'].invalid && formCreateItemSubmit}"
+            class="w-full mx-auto items-center gap-2 justify-center border border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition">
+            <div class="w-full grid grid-rows-2">
+              <i class="pi pi-image"></i>
+              <p class="text-sm">Tovar rasmni bu yerga olib keling, <a
+                class="text-blue-600 cursor-pointer hover:underline">fayllarni
+                oching</a> yoki
+                <br>
+                <a (click)="openSelectImage()" class="text-blue-600 cursor-pointer hover:underline">mavjud rasmlar
+                  to'plamidan tanlang</a>.
+              </p>
+            </div>
+            @if ((selectedImages.length > 0) && !showModalSelectImage) {
+              <div
+                class="mt-2 mx-auto relative w-28 h-28 rounded-lg overflow-hidden border group shadow-sm hover:shadow-md transition-all duration-200 bg-gray-50"
+              >
+                <img
+                  ngSrc="{{ imagePathPrefix + selectedImages[0].parentId + '/' + selectedImages[0].docName }}"
+                  fill
+                  alt="{{ selectedImages[0].docName }}"
+                  decoding="async"
+                  class="p-2 object-cover w-full h-full transition-transform duration-200 group-hover:scale-105"
+                />
 
-            <!-- CONTENT: Square uslubidagi drag&drop + gallery -->
-            <ng-template
-              #content
-              let-files
-              let-chooseCallback="chooseCallback"
-              let-removeFileCallback="removeFileCallback"
-            >
-              <!-- Drag & Drop zona -->
-              <!--                  @if (!(((files?.length ?? 0) + (gallerySelected?.length ?? 0)) > 0)) {-->
-              <!--                    <div class="rounded-xl border border-dashed border-[var(&#45;&#45;surface-border)] bg-[var(&#45;&#45;surface-card)] p-6 text-center cursor-pointer" (click)="chooseCallback()">-->
-              <!--                      <div class="flex items-center justify-center gap-3 text-[var(&#45;&#45;text-color-secondary)]">-->
-              <!--                        <i class="pi pi-images text-xl"></i>-->
-              <!--                        <span class="text-sm">Rasmlarni ko'tarib kelib tashlang,</span>-->
-              <!--                        <button type="button" class="text-sm text-primary underline" (click)="$event.stopPropagation(); chooseCallback();">-->
-              <!--                          faylarni oching-->
-              <!--                        </button>-->
-              <!--                        <span class="text-sm">yoki</span>-->
-              <!--                        <button type="button" class="text-sm text-primary underline" (click)="$event.stopPropagation(); openGallery();">-->
-              <!--                          rasmlar to'plamidan tanlang-->
-              <!--                        </button>-->
-              <!--                      </div>-->
-              <!--                    </div>-->
-              <!--                  }-->
-              <!-- Tanlangan rasmlar: local + gallery qo‘shilganlar -->
-              <div>
-                <div class="flex flex-wrap gap-3">
-                  <!-- LOCAL (p-fileupload) fayllar -->
-                  @for (file of files; track file.id; let i = $index) {
-                    <div class="group relative w-20 h-20 rounded-xl border border-[var(--surface-border)]
-                        bg-[var(--surface-card)] overflow-hidden">
-                      <img [src]="file.objectURL" [alt]="file.name" class="w-full h-full object-cover select-none"/>
-                      <!-- hover 'X' -->
-                      <button type="button"
-                              class="absolute inset-0 hidden group-hover:flex items-start justify-end p-1"
-                              (click)="onRemoveFile(file, i, removeFileCallback)">
-                <span class="bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                  <i class="pi pi-times text-xs"></i>
-                </span>
-                      </button>
-                    </div>
-                  }
-                  <!-- GALLERY dan tanlanganlar -->
-                  @for (img of gallerySelected; track img.id) {
-                    <div class="group relative w-20 h-20 rounded-xl border border-[var(--surface-border)]
-                        bg-[var(--surface-card)] overflow-hidden">
-                      <img [src]="img.url" [alt]="img.name" class="w-full h-full object-cover select-none"/>
-                      <button type="button"
-                              class="absolute inset-0 hidden group-hover:flex items-start justify-end p-1"
-                              (click)="removeFromGallery(img.id)">
-                                  <span
-                                    class="bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                  <i class="pi pi-times text-xs"></i>
-                </span>
-                      </button>
-                    </div>
-                  }
-
-                  <!--                      @if (((files?.length ?? 0) + (gallerySelected?.length ?? 0) > 0)) {-->
-                  <!--                          &lt;!&ndash; '+' karta — qo‘shimcha qo‘shish &ndash;&gt;-->
-                  <!--                        <button type="button"-->
-                  <!--                                class="w-20 h-20 rounded-xl border border-[var(&#45;&#45;surface-border)] bg-[var(&#45;&#45;surface-card)]-->
-                  <!--                           flex items-center justify-center hover:bg-[var(&#45;&#45;surface-hover)]"-->
-                  <!--                                (click)="chooseCallback()">-->
-                  <!--                          <i class="pi pi-plus text-lg"></i>-->
-                  <!--                        </button>-->
-                  <!--                      }-->
+                <div
+                  class="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-black/40">
+                  <button
+                    type="button"
+                    class="border border-red-500 text-red-500 rounded-full w-10 h-10 flex items-center justify-center
+                 hover:bg-red-500 hover:text-white transition-colors duration-150"
+                    (click)="$event.stopPropagation(); selectedImages = []"
+                    pTooltip="O‘chirish"
+                    tooltipPosition="top"
+                  >
+                    <i class="pi pi-trash text-lg"></i>
+                  </button>
                 </div>
-              </div>
-            </ng-template>
-          </p-fileupload>
 
-          <p-floatlabel variant="in" class="pt-2">
-            <label>Asosiy rasm URL</label>
-            <input pInputText formControlName="primaryImageUrl" class="w-full"/>
-          </p-floatlabel>
+              </div>
+              <div
+                class="text-md text-center py-1 truncate group-hover:bg-white/0"
+                title="{{ selectedImages[0].docName }}"
+              >
+                {{ selectedImages[0].docName }}
+              </div>
+            }
+          </div>
+          @if (form.get('primaryImageUrl')?.hasError('apiError')) {
+            <small class="pl-2 py-0 my-0 p-error text-red-900">
+              {{ form.get('primaryImageUrl')?.getError('apiError') }}
+            </small>
+          }
         </div>
 
         <!-- 🏷️ SKU kodi -->
         <div class="col-span-1">
           <p-floatlabel variant="in">
             <label>SKU kodi</label>
-            <input pInputText formControlName="skuCode" class="w-full"/>
+            <input pInputText formControlName="skuCode" class="w-full"
+                   [ngClass]="{'ng-dirty ng-invalid': form.controls['skuCode'].invalid && formCreateItemSubmit}"
+            />
           </p-floatlabel>
+          @if (form.get('skuCode')?.hasError('apiError')) {
+            <small class="pl-2 py-0 my-0 p-error text-red-900">
+              {{ form.get('skuCode')?.getError('apiError') }}
+            </small>
+          }
         </div>
 
         <!-- 🔢 Barcode -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <label>Shtrix-kod</label>
-            <input pInputText formControlName="barcode" class="w-full"/>
-          </p-floatlabel>
+        <!-- ⚖️ Birlik -->
+        <div class="flex items-start gap-3 w-full">
+          <div class="flex-1 min-h-[90px] flex flex-col justify-start">
+            <p-floatlabel variant="in" class="w-full">
+              <input
+                pInputText
+                formControlName="barcode"
+                id="barcode"
+                class="w-full"
+                [ngClass]="{
+          'ng-dirty ng-invalid': form.controls['barcode'].invalid && formCreateItemSubmit
+        }"
+              />
+              <label for="barcode">Shtrix-kod</label>
+            </p-floatlabel>
+            @if (form.get('barcode')?.hasError('apiError')) {
+              <small class="pl-2 text-red-600 text-xs">
+                {{ form.get('barcode')?.getError('apiError') }}
+              </small>
+            } @else {
+              <small class="invisible pl-2 text-xs">placeholder</small>
+            }
+          </div>
+
+          <div class="w-52 min-h-[90px] flex flex-col justify-start">
+            <p-floatlabel variant="in" class="w-full">
+              <p-select
+                dropdownIcon="pi pi-list"
+                [options]="unitOptions"
+                optionLabel="name"
+                optionValue="code"
+                formControlName="unit"
+                id="itemType"
+                class="w-full"
+                [ngClass]="{
+                  'ng-dirty ng-invalid': form.controls['unit'].invalid && formCreateItemSubmit
+                }"
+              ></p-select>
+              <label for="itemType">O'lchov birligi</label>
+            </p-floatlabel>
+            @if (form.get('unit')?.hasError('apiError')) {
+              <small class="pl-2 text-red-600 text-xs">
+                {{ form.get('unit')?.getError('apiError') }}
+              </small>
+            } @else {
+              <small class="invisible pl-2 text-xs">placeholder</small>
+            }
+          </div>
         </div>
+
 
         <!-- 🏭 Brend -->
         <div class="col-span-1">
           <p-floatlabel variant="in">
             <label>Brend</label>
-            <input pInputText formControlName="brand" class="w-full"/>
-          </p-floatlabel>
-        </div>
-
-        <!-- ⚖️ Birlik -->
-        <div class="col-span-1">
-          <p-floatlabel variant="in">
-            <p-select
-              [options]="unitOptions"
-              optionLabel="label"
-              optionValue="value"
-              formControlName="unit"
+            <input
+              pInputText
+              formControlName="brand"
               class="w-full"
-            ></p-select>
-            <label for="itemType">O'lchov birligi</label>
+              [ngClass]="{'ng-dirty ng-invalid': form.controls['brand'].invalid && formCreateItemSubmit}"
+            />
           </p-floatlabel>
+          @if (form.get('brand')?.hasError('apiError')) {
+            <small class="pl-2 py-0 my-0 p-error text-red-900">
+              {{ form.get('brand')?.getError('apiError') }}
+            </small>
+          }
         </div>
 
       </form>
@@ -397,14 +455,70 @@
                 <span pButtonLabel>qo'shish</span>
               </a>
             </p>
+
             <p-select
-              [options]="categoryOptions"
+              inputId="itemType"
               formControlName="categoryId"
-              optionLabel="label"
+              [options]="categoryOptions"
+              optionLabel="code"
               optionValue="id"
               class="w-full"
-            ></p-select>
+              variant="filled"
+              [filter]="true"
+              filterBy="code"
+              [checkmark]="true"
+              [ngClass]="{
+                'ng-dirty ng-invalid': form.controls['categoryId'].invalid && formCreateItemSubmit
+              }"
+            >
+              <!-- ✅ Tanlangan qiymat -->
+              <ng-template #selectedItem let-selectedOption>
+                @if (selectedOption) {
+                  <div class="flex items-center gap-3">
+                    <div class="relative w-10 h-10 flex-shrink-0">
+                      <img
+                        ngSrc="{{ imagePathPrefix + selectedOption.primaryImageUrl }}"
+                        fill
+                        alt="{{ selectedOption.code }}"
+                        decoding="async"
+                        class="rounded-md object-cover border border-gray-200"
+                      />
+                    </div>
+                    <div class="text-sm font-medium truncate">
+                      {{ selectedOption.code }}
+                    </div>
+                  </div>
+                }
+              </ng-template>
+
+              <!-- ✅ Dropdown elementlari -->
+              <ng-template #item let-opt>
+                <div class="flex items-center gap-3 p-1 w-full border-b border-dashed border-blue-500">
+                  <div class="relative w-10 h-10 flex-shrink-0">
+                    <img
+                      ngSrc="{{ imagePathPrefix + opt.primaryImageUrl }}"
+                      fill
+                      alt="{{ opt.code }}"
+                      decoding="async"
+                      class="rounded-md object-cover border border-gray-200"
+                    />
+                  </div>
+                  <div class="text-sm text-gray-700 font-medium truncate">
+                    {{ opt.code }}
+                  </div>
+                </div>
+              </ng-template>
+            </p-select>
+
+            @if (form.get('categoryId')?.hasError('apiError')) {
+              <small class="pl-2 py-0 my-0 p-error text-red-900">
+                {{ form.get('categoryId')?.getError('apiError') }}
+              </small>
+            }
           </p-panel>
+
+
+          <p-divider></p-divider>
 
           <!-- Status -->
           <p-panel header="Status">
@@ -414,11 +528,19 @@
                 formControlName="isActive"
                 optionLabel="label"
                 optionValue="value"
+                [ngClass]="{'ng-dirty ng-invalid': form.controls['isActive'].invalid && formCreateItemSubmit}"
               ></p-selectButton>
             </div>
+            @if (form.get('isActive')?.hasError('apiError')) {
+              <small class="pl-2 py-0 my-0 p-error text-red-900">
+                {{ form.get('isActive')?.getError('apiError') }}
+              </small>
+            }
           </p-panel>
         </form>
         <!-- (Optional) Preview -->
+        <p-divider></p-divider>
+
         <p-panel header="Rasm korinishi">
           <div class="rounded-md p-3 flex items-center justify-center h-32">
             @if (form.value?.primaryImageUrl) {
@@ -433,4 +555,108 @@
   </p-scrollPanel>
 </p-dialog>
 
+<p-dialog
+  [(visible)]="showModalSelectImage"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '40rem', minHeight: '40rem'}"
+  [baseZIndex]="1100"
+>
+  <ng-template #header>
+    <div class="w-full flex justify-between">
+      <span class="text-2xl font-bold">Rasmlar to'plami</span>
+      <p-button type="button" icon="pi pi-times" [variant]="'outlined'" [rounded]="true"
+                (click)="showModalSelectImage = false" (onClick)="selectedImages = []" pRipple></p-button>
+    </div>
+  </ng-template>
+  <div class="flex items-center justify-between w-full mt-0 pt-0">
+    @if (imagesList.length > 0) {
+      <div class="flex items-center gap-2">
+        <span class="p-input-icon-left">
+          <input
+            type="search"
+            pInputText
+            [(ngModel)]="searchQuery"
+            placeholder="Qidiruv..."
+            (input)="applyFilters()"
+          />
+        </span>
+        <p-select
+          [options]="sortOptions"
+          [(ngModel)]="selectedSort"
+          placeholder="Saralash..."
+          optionLabel="label"
+          class="w-40"
+          (onChange)="applyFilters()"
+        ></p-select>
+      </div>
+    }
+  </div>
+  @if (isLoadingImage) {
+    <div
+      class="absolute inset-0 flex flex-col items-center justify-center"
+    >
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  } @else if (imagesList.length == 0) {
+    <div
+      class="flex items-center justify-center w-full h-[calc(100%-3rem)]"
+    >
+      <div class="flex flex-col items-center justify-center gap-3 text-center">
+        <i class="pi pi-images" style="font-size: 3rem"></i>
+        <span class="font-bold text-2xl text-gray-700">Rasmlar to'plami bo'sh</span>
+        <a routerLink="/items/image" pButton target="_blank">
+          <span pButtonLabel>Rasm qo'shish</span>
+        </a>
+      </div>
+    </div>
+  } @else {
+    <p-scrollPanel [style]="{ width: '100%', height: '60vh' }">
+      <div class="mt-6 flex flex-wrap gap-6">
+        @for (img of filteredImages; track img.id) {
+          <div
+            class="relative w-28 h-28 rounded-lg overflow-hidden border group shadow-sm hover:shadow-md transition-all duration-200 bg-gray-50"
+            (click)="toggleSelection(img)"
+          >
+            <div
+              class="absolute top-0 left-0 z-10 bg-white/90 rounded-md p-1 shadow-sm cursor-pointer"
+              (click)="$event.stopPropagation(); toggleSelection(img)"
+            >
+              <p-checkbox
+                binary="true"
+                [ngModel]="isSelected(img)"
+                [style]="{ transform: 'scale(0.9)' }"
+              ></p-checkbox>
+            </div>
 
+            <img
+              ngSrc="{{ imagePathPrefix + img.parentId + '/' + img.docName }}"
+              fill
+              alt="{{ img.docName }}"
+              decoding="async"
+              class="p-2 object-cover w-full h-full transition-transform duration-200 group-hover:scale-105"
+            />
+
+            <div
+              class="absolute bottom-0 left-0 w-full bg-black/70 text-white text-md text-center py-1 truncate group-hover:bg-white/0"
+              title="{{ img.docName }}"
+            >
+              {{ img.docName }}
+            </div>
+
+            @if (isSelected(img)) {
+              <div class="absolute inset-0 border-4 border-sky-500 rounded-lg pointer-events-none"></div>
+            }
+          </div>
+        }
+      </div>
+    </p-scrollPanel>
+    <ng-template #footer
+    >
+      <div class="w-full flex items-center justify-between border-t-2">
+        <p-button label="Tanlash" class="pt-2" [disabled]="!(selectedImages.length > 0)"
+                  (onClick)="showModalSelectImage = false"/>
+      </div>
+    </ng-template>
+  }
+</p-dialog>

@@ -210,6 +210,23 @@ export class ThemeSwitcher {
 
   surfaces = [
     {
+      name: 'zinc',
+      palette: {
+        0: '#ffffff',
+        50: '#f4f4f5',
+        100: '#e4e4e7',
+        200: '#d4d4d8',
+        300: '#a1a1aa',
+        400: '#71717a',
+        500: '#52525b',
+        600: '#3f3f46',
+        700: '#27272a',
+        800: '#18181b',
+        900: '#09090b',
+        950: '#000000',
+      },
+    },
+    {
       name: 'slate',
       palette: {
         0: '#ffffff',
@@ -241,23 +258,6 @@ export class ThemeSwitcher {
         800: '#1f2937',
         900: '#111827',
         950: '#030712',
-      },
-    },
-    {
-      name: 'zinc',
-      palette: {
-        0: '#ffffff',
-        50: '#fafafa',
-        100: '#f4f4f5',
-        200: '#e4e4e7',
-        300: '#d4d4d8',
-        400: '#a1a1aa',
-        500: '#71717a',
-        600: '#52525b',
-        700: '#3f3f46',
-        800: '#27272a',
-        900: '#18181b',
-        950: '#09090b',
       },
     },
     {
@@ -608,9 +608,9 @@ export class ThemeSwitcher {
       }
     }
     return {
-      preset: 'Aura',
+      preset: 'Lara',
       primary: 'noir',
-      surface: null,
+      surface: 'neutral',
       darkTheme: false,
     };
   }
