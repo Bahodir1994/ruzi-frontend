@@ -35,6 +35,8 @@ import {CategoryService} from '../category/category-service';
 import {CategoryModel} from '../category/category-model';
 import {UnitService} from '../unit/unit-service';
 import {UnitModel} from '../unit/unit-model';
+import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
+import {Card} from 'primeng/card';
 
 interface Actions {
   name: string,
@@ -71,7 +73,9 @@ interface Actions {
     ProgressSpinner,
     Ripple,
     Divider,
-    NgClass
+    NgClass,
+    ImageFallbackDirective,
+    Card
   ],
   templateUrl: './item.html',
   standalone: true,
@@ -79,14 +83,6 @@ interface Actions {
   encapsulation: ViewEncapsulation.None
 })
 export class Item {
-  itemTypeOption = [
-    {icon: 'cutlery.png', id: '001', label: 'Oziq-ovqat maxsulotlari'},
-    {icon: 'web-maintenance.png', id: '002', label: 'Qurilish materiallari'},
-    {icon: 'cutlery.png', id: '003', label: 'Elektronika tovarlari'},
-    {icon: 'web-maintenance.png', id: '004', label: 'Kiyim-Kechak maxsulotlari'},
-    {icon: 'cutlery.png', id: '005', label: 'Tibbiyot maxsulotlari'},
-    {icon: 'web-maintenance.png', id: '005', label: 'XOZ tovarlar'},
-  ];
   activeOptions = [
     {label: 'Aktiv', value: 'true'},
     {label: 'Nofaol', value: 'false'},
@@ -150,16 +146,13 @@ export class Item {
     private fb: FormBuilder,
     private itemService: ItemService,
     private cdr: ChangeDetectorRef,
-    private permissionService: PermissionService,
     private formStateService: FormStateService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.readCategoryList();
     this.readUnitList();
-    this.permission('null');
     this.actions = [
       {name: 'Saqlangach oynani yopma!', code: 'NY'},
       {name: 'Saqlangach maydonlarni tozala!', code: 'RM'}
@@ -183,12 +176,6 @@ export class Item {
     this.form.updateValueAndValidity();
   }
 
-  permission(status: string) {
-    this.permissions = {
-      add_new_product: this.permissionService.canAccess(Item, 'add_new_product', status)
-    };
-  }
-
   async loadData() {
     this.isLoading = true;
     if (this.searchValue != null) {
@@ -203,29 +190,6 @@ export class Item {
       this.isLoading = false;
     }
   }
-
-  pageChange(event: any) {
-    if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
-      this.dataTableInputProductModel.start = event.first;
-      this.dataTableInputProductModel.length = event.rows;
-      this.loadData().then(r => null);
-    }
-  }
-
-  get hasNY(): boolean {
-    return this.selectedActions?.some(a => a.code === 'NY') ?? false;
-  }
-
-  onActionsChange() {
-    if (!this.hasNY) {
-      this.selectedActions = (this.selectedActions ?? []).filter(a => a.code !== 'RM');
-    }
-  }
-
-  openDialog() {
-    this.showItemModal = true;
-  }
-
   async onSubmit() {
     this.formCreateItemSubmit = true;
     if (this.form.invalid) return;
@@ -248,6 +212,23 @@ export class Item {
     });
   }
 
+  pageChange(event: any) {
+    if (event.first !== this.dataTableInputProductModel.start || event.rows !== this.dataTableInputProductModel.length) {
+      this.dataTableInputProductModel.start = event.first;
+      this.dataTableInputProductModel.length = event.rows;
+      this.loadData().then(r => null);
+    }
+  }
+
+  onActionsChange() {
+    if (!this.hasNY) {
+      this.selectedActions = (this.selectedActions ?? []).filter(a => a.code !== 'RM');
+    }
+  }
+  openDialog() {
+    this.showItemModal = true;
+  }
+
   toggleSelection(img: any) {
     const isSelected = this.isSelected(img);
 
@@ -262,11 +243,9 @@ export class Item {
 
     this.cdr.detectChanges();
   }
-
   isSelected(img: any): boolean {
     return this.selectedImages.some((i) => i.id === img.id);
   }
-
   openSelectImage() {
     this.showModalSelectImage = true;
     this.readImageList();
@@ -286,7 +265,6 @@ export class Item {
       }
     });
   }
-
   readCategoryList() {
     this.categoryService.category_list().subscribe({
       next: value => {
@@ -295,7 +273,6 @@ export class Item {
       }
     })
   }
-
   readUnitList() {
     this.unitService.unit_list().subscribe({
       next: value => {
@@ -332,5 +309,8 @@ export class Item {
     }
 
     this.filteredImages = list;
+  }
+  get hasNY(): boolean {
+    return this.selectedActions?.some(a => a.code === 'NY') ?? false;
   }
 }

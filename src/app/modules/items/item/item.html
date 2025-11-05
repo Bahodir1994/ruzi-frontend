@@ -5,7 +5,6 @@
       <input
         type="search"
         pInputText
-        pSize="small"
         placeholder="Qidiruv"
         [(ngModel)]="searchValue"
         (input)="loadData()"
@@ -15,146 +14,189 @@
       *kaHasRoles="['ROLE_ITEM_CREATE']"
       (click)="openDialog()"
       (onClick)="dialog.maximize()"
-      size="small"
       class="pr-2"
-      styleClass="shadow shadow-blue-500/50"
       icon="pi pi-file-plus"
       label="Yangi tovar qo'shish"
-      [outlined]="true"
     />
     <p-button
       *kaHasRoles="['ROLE_ITEM_CREATE']"
-      size="small"
       class="pr-2"
-      styleClass="shadow shadow-blue-500/50"
       icon="pi pi-file-excel" label="Excel"
-      [outlined]="true"/>
+      />
   </div>
 </div>
 
-<p-table
-  size="small"
-  #dataTableItem
-  [value]="itemModel"
-  dataKey="id"
-  [rowHover]="true"
-  [rows]="10"
-  [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="[10, 25, 50]"
-  loadingIcon="pi pi-spinner"
-  [paginator]="true"
-  currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
-  [filterDelay]="0"
-  [scrollable]="true"
-  [totalRecords]="totalRecords"
-  [lazy]="true"
-  (onLazyLoad)="pageChange($event)"
-  [first]="0"
-  [pageLinks]="5"
-  [showJumpToPageInput]="true"
-  scrollHeight="80vh"
->
-  <ng-template pTemplate="header">
-    <tr class="border shadow h-[60px]">
-      <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
-
-      <th pSortableColumn="skuCode" class="text-center text-nowrap sort-header">
-        SKU Code
-        <p-sortIcon field="skuCode"/>
-      </th>
-
-      <th pSortableColumn="image" class="text-center text-nowrap sort-header">
-        Rasmi
-      </th>
-
-      <th pSortableColumn="barcode" class="text-center text-nowrap sort-header">
-        Shtrix kod
-        <p-sortIcon field="barcode"/>
-      </th>
-
-      <th pSortableColumn="name" class="text-center text-nowrap sort-header">
-        Mahsulot nomi
-        <p-sortIcon field="name"/>
-      </th>
-
-      <th pSortableColumn="brand" class="text-center text-nowrap sort-header">
-        Brend
-        <p-sortIcon field="brand"/>
-      </th>
-
-      <th pSortableColumn="category" class="text-center text-nowrap sort-header">
-        Kategoriya
-        <p-sortIcon field="category"/>
-      </th>
-
-      <th pSortableColumn="unit" class="text-center text-nowrap sort-header">
-        O‘lchov birligi
-        <p-sortIcon field="unit"/>
-      </th>
-
-      <th pSortableColumn="defaultSalePrice" class="text-center text-nowrap sort-header">
-        Sotuv narxi
-        <p-sortIcon field="defaultSalePrice"/>
-      </th>
-
-      <th pSortableColumn="description" class="text-center text-nowrap sort-header">
-        Izoh
-        <p-sortIcon field="description"/>
-      </th>
-
-      <th pSortableColumn="isActive" class="text-center text-nowrap sort-header">
-        Holati
-        <p-sortIcon field="isActive"/>
-      </th>
-
-      <th class="text-center text-nowrap sort-header">Amallar</th>
-    </tr>
+<p-card class="card" xmlns="http://www.w3.org/1999/html">
+  <ng-template #header>
+    <p class="text-3xl font-bold px-4 pt-2">Guruhlar</p>
+    @if (categoryModel.length > 0) {
+      <div class="flex w-full justify-between gap-2 p-4">
+        <p-icon-field iconPosition="right" class="pr-2">
+          <p-inputicon class="pi pi-search"></p-inputicon>
+          <input
+            type="text"
+            pInputText
+            placeholder="Qidiruv"
+            [(ngModel)]="searchValue"
+            (input)="loadDataTable()"
+          />
+        </p-icon-field>
+        <p-button
+          *kaHasRoles="['ROLE_CAT_CREATE']"
+          class="pr-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-plus"
+          label="Yangi kategoriya qo'shish"
+          (onClick)="dialog.maximize()"
+          (click)="showModalCategory = true"
+        />
+      </div>
+    }
   </ng-template>
-  <ng-template pTemplate="body"
-               let-row
-               let-i="rowIndex"
-  >
-    <tr style="height:49px">
-      <td pFrozenColumn alignFrozen="left" class="shadow text-nowrap text-center">
-        {{ i + 1 }}
-      </td>
+  @if (itemModel.length === 0) {
+    <div
+      class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
+    >
+      <i class="pi pi-folder mb-3 text-gray-500" style="font-size: 4rem;"></i>
+      <p class="text-2xl font-bold">
+        Tovarlar guruhi
+      </p>
+      <span class="text-sm max-w-2xl">Guruhlar mahsulotlaringizni tartibga solishga, mijozlar Ushbu platformada qanday harakat qilishini aniqlashga, mahsulot sotuvi haqida hisobot berishga va elementlarni muayyan printerlarga yo‘naltirishga yordam beradi.</span>
+      <p-button
+        *kaHasRoles="['ROLE_CAT_CREATE']"
+        class="p-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi guruh qo'shish"
+        (onClick)="dialog.maximize(); openCreateCategory()"
+      />
+    </div>
+  } @else {
+    <p-table
+      size="small"
+      #dataTableItem
+      [value]="itemModel"
+      dataKey="id"
+      [rowHover]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      loadingIcon="pi pi-spinner"
+      [paginator]="true"
+      currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
+      [filterDelay]="0"
+      [scrollable]="true"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="pageChange($event)"
+      [first]="0"
+      [pageLinks]="5"
+      [showJumpToPageInput]="true"
+      scrollHeight="80vh"
+    >
+      <ng-template pTemplate="header">
+        <tr class="border shadow h-[60px]">
+          <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
 
-      <td class="text-nowrap text-center">{{ row.skuCode }}</td>
-      <td><img
-        src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
-        alt="Bamboo Watch"
-        class="w-24 rounded"
-      /></td>
-      <td class="text-nowrap text-center">{{ row.barcode }}</td>
-      <td class="text-nowrap text-center">{{ row.name }}</td>
-      <td class="text-nowrap text-center">{{ row.brand }}</td>
-      <td class="text-nowrap text-center">{{ row.category }}</td>
-      <td class="text-nowrap text-center">{{ row.unit }}</td>
-      <td class="text-nowrap text-center">{{ row.defaultSalePrice | number:'1.2-2' }}</td>
-      <td class="text-nowrap text-center">{{ row.description }}</td>
-      <td class="text-nowrap text-center">
-        <p-tag [value]="row.isActive ? 'Faol' : 'Nofaol'" [severity]="row.isActive ? 'success' : 'danger'"></p-tag>
-      </td>
+          <th pSortableColumn="skuCode" class="text-center text-nowrap sort-header">
+            SKU Code
+            <p-sortIcon field="skuCode"/>
+          </th>
 
-      <td pFrozenColumn alignFrozen="right" class="text-center">
-        <!-- Amallar tugmalari -->
-        <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"></button>
-        <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
-      </td>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td [attr.colspan]="12  " class="mx-auto">
-        <div class="flex flex-col items-center justify-center p-6 text-gray-500">
-          <i class="pi pi-info-circle text-3xl mb-2"></i>
-          <span>Mahsulotlar topilmadi</span>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
+          <th pSortableColumn="image" class="text-center text-nowrap sort-header">
+            Rasmi
+          </th>
 
-</p-table>
+          <th pSortableColumn="barcode" class="text-center text-nowrap sort-header">
+            Shtrix kod
+            <p-sortIcon field="barcode"/>
+          </th>
+
+          <th pSortableColumn="name" class="text-center text-nowrap sort-header">
+            Mahsulot nomi
+            <p-sortIcon field="name"/>
+          </th>
+
+          <th pSortableColumn="brand" class="text-center text-nowrap sort-header">
+            Brend
+            <p-sortIcon field="brand"/>
+          </th>
+
+          <th pSortableColumn="category" class="text-center text-nowrap sort-header">
+            Kategoriya
+            <p-sortIcon field="category"/>
+          </th>
+
+          <th pSortableColumn="unit" class="text-center text-nowrap sort-header">
+            O‘lchov birligi
+            <p-sortIcon field="unit"/>
+          </th>
+
+          <th pSortableColumn="defaultSalePrice" class="text-center text-nowrap sort-header">
+            Sotuv narxi
+            <p-sortIcon field="defaultSalePrice"/>
+          </th>
+
+          <th pSortableColumn="description" class="text-center text-nowrap sort-header">
+            Izoh
+            <p-sortIcon field="description"/>
+          </th>
+
+          <th pSortableColumn="isActive" class="text-center text-nowrap sort-header">
+            Holati
+            <p-sortIcon field="isActive"/>
+          </th>
+
+          <th class="text-center text-nowrap sort-header">Amallar</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body"
+                   let-row
+                   let-i="rowIndex"
+      >
+        <tr style="height:49px">
+          <td pFrozenColumn alignFrozen="left" class="shadow text-nowrap text-center">
+            {{ i + 1 }}
+          </td>
+
+          <td class="text-nowrap text-center">{{ row.skuCode }}</td>
+          <td><img
+            src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
+            alt="Bamboo Watch"
+            class="w-24 rounded"
+          /></td>
+          <td class="text-nowrap text-center">{{ row.barcode }}</td>
+          <td class="text-nowrap text-center">{{ row.name }}</td>
+          <td class="text-nowrap text-center">{{ row.brand }}</td>
+          <td class="text-nowrap text-center">{{ row.category }}</td>
+          <td class="text-nowrap text-center">{{ row.unit }}</td>
+          <td class="text-nowrap text-center">{{ row.defaultSalePrice | number:'1.2-2' }}</td>
+          <td class="text-nowrap text-center">{{ row.description }}</td>
+          <td class="text-nowrap text-center">
+            <p-tag [value]="row.isActive ? 'Faol' : 'Nofaol'" [severity]="row.isActive ? 'success' : 'danger'"></p-tag>
+          </td>
+
+          <td pFrozenColumn alignFrozen="right" class="text-center">
+            <!-- Amallar tugmalari -->
+            <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="12  " class="mx-auto">
+            <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+              <i class="pi pi-info-circle text-3xl mb-2"></i>
+              <span>Mahsulotlar topilmadi</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  }
+</p-card>
 
 <p-dialog
   [(visible)]="showItemModal"
@@ -479,7 +521,7 @@
                       <img
                         ngSrc="{{ imagePathPrefix + selectedOption.primaryImageUrl }}"
                         fill
-                        alt="{{ selectedOption.code }}"
+                        appImageFallback="assets/images/image.png"
                         decoding="async"
                         class="rounded-md object-cover border border-gray-200"
                       />
@@ -498,7 +540,7 @@
                     <img
                       ngSrc="{{ imagePathPrefix + opt.primaryImageUrl }}"
                       fill
-                      alt="{{ opt.code }}"
+                      appImageFallback="assets/images/image.png"
                       decoding="async"
                       class="rounded-md object-cover border border-gray-200"
                     />
@@ -516,10 +558,7 @@
               </small>
             }
           </p-panel>
-
-
           <p-divider></p-divider>
-
           <!-- Status -->
           <p-panel header="Status">
             <div class="col-span-1">
@@ -538,13 +577,20 @@
             }
           </p-panel>
         </form>
-        <!-- (Optional) Preview -->
         <p-divider></p-divider>
-
+        <!-- (Optional) Preview -->
         <p-panel header="Rasm korinishi">
           <div class="rounded-md p-3 flex items-center justify-center h-32">
             @if (form.value?.primaryImageUrl) {
-              <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>
+              <img
+                ngSrc="{{ imagePathPrefix + form.value?.primaryImageUrl }}"
+                fill
+                alt="{{ selectedImages[0].docName }}"
+                decoding="async"
+                class="max-h-28 object-contain"
+              />
+
+<!--              <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>-->
             } @else if (!form.value?.primaryImageUrl) {
               <span class="text-sm">Rasm topilmadi</span>
             }

@@ -26,8 +26,8 @@ import {
 import {httpCodeInterceptor} from './configuration/interceptors/httpcode.interceptor';
 import {languageInterceptor} from './configuration/interceptors/language.interceptor';
 
-const apiCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:9050|http:\/\/192\.168\.58\.1:9050|https:\/\/api\.ruzi\.uz)(\/.*)?$/i,
+const globalCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
+  urlPattern: /.*/,
   bearerPrefix: 'Bearer'
 });
 
@@ -57,12 +57,12 @@ export const appConfig: ApplicationConfig = {
       features: [
         withAutoRefreshToken({
           onInactivityTimeout: 'logout',
-          sessionTimeout: 600000
+          sessionTimeout: 3600000
         })
       ],
       providers: [AutoRefreshTokenService, UserActivityService]
     }),
-    {provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: [apiCondition]},
+    {provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: [globalCondition]},
     provideHttpClient(withInterceptors([
       includeBearerTokenInterceptor,
       httpCodeInterceptor,
