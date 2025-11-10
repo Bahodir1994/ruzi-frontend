@@ -427,7 +427,7 @@
     <i class="pi pi-shop p-5" style="font-size: 2.5rem"></i>
   </p-button>
   <div class="absolute bottom-4 shadow-xl rounded-3xl left-32 p-4 bg-white dark:bg-gray-700">
-    <theme-switcher [toTop]="true"/>
+<!--    <theme-switcher [toTop]="true"/>-->
   </div>
 </div>
 
@@ -489,8 +489,11 @@
   </ng-template>
 </p-popover>
 
-<!-- Narx o‘zgartirish / chegirma qo‘llash -->
-<p-dialog [(visible)]="editPriceVisible" header="Narxni o‘zgartirish" [modal]="true" [style]="{width:'380px'}">
+<p-dialog
+  [(visible)]="editPriceVisible"
+  header="Narxni o‘zgartirish"
+  [modal]="true"
+  [style]="{width:'380px'}">
   <div class="p-fluid space-y-3">
     <!-- Asl narx -->
     <div class="flex items-center justify-between">
@@ -589,7 +592,6 @@
     ></p-button>
   </ng-template>
 </p-dialog>
-
 
 @if (cartSessionModel) {
   <app-payments-dialog

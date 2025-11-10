@@ -9,7 +9,7 @@ import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
 import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
-import {DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf, NgOptimizedImage} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
@@ -88,6 +88,9 @@ export class Item {
     {label: 'Nofaol', value: 'false'},
   ];
 
+  isAdding = false;
+  newItem = { name: '', price: undefined as number | undefined };
+
   files = [];
   categoryOptions!: CategoryModel[] | [];
   unitOptions!: UnitModel[] | [];
@@ -162,7 +165,7 @@ export class Item {
       code: ['', [Validators.required, Validators.maxLength(100)]],
       name: ['', [Validators.required, Validators.maxLength(600)]],
       price: [undefined],
-      categoryId: ['', Validators.required],
+      categoryId: ['', Validators.maxLength(3)],
       isActive: ['true'],
       primaryImageUrl: [''],
       skuCode: ['', Validators.required],
@@ -280,6 +283,37 @@ export class Item {
         this.cdr.detectChanges()
       }
     })
+  }
+
+  startAddRow() {
+    this.isAdding = true;
+  }
+  cancelAddRow() {
+    this.isAdding = false;
+    this.newItem = { name: '', price: undefined };
+  }
+  saveNewItem() {
+    if (!this.newItem.name || this.newItem.price == null) {
+      alert('Mahsulot nomi va narxini kiriting!');
+      return;
+    }
+
+    const newRow = {
+      name: this.newItem.name.trim(),
+      price: this.newItem.price ?? 0,
+      isActive: true,
+    };
+
+
+    this.itemService.create_item(newRow).subscribe({
+      next: () => {
+        this.loadData();
+        this.cancelAddRow();
+      }
+    });
+  }
+  deleteItem(row: ItemModel) {
+    this.itemModel = this.itemModel.filter(p => p.id !== row.id);
   }
 
   applyFilters() {

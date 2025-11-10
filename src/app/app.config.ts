@@ -26,6 +26,10 @@ import {
 import {httpCodeInterceptor} from './configuration/interceptors/httpcode.interceptor';
 import {languageInterceptor} from './configuration/interceptors/language.interceptor';
 
+const host = window.location.hostname; // avtomatik lokal IP yoki domen
+const keycloakPort = 8080;
+const minioPort = 9000;
+
 const globalCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /.*/,
   bearerPrefix: 'Bearer'
@@ -45,7 +49,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideKeycloak({
       config: {
-        url: 'http://localhost:8080',
+        url: `http://${host}:${keycloakPort}`,
         realm: 'ruzi-realm',
         clientId: 'ruzi'
       },
