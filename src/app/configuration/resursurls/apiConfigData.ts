@@ -21,10 +21,20 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
-        url: "/route-item",
+        url: "/route-item/create",
         method: "POST",
         label: "item_create",
         comment: "yangi tovar qo'shish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-item/create-simple",
+        method: "POST",
+        label: "item_create_simple",
+        comment: "yangi tovar qo'shish sodda",
         active: true,
         showSuccess: true,
         showWarning: true,

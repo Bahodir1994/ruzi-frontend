@@ -32,11 +32,11 @@
   </ng-template>
   @if (itemModel.length === 0) {
     <div
-      class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
+      class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
       <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>
       <p class="text-2xl font-bold">
-        Tovarlar guruhi
+        Tovarlar to'plami
       </p>
       <span class="text-sm max-w-3xl">Mahsulotlar kutubxonasi yordamida sotadigan narsalaringizni tartiblang. To'lovni tezlashtirish, savdo hisobotlarini ko'rish va inventarizatsiyani kuzatish uchun mahsulotlar yarating. Import qilingan mahsulotlarni yaratish va yangilash uchun shablonimizni yuklab oling..</span>
       <p-button
@@ -49,6 +49,30 @@
         (click)="showItemModal = true"
       />
     </div>
+
+    <p class="text-md font-bold p-4">Tezkor tovar kiritish</p>
+    <div  class="flex items-center justify-between gap-2">
+      <input
+        pInputText
+        placeholder="Mahsulot nomi"
+        [(ngModel)]="newItem.name"
+      />
+      <div class="flex items-center gap-2">
+        <p-inputNumber
+          [(ngModel)]="newItem.price"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          placeholder="Narxi"
+        ></p-inputNumber>
+        <p-button
+          icon="pi pi-save"
+          label="Saqlash"
+          (click)="saveNewItem()"
+        ></p-button>
+      </div>
+    </div>
+    <p-divider></p-divider>
   } @else {
     <p-table
       size="small"

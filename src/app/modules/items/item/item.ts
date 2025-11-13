@@ -85,7 +85,7 @@ interface Actions {
 export class Item {
   activeOptions = [
     {label: 'Aktiv', value: 'true'},
-    {label: 'Nofaol', value: 'false'},
+    {label: 'NoAktiv', value: 'false'},
   ];
 
   isAdding = false;
@@ -305,7 +305,7 @@ export class Item {
     };
 
 
-    this.itemService.create_item(newRow).subscribe({
+    this.itemService.create_item_simple(newRow).subscribe({
       next: () => {
         this.loadData();
         this.cancelAddRow();
