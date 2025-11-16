@@ -3,7 +3,6 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 
 import {providePrimeNG} from 'primeng/config';
-import Aura from '@primeuix/themes/aura';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {provideTranslateService} from '@ngx-translate/core';
@@ -25,6 +24,7 @@ import {
 } from 'keycloak-angular';
 import {httpCodeInterceptor} from './configuration/interceptors/httpcode.interceptor';
 import {languageInterceptor} from './configuration/interceptors/language.interceptor';
+import PresetWhiteBlue from './configuration/theme/preset-white';
 
 const host = window.location.hostname; // avtomatik lokal IP yoki domen
 const keycloakPort = 8080;
@@ -73,7 +73,7 @@ export const appConfig: ApplicationConfig = {
       languageInterceptor
     ])),
     providePrimeNG({
-      theme: {preset: Aura, options: {darkModeSelector: '.p-dark'}},
+      theme: {preset: PresetWhiteBlue, options: {darkModeSelector: '.p-dark'}},
     }),
     importProvidersFrom(ToastModule),
     MessageService,

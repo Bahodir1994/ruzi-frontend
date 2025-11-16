@@ -16,7 +16,7 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
   const messageService = inject(MessageService);
   const translateService = inject(TranslateService);
 
-  const findApiConfig = (url: string, method: string) => {
+  const findApiConfigOld1 = (url: string, method: string) => {
     const normalizedUrl = url.split('?')[0].replace(/\/+$/, '');
     for (const module of apiConfigData) {
       for (const api of module.list) {
@@ -31,6 +31,40 @@ export const httpCodeInterceptor: HttpInterceptorFn = (req, next) => {
     }
     return null;
   };
+
+  const findApiConfig = (url: string, method: string) => {
+    const normalizedUrl = url.split('?')[0].replace(/\/+$/, '');
+
+    let path = normalizedUrl;
+    try {
+      // Agar absolute URL bo‘lsa (http://...)
+      path = new URL(normalizedUrl).pathname;
+    } catch {
+      // Agar nisbiy bo‘lsa (/api/...) – o‘sha holatida qolaveradi
+      path = normalizedUrl;
+    }
+
+    path = path.replace(/\/+$/, '');
+
+    for (const module of apiConfigData) {
+      for (const api of module.list) {
+        const apiPath = api.url.replace(/\/+$/, '');
+        const sameMethod =
+          api.method.toLowerCase() === method.toLowerCase();
+
+        const match =
+          path === apiPath ||          // /api/items/delete
+          path.startsWith(apiPath + '/'); // /api/items/delete/:id
+
+        if (sameMethod && match) {
+          return api;
+        }
+      }
+    }
+
+    return null;
+  };
+
 
   const showUniqueToast = (msg: ToastMessageOptions) => {
     const key = `${msg.severity}|${msg.summary}|${msg.detail}`;

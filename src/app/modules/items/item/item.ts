@@ -1,15 +1,14 @@
-import {ChangeDetectorRef, Component, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectorRef, Component, signal, ViewEncapsulation} from '@angular/core';
 import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {ItemService} from './item.service';
-import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {ItemModel} from './item-model';
 import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
 import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
-import {DecimalPipe, NgClass, NgIf, NgOptimizedImage} from '@angular/common';
+import {DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {Tag} from 'primeng/tag';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
@@ -37,11 +36,10 @@ import {UnitService} from '../unit/unit-service';
 import {UnitModel} from '../unit/unit-model';
 import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
 import {Card} from 'primeng/card';
-
-interface Actions {
-  name: string,
-  code: string
-}
+import {Actionbar} from '../../../component/actionbar/actionbar';
+import {Menu} from 'primeng/menu';
+import {MenuItem} from 'primeng/api';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-item',
@@ -75,7 +73,9 @@ interface Actions {
     Divider,
     NgClass,
     ImageFallbackDirective,
-    Card
+    Card,
+    Actionbar,
+    Menu
   ],
   templateUrl: './item.html',
   standalone: true,
@@ -83,24 +83,24 @@ interface Actions {
   encapsulation: ViewEncapsulation.None
 })
 export class Item {
+  bottomBarVisible = signal(false);
+  menuVisible = false;
   activeOptions = [
     {label: 'Aktiv', value: 'true'},
     {label: 'NoAktiv', value: 'false'},
   ];
 
   isAdding = false;
-  newItem = { name: '', price: undefined as number | undefined };
+  newItem = {name: '', price: undefined as number | undefined};
 
   files = [];
   categoryOptions!: CategoryModel[] | [];
   unitOptions!: UnitModel[] | [];
 
-  public permissions: Record<string, boolean> = {};
-
   showModalSelectImage = false;
   showItemModal = false;
-  actions!: Actions[];
-  selectedActions!: Actions[];
+  actions!: MenuItem[];
+  selectedActions!: MenuItem[];
 
   form!: FormGroup;
   formCreateItemSubmit = false;
@@ -109,7 +109,7 @@ export class Item {
   searchValue: string | undefined;
   isLoading: boolean = true;
 
-  imagePathPrefix = 'http://localhost:9000/ruzi/thumb/';
+  imagePathPrefix = environment.minioThumbUrl;
   searchQuery = '';
   selectedSort: any;
   sortOptions = [
@@ -123,6 +123,7 @@ export class Item {
   isLoadingImage: boolean = true;
 
   itemModel: ItemModel[] = [];
+  itemSelectedModel: ItemModel[] = [];
   dataTableInputProductModel: DataTableInput = {
     draw: 0,
     start: 0,
@@ -150,22 +151,23 @@ export class Item {
     private itemService: ItemService,
     private cdr: ChangeDetectorRef,
     private formStateService: FormStateService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.readCategoryList();
     this.readUnitList();
     this.actions = [
-      {name: 'Saqlangach oynani yopma!', code: 'NY'},
-      {name: 'Saqlangach maydonlarni tozala!', code: 'RM'}
+      {name: 'Saqlangach oynani yopma!', id: 'NY'},
+      {name: 'Saqlangach maydonlarni tozala!', id: 'RM'}
     ];
 
     this.form = this.fb.group({
       code: ['', [Validators.required, Validators.maxLength(100)]],
       name: ['', [Validators.required, Validators.maxLength(600)]],
       price: [undefined],
-      categoryId: ['', Validators.maxLength(3)],
+      categoryId: ['', Validators.minLength(5)],
       isActive: ['true'],
       primaryImageUrl: [''],
       skuCode: ['', Validators.required],
@@ -177,6 +179,33 @@ export class Item {
 
     this.formStateService.setForm(this.form);
     this.form.updateValueAndValidity();
+  }
+
+  getRowActions(row: ItemModel): MenuItem[] {
+    return [
+      {
+        label: 'O‘chirish',
+        icon: 'pi pi-trash',
+        styleClass: 'text-red-600 hover:bg-red-50',
+        command: () => this.onDeleteRow(row)   // <-- item bor
+      },
+      {
+        label: 'Tahrirlash',
+        icon: 'pi pi-pencil',
+        command: () => null
+      }
+    ];
+  }
+
+  getGroupAction() : MenuItem[] {
+    return [
+      {
+        label: 'O`chirish',
+        icon: 'pi pi-trash',
+        styleClass: 'text-red-600 hover:bg-red-50 hover:text-red-700 border-b dark:hover:bg-red-900/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400',
+        command: () => this.onDeleteSelected()
+      }
+    ];
   }
 
   async loadData() {
@@ -193,6 +222,7 @@ export class Item {
       this.isLoading = false;
     }
   }
+
   async onSubmit() {
     this.formCreateItemSubmit = true;
     if (this.form.invalid) return;
@@ -225,9 +255,10 @@ export class Item {
 
   onActionsChange() {
     if (!this.hasNY) {
-      this.selectedActions = (this.selectedActions ?? []).filter(a => a.code !== 'RM');
+      this.selectedActions = (this.selectedActions ?? []).filter(a => a.id !== 'RM');
     }
   }
+
   openDialog() {
     this.showItemModal = true;
   }
@@ -246,9 +277,11 @@ export class Item {
 
     this.cdr.detectChanges();
   }
+
   isSelected(img: any): boolean {
     return this.selectedImages.some((i) => i.id === img.id);
   }
+
   openSelectImage() {
     this.showModalSelectImage = true;
     this.readImageList();
@@ -268,6 +301,7 @@ export class Item {
       }
     });
   }
+
   readCategoryList() {
     this.categoryService.category_list().subscribe({
       next: value => {
@@ -276,6 +310,7 @@ export class Item {
       }
     })
   }
+
   readUnitList() {
     this.unitService.unit_list().subscribe({
       next: value => {
@@ -288,10 +323,12 @@ export class Item {
   startAddRow() {
     this.isAdding = true;
   }
+
   cancelAddRow() {
     this.isAdding = false;
-    this.newItem = { name: '', price: undefined };
+    this.newItem = {name: '', price: undefined};
   }
+
   saveNewItem() {
     if (!this.newItem.name || this.newItem.price == null) {
       alert('Mahsulot nomi va narxini kiriting!');
@@ -312,8 +349,32 @@ export class Item {
       }
     });
   }
-  deleteItem(row: ItemModel) {
-    this.itemModel = this.itemModel.filter(p => p.id !== row.id);
+
+  onDeleteRow(row: ItemModel) {
+    this.itemService.delete_item(row.id).subscribe({
+      next: () => {
+
+        // ❗ 1) Agar row tanlangan bo‘lsa — tanlanganlar ro‘yxatidan o‘chiramiz
+        this.itemSelectedModel = this.itemSelectedModel.filter(i => i.id !== row.id);
+
+        // ❗ 2) bottomBarVisible ni qayta hisoblaymiz
+        this.onTableSelectionChange(this.itemSelectedModel);
+
+        // ❗ 3) table ma’lumotlarini qayta yuklaymiz
+        this.loadData();
+      }
+    });
+  }
+
+  onDeleteSelected() {
+    const ids = this.itemSelectedModel.map(i => i.id);
+
+    this.itemService.delete_items_bulk(ids).subscribe({
+      next: () => {
+        this.itemSelectedModel = [];
+        this.loadData();
+      }
+    });
   }
 
   applyFilters() {
@@ -344,7 +405,17 @@ export class Item {
 
     this.filteredImages = list;
   }
+
   get hasNY(): boolean {
-    return this.selectedActions?.some(a => a.code === 'NY') ?? false;
+    return this.selectedActions?.some(a => a.id === 'NY') ?? false;
+  }
+
+  toggleMenu(event: Event, menu: any) {
+    menu.toggle(event);
+    this.menuVisible = !this.menuVisible;
+  }
+
+  onTableSelectionChange(selected: any[]) {
+    this.bottomBarVisible.set(selected.length > 0);
   }
 }

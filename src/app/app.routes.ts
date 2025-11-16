@@ -86,56 +86,36 @@ export const routes: Routes = [
           breadcrumb: 'Sozlamalar'
         },
         children: [
-          {path: '', redirectTo: 'personal-info', pathMatch: 'full'},
           {
-            path: 'personal-info',
+            path: 'purchase-order',
+            component: PurchaseOrder,
+            canActivate: [canActivateAuthGuard],
             data: {
               roles: [],
-              title: 'Personal ma`lumotlar',
-              breadcrumb: 'Personal ma`lumotlar'
-            },
-            children: []
+              title: 'Kirim',
+              breadcrumb: 'Kirim'
+            }
           },
           {
-            path: 'business-info',
+            path: 'warehouse',
+            component: Warehouse,
+            canActivate: [canActivateAuthGuard],
             data: {
               roles: [],
-              title: 'Biznes ma`lumotlari',
-              breadcrumb: 'Biznes ma`lumotlar'
-            },
-            children: [
-              {
-                path: 'purchase-order',
-                component: PurchaseOrder,
-                canActivate: [canActivateAuthGuard],
-                data: {
-                  roles: [],
-                  title: 'Kirim',
-                  breadcrumb: 'Kirim'
-                }
-              },
-              {
-                path: 'warehouse',
-                component: Warehouse,
-                canActivate: [canActivateAuthGuard],
-                data: {
-                  roles: [],
-                  title: 'Joylashuv',
-                  breadcrumb: 'Joylashuv'
-                }
-              },
-              {
-                path: 'supplier',
-                component: Supplier,
-                canActivate: [canActivateAuthGuard],
-                data: {
-                  roles: [],
-                  title: 'Ta\'minotchi',
-                  breadcrumb: 'Ta\'minotchi'
-                }
-              }
-            ]
+              title: 'Joylashuv',
+              breadcrumb: 'Joylashuv'
+            }
           },
+          {
+            path: 'supplier',
+            component: Supplier,
+            canActivate: [canActivateAuthGuard],
+            data: {
+              roles: [],
+              title: 'Ta\'minotchi',
+              breadcrumb: 'Ta\'minotchi'
+            }
+          }
         ]
       }
     ]

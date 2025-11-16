@@ -10,6 +10,7 @@ import {PrimeNG} from 'primeng/config';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {StyleClassModule} from 'primeng/styleclass';
 import {ToggleSwitchModule} from 'primeng/toggleswitch';
+import {Button} from 'primeng/button';
 
 const presets = {
   Aura,
@@ -37,31 +38,32 @@ export interface ColorOption {
 @Component({
   selector: 'theme-switcher',
   standalone: true,
-  imports: [CommonModule, FormsModule, StyleClassModule, SelectButtonModule, ToggleSwitchModule],
+  imports: [CommonModule, FormsModule, StyleClassModule, SelectButtonModule, ToggleSwitchModule, Button],
   template: `
-    <ul class="flex list-none m-0 p-0 gap-2 items-center">
+    <ul class="list-none m-0 p-0 gap-2 items-center"
+    [ngClass]="sidebarVisible? 'flex' : ''"
+    >
       <li>
-        <button type="button"
-                class="inline-flex w-8 h-8 p-0 items-center justify-center surface-0 dark:surface-800 border border-surface-200 dark:border-surface-600 rounded"
-                (click)="onThemeToggler()">
-          <i [ngClass]="'pi ' + iconClass()" class="dark:text-white"></i>
-        </button>
+        <p-button
+          [text]="true"
+          (click)="onThemeToggler()">
+          <i [ngClass]="'pi ' + iconClass()" style="font-size: 1.5rem"></i>
+        </p-button>
       </li>
       <li class="relative">
-        <button
+        <p-button
+          [text]="true"
           pStyleClass="@next"
           enterFromClass="hidden"
           enterActiveClass="animate-scalein"
           leaveToClass="hidden"
           leaveActiveClass="animate-fadeout"
           [hideOnOutsideClick]="true"
-          type="button"
-          class="inline-flex w-8 h-8 p-0 items-center justify-center surface-0 dark:surface-800 border border-surface-200 dark:border-surface-600 rounded"
         >
-          <i class="pi pi-palette dark:text-white"></i>
-        </button>
+          <i class="pi pi-palette" style="font-size: 1.5rem"></i>
+        </p-button>
         <div
-          class="absolute hidden w-[18rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex z-10"
+          class="absolute hidden w-[20rem] p-3 bg-white dark:bg-surface-800 rounded-md shadow border border-surface-200 dark:border-surface-700 flex-col justify-start items-start gap-3.5 inline-flex z-10"
           [ngClass]="{
             'top-[2.5rem] right-full ml-2 origin-bottom-left': !toTop,
             'bottom-[2.5rem] left-full ml-2 origin-bottom-right': toTop
@@ -120,6 +122,8 @@ export interface ColorOption {
 })
 export class ThemeSwitcher {
   @Input() toTop = false;
+
+  @Input() sidebarVisible: boolean = true;
 
   private readonly STORAGE_KEY = 'themeSwitcherState';
 

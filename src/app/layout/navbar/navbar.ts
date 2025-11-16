@@ -2,7 +2,6 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import {Toolbar} from 'primeng/toolbar';
 import {Button} from 'primeng/button';
 import {UserprofileComponent} from '../../component/userprofile/userprofile.component';
-import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 import {BreadcrumbComponent} from '../../component/breadcrumb/breadcrumb';
 
 @Component({
@@ -11,7 +10,6 @@ import {BreadcrumbComponent} from '../../component/breadcrumb/breadcrumb';
     Toolbar,
     Button,
     UserprofileComponent,
-    ThemeSwitcher,
     BreadcrumbComponent
   ],
   templateUrl: './navbar.html',

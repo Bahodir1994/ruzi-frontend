@@ -43,40 +43,24 @@
     "route": "settings",
     "items": [
       {
-        "label": "Personal ma'lumotlar",
-        "icon": "pi pi-stop",
+        "label": "Kirim",
+        "icon": "pi pi-circle",
         "type": "link",
-        "route": "personal-info",
+        "route": "purchase-order",
         "permissions": []
       },
       {
-        "label": "Biznes ma'lumotlari",
-        "icon": "pi pi-stop",
-        "type": "sub",
-        "route": "business-info",
-        "items": [
-          {
-            "label": "Kirim",
-            "icon": "pi pi-circle",
-            "type": "link",
-            "route": "purchase-order",
-            "permissions": []
-          },
-          {
-            "label": "Joylashuv",
-            "icon": "pi pi-circle",
-            "type": "link",
-            "route": "warehouse",
-            "permissions": []
-          },
-          {
-            "label": "Ta'minotchilar",
-            "icon": "pi pi-circle",
-            "type": "link",
-            "route": "supplier",
-            "permissions": []
-          }
-        ],
+        "label": "Joylashuv",
+        "icon": "pi pi-circle",
+        "type": "link",
+        "route": "warehouse",
+        "permissions": []
+      },
+      {
+        "label": "Ta'minotchilar",
+        "icon": "pi pi-circle",
+        "type": "link",
+        "route": "supplier",
         "permissions": []
       }
     ],
