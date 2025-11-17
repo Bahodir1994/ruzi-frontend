@@ -110,3 +110,7 @@ a {
   overflow-y: auto; /* Scroll bo‘lishi uchun */
   z-index: 1000;
 }
+
+.active-link {
+  @apply bg-blue-50 border-l-4 border-blue-600 text-blue-700 font-semibold;
+}

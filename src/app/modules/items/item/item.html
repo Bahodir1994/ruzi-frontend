@@ -1,8 +1,8 @@
-<p-card class="card" xmlns="http://www.w3.org/1999/html">
+<p-card class="card">
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">Tovarlar</p>
     @if (itemModel.length > 0) {
-      <div class="flex w-full justify-between gap-2 p-4">
+      <div class="flex w-full justify-between gap-2 p-4 pb-0">
         <p-icon-field iconPosition="right" class="pr-2">
           <p-inputicon class="pi pi-search"></p-inputicon>
           <input
@@ -49,9 +49,8 @@
         (click)="showItemModal = true"
       />
     </div>
-
     <p class="text-md font-bold p-4">Tezkor tovar kiritish</p>
-    <div  class="flex items-center justify-between gap-2">
+    <div class="flex items-center justify-between gap-2">
       <input
         pInputText
         placeholder="Mahsulot nomi"
@@ -78,6 +77,8 @@
       size="small"
       #dataTableItem
       [value]="itemModel"
+      [(selection)]="itemSelectedModel"
+      (selectionChange)="onTableSelectionChange($event)"
       dataKey="id"
       [rowHover]="true"
       [rows]="10"
@@ -98,14 +99,18 @@
     >
       <ng-template pTemplate="header">
         <tr class="border shadow h-[60px]">
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox/>
+          </th>
+
           <th class="text-nowrap sort-header" pFrozenColumn alignFrozen="left">№</th>
 
           <th class="text-center text-nowrap sort-header">
-            SKU Code
+            Rasmi
           </th>
 
-          <th pSortableColumn="image" class="text-center text-nowrap sort-header">
-            Rasmi
+          <th class="text-center text-nowrap sort-header">
+            SKU Code
           </th>
 
           <th class="text-center text-nowrap sort-header">
@@ -140,13 +145,13 @@
             Holati
           </th>
 
-          <th class="text-center text-nowrap sort-header">Amallar</th>
+          <th class="text-center text-nowrap sort-header"></th>
         </tr>
         <tr>
           <th colspan="13">
             <div class="flex w-full items-center justify-start gap-2">
-              @if (isAdding){
-                <div  class="flex items-center gap-2">
+              @if (isAdding) {
+                <div class="flex items-center gap-2">
                   <input
                     pInputText
                     placeholder="Mahsulot nomi"
@@ -186,21 +191,20 @@
           </th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body"
-                   let-row
-                   let-i="rowIndex"
-      >
+      <ng-template pTemplate="body" let-row let-i="rowIndex">
         <tr>
+          <td>
+            <p-tableCheckbox [value]="row"/>
+          </td>
           <td class="text-nowrap text-center">
             {{ i + 1 }}
           </td>
-
-          <td class="text-nowrap text-center">{{ row.skuCode }}</td>
           <td><img
             src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
             alt="Bamboo Watch"
-            class="w-12 h-12 rounded"
+            class="w-10 h-10 rounded"
           /></td>
+          <td class="text-nowrap text-center">{{ row.skuCode }}</td>
           <td class="text-nowrap text-center">{{ row.barcode }}</td>
           <td class="text-nowrap text-center">{{ row.name }}</td>
           <td class="text-nowrap text-center">{{ row.brand }}</td>
@@ -213,9 +217,9 @@
           </td>
 
           <td pFrozenColumn alignFrozen="right" class="text-center">
-            <!-- Amallar tugmalari -->
-            <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"></button>
-            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+
+            <p-menu #actionTable [model]="getRowActions(row)" appendTo="body" [popup]="true" />
+            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-v"/>
           </td>
         </tr>
       </ng-template>
@@ -559,7 +563,7 @@
                         appImageFallback="assets/images/image.png"
                         decoding="async"
                         class="rounded-md object-cover border border-gray-200"
-                      />
+                       alt=""/>
                     </div>
                     <div class="text-sm font-medium truncate">
                       {{ selectedOption.code }}
@@ -578,7 +582,7 @@
                       appImageFallback="assets/images/image.png"
                       decoding="async"
                       class="rounded-md object-cover border border-gray-200"
-                    />
+                     alt=""/>
                   </div>
                   <div class="text-sm text-gray-700 font-medium truncate">
                     {{ opt.code }}
@@ -625,7 +629,7 @@
                 class="max-h-28 object-contain"
               />
 
-<!--              <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>-->
+              <!--              <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>-->
             } @else if (!form.value?.primaryImageUrl) {
               <span class="text-sm">Rasm topilmadi</span>
             }
@@ -635,7 +639,6 @@
     </div>
   </p-scrollPanel>
 </p-dialog>
-
 <p-dialog
   [(visible)]="showModalSelectImage"
   [modal]="true"
@@ -741,3 +744,37 @@
     </ng-template>
   }
 </p-dialog>
+
+<app-actionbar
+  [bottomBarVisible]="bottomBarVisible"
+  [infoTemplate]="info"
+  [actionsTemplate]="actionSlot"
+></app-actionbar>
+<ng-template #info>
+  <span class="font-bold">{{ itemSelectedModel.length }} ta tanlangan tovar</span>
+  <p-button class="px-4" (onClick)="itemSelectedModel = []; onTableSelectionChange(itemSelectedModel)" severity="info"
+            label="tanlashni bekor qilish" [text]="true"></p-button>
+</ng-template>
+<ng-template #actionSlot>
+  <p-menu #menu [model]="getGroupAction()" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-xl">
+    <ng-template pTemplate="item" let-item>
+      <a
+        pRipple
+        class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+        [ngClass]="item.styleClass"
+        (click)="item.command?.($event)"
+      >
+        <i [class]="item.icon + ' mr-2'"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </ng-template>
+  </p-menu>
+  <p-button
+    (click)="toggleMenu($event, menu)"
+    label="Amallar"
+    [icon]="menuVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
+    iconPos="right"
+    severity="secondary"
+    class="rounded-md"
+  ></p-button>
+</ng-template>

@@ -6,6 +6,8 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {MenuAs} from '../../service/sidebar/sidebarDto';
 import {SidebarService} from '../../service/sidebar/sidebar.service';
 import {AuthService} from '../../configuration/authentication/auth.service';
+import {Button} from 'primeng/button';
+import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 
 
 @Component({
@@ -16,7 +18,9 @@ import {AuthService} from '../../configuration/authentication/auth.service';
     NgClass,
     RouterLink,
     RouterLinkActive,
-    StyleClass
+    StyleClass,
+    Button,
+    ThemeSwitcher
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'

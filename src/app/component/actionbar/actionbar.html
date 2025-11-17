@@ -1,0 +1,16 @@
+@if (bottomBarVisible()) {
+  <div
+    class="absolute left-0 right-0 bottom-0 bg-white border-t
+         shadow-[0_-2px_20px_rgba(0,0,0,0.05)]
+         px-6 py-4 flex items-center justify-between
+         transition-all duration-300 ease-out z-50"
+  >
+    <div class="text-sm">
+      <ng-container *ngTemplateOutlet="infoTemplate"></ng-container>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+    </div>
+  </div>
+}

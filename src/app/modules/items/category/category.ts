@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {TableFilterEvent, TableModule} from 'primeng/table';
 import {CategoryModel} from './category-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
@@ -31,6 +31,7 @@ import {Select} from 'primeng/select';
 import {RouterLink} from '@angular/router';
 import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
 import {FormStateService} from '../../../service/states/form-state.service';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-category',
@@ -68,7 +69,7 @@ import {FormStateService} from '../../../service/states/form-state.service';
   styleUrl: './category.scss',
   providers: [CategoryService]
 })
-export class Category {
+export class Category implements OnInit {
   menuVisible = false;
   actions: MenuItem[] = [];
 
@@ -95,7 +96,7 @@ export class Category {
   filtersItem: TableFilterEvent = {};
   isLoadingItem: boolean = true;
 
-  imagePathPrefix = 'http://localhost:9000/ruzi/thumb/';
+  imagePathPrefix = environment.minioThumbUrl;
   searchQuery = '';
   selectedSort: any;
   sortOptions = [

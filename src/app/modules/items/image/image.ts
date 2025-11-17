@@ -19,6 +19,7 @@ import {TreeTableModule} from 'primeng/treetable';
 import {ScrollPanel} from 'primeng/scrollpanel';
 import {Checkbox} from 'primeng/checkbox';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-image',
@@ -56,7 +57,7 @@ export class Image implements OnInit {
   isUploading = false;
   formSaveEditedImage!: FormGroup;
 
-  imagePathPrefix = 'http://localhost:9000/ruzi/thumb/';
+  imagePathPrefix = environment.minioThumbUrl;
 
   imagesList: DocumentDto[] = [];
   selectedImages: any[] = [];
@@ -185,7 +186,7 @@ export class Image implements OnInit {
     const img = this.imagesList.find(i => i.id === id);
     if (!img) return;
 
-    const fileUrl = this.imagePathPrefix + img.parentId + '/' + img.docName;
+    const fileUrl = environment.minioThumbUrl + img.parentId + '/' + img.docName;
 
     fetch(fileUrl)
       .then(response => {

@@ -1,12 +1,12 @@
 import {ApiUrls} from "./apiConfigDto";
+import {environment} from '../../../environments/environment';
 
 export const apiConfigData: ApiUrls[] = [
 
   /** Module */
   {
     module: "items",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -39,13 +39,32 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: true,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-item/delete",
+        method: "DELETE",
+        label: "item_delete_one",
+        comment: "bitta tovar ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-item/delete",
+        method: "POST",
+        label: "item_delete_many",
+        comment: "birnechta tovar ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
       }
     ]
   },
   {
     module: "category",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -94,8 +113,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "units",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -123,8 +141,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "purchase-order",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -142,8 +159,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "warehouse",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -161,8 +177,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "supplier",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -180,8 +195,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "stock",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -199,8 +213,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "cart",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -308,8 +321,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "customer",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -327,8 +339,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "referrer",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [
@@ -346,8 +357,7 @@ export const apiConfigData: ApiUrls[] = [
   },
   {
     module: "images",
-    // host: "http://192.168.224.38:9050",
-    host: "http://localhost:9050",
+    host: environment.baseUrl,
     ssl: false,
     active: true,
     list: [

@@ -8,7 +8,6 @@ import {ItemModel} from './item-model';
 import {ResponseDto} from '../../../configuration/resursurls/responseDto';
 import {HttpClient} from '@angular/common/http';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -42,6 +41,35 @@ export class ItemService {
         if (value) {
           this.moduleUrl = value;
           return this.http.post<ResponseDto>(this.moduleUrl.host + this.moduleUrl.url, formData);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
+  delete_item(id: string | number): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_delete_one').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
+  delete_items_bulk(ids: (string | number)[]): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_delete_many').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.post<ResponseDto>(
+            `${this.moduleUrl.host}${this.moduleUrl.url}`,
+            { ids: ids }
+          );
         } else {
           throw new Error('ERROR9999');
         }

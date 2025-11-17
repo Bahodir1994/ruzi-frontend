@@ -1,8 +1,8 @@
-<p-card class="card" xmlns="http://www.w3.org/1999/html">
+<p-card class="card" >
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">Guruhlar</p>
     @if (categoryModel.length > 0) {
-      <div class="flex w-full justify-between gap-2 p-4">
+      <div class="flex w-full justify-between gap-2 p-4 pb-0">
         <p-icon-field iconPosition="right" class="pr-2">
           <p-inputicon class="pi pi-search"></p-inputicon>
           <input
@@ -158,8 +158,6 @@
               </a>
             </ng-template>
           </p-menu>
-
-
           <p-button
             (click)="toggleMenu($event, menu)"
             label="Amallar"

@@ -1,163 +1,198 @@
 <div
-  class="h-full transition-all duration-300 ease-in-out bg-[#F8F8F8FF] dark:bg-slate-900 border-r"
-  [ngClass]="{'w-64': visible,'w-16': !visible}">
-  <div class="flex flex-col h-full">
-    <div class="overflow-y-auto">
-      <ul class="list-none p-2 m-0">
-        <li>
-          <ul class="list-none p-0 m-0 overflow-hidden">
-            @for (menu_data of items; track $index) {
-              <li>
-                @if (menu_data.type === 'link') {
-                  <a [routerLink]="menu_data.route" pRipple
-                     [routerLinkActive]="'active-router-link'"
-                     class="flex items-center cursor-pointer p-3 my-3 rounded-border duration-150 transition-colors p-ripple">
-                    <i class="{{menu_data.icon}} pl-1 mr-2" [ngClass]="visible? 'mr-2': 'ml-0'"></i>
-                    <span class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                          [class.opacity-0]="!visible"
-                          [class.opacity-100]="visible"
-                    >{{ menu_data.label }}</span>
-                  </a>
-                } @else {
-                  <a
-                    [routerLinkActive]="'active-router-link'"
-                    pRipple
-                    pStyleClass="@next"
-                    enterFromClass="hidden"
-                    enterActiveClass="animate-slidedown"
-                    leaveToClass="hidden"
-                    leaveActiveClass="animate-slideup"
-                    class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple"
-                  >
-                    <i class="{{menu_data.icon}} pl-1 mr-2"></i>
-                    <span
-                      class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                      [class.opacity-0]="!visible"
-                      [class.opacity-100]="visible"
-                    >
-                    {{ menu_data.label }}
-                  </span>
-                    <i [hidden]="!visible"
-                       class="pi pi-chevron-{{ isActiveRoute(menu_data.route) ? 'down' : 'right' }} ml-auto"></i>
-                  </a>
-                  <ul
-                    class="list-none py-0 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out"
-                    [ngClass]="{'pl-2': visible, '-pl-2': !visible, 'hidden': !isParentActive(menu_data)}"
-                  >
-                    @for (menu_data_sub of menu_data.items; track $index; let i = $index) {
-                      <li>
-                        @if (menu_data_sub.type === 'link') {
-                          <a
-                            [routerLink]="menu_data.route + '/' + menu_data_sub.route"
-                            [routerLinkActive]="'active-router-link'"
-                            pRipple
-                            class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
-                            <i
-                              class="{{menu_data_sub.icon}} pl-1 mr-2"
-                              [ngClass]="visible? 'mr-2': 'mr-0'"
-                            ></i>
-                            <span
-                              class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                              [class.opacity-0]="!visible"
-                              [class.opacity-100]="visible"
-                            >
-                            {{ menu_data_sub.label }}
-                          </span>
-                          </a>
-                        } @else {
-                          <a
-                            [routerLinkActive]="'active-router-link'"
-                            pRipple
-                            pStyleClass="@next"
-                            enterFromClass="hidden"
-                            enterActiveClass="animate-slidedown"
-                            leaveToClass="hidden"
-                            leaveActiveClass="animate-slideup"
-                            class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
-                            <i class="{{menu_data_sub.icon}} pl-1 mr-2" [ngClass]="visible? 'mr-2': 'ml-0'"></i>
-                            <span class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                                  [class.opacity-0]="!visible"
-                                  [class.opacity-100]="visible"
-                            >{{ menu_data_sub.label }}</span>
-                            <i
-                              class="pi pi-chevron-{{ isActiveRoute(menu_data.route + '/' + menu_data_sub.route) ? 'down' : 'right' }} ml-auto"></i>
-                          </a>
-                          <ul
-                            class="list-none py-0 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out"
-                            [ngClass]="visible? 'pl-2': 'pl-0'"
-                          >
-                            @for (menu_data_sub2 of menu_data_sub.items; track $index; let i = $index) {
-                              <li>
-                                @if (menu_data_sub2.type === 'link') {
-                                  <a
-                                    pRipple
-                                    [routerLink]="menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route"
-                                    [routerLinkActive]="'active-router-link'"
-                                    class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
-                                    @if (!visible) {
-                                      <i class="{{menu_data_sub2.icon}} pl-1 mr-2 ml-0" style="font-size: 1rem"></i>
-                                    }
-                                    <span
-                                      class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                                      [class.opacity-0]="!visible"
-                                      [class.opacity-100]="visible"
-                                    >{{ menu_data_sub2.label }}</span>
-                                  </a>
-                                } @else {
-                                  <a
-                                    [routerLinkActive]="'active-router-link'"
-                                    pRipple
-                                    pStyleClass="@next"
-                                    enterFromClass="hidden"
-                                    enterActiveClass="animate-slidedown"
-                                    leaveToClass="hidden"
-                                    leaveActiveClass="animate-slideup"
-                                    class="hover:bg-ruziblue flex items-center cursor-pointer p-3 mb-2 mt-1 rounded-border duration-150 transition-colors p-ripple">
-                                    <i class="{{menu_data_sub2.icon}} pl-1 mr-2"
-                                       [ngClass]="visible? 'mr-2': 'ml-0'"></i>
-                                    <span
-                                      class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                                      [class.opacity-0]="!visible"
-                                      [class.opacity-100]="visible">{{ menu_data_sub2.label }}</span>
-                                    <i
-                                      class="pi pi-chevron-{{ isActiveRoute(menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route) ? 'down' : 'right' }} ml-auto"></i>
-                                  </a>
-                                  <ul
-                                    class="list-none py-0 pl-2 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
-                                    @for (menu_data_sub3 of menu_data_sub2.items; track $index; let i = $index) {
-                                      <li>
-                                        <a
-                                          pRipple
-                                          [routerLink]="menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route+ '/' + menu_data_sub3.route"
-                                          [routerLinkActive]="'active-router-link'"
-                                          class="hover:bg-ruziblue hover:text-white flex items-center cursor-pointer p-3 my-3 rounded-border duration-150 transition-colors p-ripple">
-                                          <i class="{{menu_data_sub3.icon}} pl-1 mr-2"
-                                             [ngClass]="visible? 'mr-2': 'ml-0'"></i>
-                                          <span
-                                            class="font-medium transition-opacity duration-500 whitespace-nowrap inline-block"
-                                            [class.opacity-0]="!visible"
-                                            [class.opacity-100]="visible">{{ menu_data_sub3.label }}</span>
-                                        </a>
-                                      </li>
-                                    }
-                                  </ul>
-                                }
-                              </li>
-                            }
-                          </ul>
-                        }
-                      </li>
-                    }
-                  </ul>
-                }
-              </li>
-            }
-          </ul>
-        </li>
-      </ul>
+  class="h-full flex flex-col transition-all duration-300 border-r bg-zinc-50 dark:bg-gray-950 dark:border-transparent"
+  [ngClass]="{'w-72': visible,'w-16': !visible}"
+>
+  <!-- ⭐ HEADER USER CARD -->
+  @if (visible) {
+    <div class="px-4 py-4 border-b border-gray-200">
+      <div class="flex items-center gap-3">
+        <img src="assets/images/photo.png"
+             class="w-10 h-10 rounded-full shadow-sm"/>
+
+        <div>
+          <div class="text-sm font-semibold text-gray-800">John Doe</div>
+          <div class="text-xs text-gray-500">johnexample.com</div>
+        </div>
+      </div>
     </div>
+  } @else {
+    <!-- Collapse mode avatar -->
+    <div class="px-4 py-4 border-b border-gray-200">
+      <img src="assets/images/photo.png"
+           class="w-10 h-10 mx-auto rounded-full shadow-sm"/>
+    </div>
+  }
+  <!-- ⭐ EXISTING MENU -->
+  <div class="flex-1 overflow-y-auto px-2 py-3">
+
+    <ul class="list-none p-0 m-0 space-y-1">
+
+      @for (menu_data of items; track $index) {
+        <li>
+
+          <!-- ================================
+               TOP LEVEL LINK
+          =================================== -->
+          @if (menu_data.type === 'link') {
+
+            <a [routerLink]="menu_data.route"
+               [routerLinkActive]="'active-router-link'"
+               pRipple
+               class="group flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-150">
+
+              <!-- ICON -->
+              <i class="{{menu_data.icon}} group-hover:text-gray-700" style="font-size: 1.5rem"
+                 [ngClass]="visible ? '' : 'mx-auto'"></i>
+
+              <!-- LABEL -->
+              <span class="font-semibold text-sm transition-opacity duration-300 whitespace-nowrap"
+                    [class.opacity-0]="!visible"
+                    [class.opacity-100]="visible">
+                  {{ menu_data.label }}
+              </span>
+
+            </a>
+
+          } @else {
+
+            <!-- ================================
+                 DROPDOWN PARENT MENU
+            =================================== -->
+            <a pRipple
+               pStyleClass="@next"
+               enterFromClass="hidden"
+               enterActiveClass="animate-slidedown"
+               leaveToClass="hidden"
+               leaveActiveClass="animate-slideup"
+               class="group flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors">
+
+              <!-- ICON -->
+              <i class="{{menu_data.icon}}" style="font-size: 1.5rem"
+                 [ngClass]="visible ? '' : 'mx-auto'"></i>
+
+              <!-- LABEL -->
+              <span class="font-semibold text-sm transition-opacity duration-300 whitespace-nowrap"
+                    [class.opacity-0]="!visible"
+                    [class.opacity-100]="visible">
+                  {{ menu_data.label }}
+              </span>
+
+              <!-- CHEVRON -->
+              <i [hidden]="!visible"
+                 class="pi pi-chevron-{{ isActiveRoute(menu_data.route) ? 'down' : 'right' }}
+                        ml-auto text-gray-500">
+              </i>
+
+            </a>
+
+            <!-- ================================
+                 LEVEL 1 SUBMENU
+            =================================== -->
+            <ul
+              class="list-none p-0 m-0 hidden transition-all duration-300 overflow-hidden"
+              [ngClass]="{'pl-4': visible, 'pl-1': !visible, 'hidden': !isParentActive(menu_data)}">
+
+              @for (menu_data_sub of menu_data.items; track $index) {
+                <li>
+
+                  @if (menu_data_sub.type === 'link') {
+
+                    <a [routerLink]="menu_data.route + '/' + menu_data_sub.route"
+                       [routerLinkActive]="'active-router-link'"
+                       pRipple
+                       class="flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-gray-100 ml-1">
+
+                      <span class="text-sm font-semibold transition-opacity duration-300 whitespace-nowrap"
+                            [class.opacity-0]="!visible"
+                            [class.opacity-100]="visible">
+                        {{ menu_data_sub.label }}
+                      </span>
+
+                    </a>
+
+                  } @else {
+
+                    <!-- CHILD DROPDOWN -->
+                    <a pRipple
+                       pStyleClass="@next"
+                       enterFromClass="hidden"
+                       enterActiveClass="animate-slidedown"
+                       leaveToClass="hidden"
+                       leaveActiveClass="animate-slideup"
+                       class="flex items-center gap-3 p-3 rounded-md cursor-pointer
+                              text-gray-800 hover:bg-gray-100 ml-1">
+
+                      <span class="text-sm font-semibold transition-opacity duration-300 whitespace-nowrap"
+                            [class.opacity-0]="!visible"
+                            [class.opacity-100]="visible">
+                        {{ menu_data_sub.label }}
+                      </span>
+
+                      @if (visible) {
+                        <i
+                          class="pi pi-chevron-{{ isActiveRoute(menu_data.route + '/' + menu_data_sub.route) ? 'down' : 'right' }} ml-auto text-gray-500"></i>
+                      }
+
+                    </a>
+
+                    <!-- LEVEL 2 SUBMENU -->
+                    <ul class="list-none pl-3 m-0 hidden transition-all duration-300">
+
+                      @for (menu_data_sub2 of menu_data_sub.items; track $index) {
+                        <li>
+
+                          <!-- LINK -->
+                          <a [routerLink]="menu_data.route + '/' + menu_data_sub.route + '/' + menu_data_sub2.route"
+                             [routerLinkActive]="'active-router-link'"
+                             pRipple
+                             class="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer
+                                    text-gray-600 hover:bg-gray-100">
+
+                            @if (!visible) {
+                              <i class="{{menu_data_sub2.icon}} text-base"></i>
+                            }
+
+                            <span class="text-sm font-medium transition-opacity duration-300 whitespace-nowrap"
+                                  [class.opacity-0]="!visible"
+                                  [class.opacity-100]="visible">
+                              {{ menu_data_sub2.label }}
+                            </span>
+
+                          </a>
+
+                        </li>
+                      }
+
+                    </ul>
+
+                  }
+
+                </li>
+              }
+
+            </ul>
+
+          }
+
+        </li>
+      }
+
+    </ul>
+
+  </div>
+  <!-- ⭐ FOOTER LOGOUT -->
+  <hr class="mb-2 mx-4 border-t border-0 border-surface"/>
+  <div [ngClass]="visible? 'flex justify-between px-4 py-4' : 'items-center mx-auto'">
+    <p-button
+      [text]="true"
+      [label]="visible? 'Chiqish' : ''">
+      <i class="pi pi-sign-out" style="font-size: 1.5rem"></i>
+    </p-button>
+    <theme-switcher [toTop]="true" [sidebarVisible]="visible"/>
+    <p-button
+      [text]="true"
+      (onClick)="visible ? visible = false : visible = true">
+      <i class="pi pi-bars" style="font-size: 1.5rem"></i>
+    </p-button>
   </div>
 </div>
-
-
-
