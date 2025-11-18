@@ -41,6 +41,16 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
+        url: "/route-item/create/xlsx",
+        method: "POST",
+        label: "item_create_xlsx",
+        comment: "yangi tovarlarni xlsx dan qo'shish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-item/delete",
         method: "DELETE",
         label: "item_delete_one",
@@ -55,6 +65,16 @@ export const apiConfigData: ApiUrls[] = [
         method: "POST",
         label: "item_delete_many",
         comment: "birnechta tovar ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-item/update",
+        method: "PUT",
+        label: "item_update",
+        comment: "tovarni ozgartirish",
         active: true,
         showSuccess: true,
         showWarning: true,

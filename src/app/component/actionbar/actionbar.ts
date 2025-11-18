@@ -4,8 +4,7 @@ import {NgClass, NgTemplateOutlet} from '@angular/common';
 @Component({
   selector: 'app-actionbar',
   imports: [
-    NgTemplateOutlet,
-    NgClass
+    NgTemplateOutlet
   ],
   templateUrl: './actionbar.html',
   standalone: true,

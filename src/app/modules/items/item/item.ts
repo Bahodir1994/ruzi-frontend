@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, signal, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectorRef, Component, signal, ViewChild, ViewEncapsulation} from '@angular/core';
 import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {ItemService} from './item.service';
 import {firstValueFrom} from 'rxjs';
-import {ItemModel} from './item-model';
+import {ErrorResponse, ItemModel} from './item-model';
 import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IconField} from 'primeng/iconfield';
@@ -40,6 +40,9 @@ import {Actionbar} from '../../../component/actionbar/actionbar';
 import {Menu} from 'primeng/menu';
 import {MenuItem} from 'primeng/api';
 import {environment} from '../../../../environments/environment';
+import {SplitButton} from 'primeng/splitbutton';
+import {FileUpload, FileUploadHandlerEvent} from 'primeng/fileupload';
+import {ProgressBar} from 'primeng/progressbar';
 
 @Component({
   selector: 'app-item',
@@ -75,7 +78,9 @@ import {environment} from '../../../../environments/environment';
     ImageFallbackDirective,
     Card,
     Actionbar,
-    Menu
+    Menu,
+    FileUpload,
+    ProgressBar
   ],
   templateUrl: './item.html',
   standalone: true,
@@ -83,6 +88,17 @@ import {environment} from '../../../../environments/environment';
   encapsulation: ViewEncapsulation.None
 })
 export class Item {
+  @ViewChild('dialog') dialog!: Dialog;
+  @ViewChild('fu') fileUploadXlsx: FileUpload | undefined;
+  shouldMaximize = false;
+
+  loading: boolean = false;
+  progress: number = 0;
+
+  errorResponse: ErrorResponse[] = []
+  uploadedFiles: any[] = [];
+  uploadedFileXlsx: any[] = [];
+
   bottomBarVisible = signal(false);
   menuVisible = false;
   activeOptions = [
@@ -90,6 +106,7 @@ export class Item {
     {label: 'NoAktiv', value: 'false'},
   ];
 
+  editingId!: string | null;
   isAdding = false;
   newItem = {name: '', price: undefined as number | undefined};
 
@@ -97,6 +114,8 @@ export class Item {
   categoryOptions!: CategoryModel[] | [];
   unitOptions!: UnitModel[] | [];
 
+  dialogVisibleXlsxErrors: boolean = false;
+  showModalImportItem = false;
   showModalSelectImage = false;
   showItemModal = false;
   actions!: MenuItem[];
@@ -192,7 +211,11 @@ export class Item {
       {
         label: 'Tahrirlash',
         icon: 'pi pi-pencil',
-        command: () => null
+        command: () => {
+          this.openEditItem(row);
+          this.shouldMaximize = true;
+          this.showItemModal = true;
+        }
       }
     ];
   }
@@ -204,6 +227,16 @@ export class Item {
         icon: 'pi pi-trash',
         styleClass: 'text-red-600 hover:bg-red-50 hover:text-red-700 border-b dark:hover:bg-red-900/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400',
         command: () => this.onDeleteSelected()
+      }
+    ];
+  }
+
+  getExcelBtnAction() : MenuItem[] {
+    return [
+      {
+        label: 'Na`muna Excel yuklab olish',
+        icon: 'pi pi-download',
+        command: () => this.showModalImportItem = true
       }
     ];
   }
@@ -237,12 +270,25 @@ export class Item {
       primaryImageUrl
     }
 
-    this.itemService.create_item(data).subscribe({
-      next: () => {
-        this.loadData()
-        this.showItemModal = false;
-      }
-    });
+    if (this.editingId) {
+      // UPDATE LISIT
+      this.itemService.update_item(this.editingId, data).subscribe({
+        next: () => {
+          this.loadData();
+          this.showItemModal = false;
+          this.editingId = null;
+        }
+      });
+    } else {
+      // CREATE LISTI
+      this.itemService.create_item(data).subscribe({
+        next: () => {
+          this.loadData();
+          this.showItemModal = false;
+        }
+      });
+    }
+
   }
 
   pageChange(event: any) {
@@ -257,10 +303,6 @@ export class Item {
     if (!this.hasNY) {
       this.selectedActions = (this.selectedActions ?? []).filter(a => a.id !== 'RM');
     }
-  }
-
-  openDialog() {
-    this.showItemModal = true;
   }
 
   toggleSelection(img: any) {
@@ -417,5 +459,78 @@ export class Item {
 
   onTableSelectionChange(selected: any[]) {
     this.bottomBarVisible.set(selected.length > 0);
+  }
+
+  openEditItem(row: ItemModel) {
+    // EDIT MODE FLAG qo‘shamiz
+    this.editingId = row.id;
+    this.showItemModal = true;
+
+    this.selectedImages = [];
+
+    this.form.patchValue({
+      code: row.code,
+      name: row.name,
+      price: row.price,
+      categoryId: '',
+      isActive: row.isActive ? 'true' : 'false',
+      primaryImageUrl: row.primaryImageUrl,
+      skuCode: row.skuCode,
+      barcode: row.barcode,
+      brand: row.brand,
+      unit: row.unit,
+      description: row.description,
+    });
+
+    // Rasm bo‘lsa
+    if (row.primaryImageUrl) {
+      const [parentId, docName] = row.primaryImageUrl.split('/');
+      this.selectedImages = [{parentId, docName}];
+    }
+  }
+
+  onDialogShown() {
+    if (this.shouldMaximize) {
+      this.dialog.maximize();
+      this.shouldMaximize = false;
+    }
+  }
+
+  onModalClose() {
+    this.selectedImages = [];
+    this.editingId = null;
+    this.form.reset();
+  }
+
+  onSaveFromExcel(event: FileUploadHandlerEvent) {
+    this.loading = true;
+    this.progress = 0;
+
+    let files = event.files;
+    for (let file of files) {
+      this.itemService.create_item_xlsx(file)
+        .subscribe({
+          next: () => {
+            setTimeout(() => {
+              this.uploadedFileXlsx = [];
+              this.fileUploadXlsx!.clear()
+              this.loadData()
+            }, 100);
+            this.loading = false;
+            this.progress = 100;
+          },
+          error: err => {
+            this.errorResponse = err.error.data;
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.dialogVisibleXlsxErrors = true;
+            }, 1000);
+          }
+        });
+    }
+  }
+
+  downloadExcel($event: PointerEvent, xlsx: string, assets: string) {
+    return null;
   }
 }

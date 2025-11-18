@@ -184,8 +184,7 @@
   <hr class="mb-2 mx-4 border-t border-0 border-surface"/>
   <div [ngClass]="visible? 'flex justify-between px-4 py-4' : 'items-center mx-auto'">
     <p-button
-      [text]="true"
-      [label]="visible? 'Chiqish' : ''">
+      [text]="true" pTooltip="Chiqish" tooltipPosition="top">
       <i class="pi pi-sign-out" style="font-size: 1.5rem"></i>
     </p-button>
     <theme-switcher [toTop]="true" [sidebarVisible]="visible"/>

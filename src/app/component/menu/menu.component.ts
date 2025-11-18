@@ -8,20 +8,22 @@ import {SidebarService} from '../../service/sidebar/sidebar.service';
 import {AuthService} from '../../configuration/authentication/auth.service';
 import {Button} from 'primeng/button';
 import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
+import {Tooltip} from "primeng/tooltip";
 
 
 @Component({
   standalone: true,
   selector: 'app-menu',
-  imports: [
-    Ripple,
-    NgClass,
-    RouterLink,
-    RouterLinkActive,
-    StyleClass,
-    Button,
-    ThemeSwitcher
-  ],
+    imports: [
+        Ripple,
+        NgClass,
+        RouterLink,
+        RouterLinkActive,
+        StyleClass,
+        Button,
+        ThemeSwitcher,
+        Tooltip
+    ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })

@@ -1,36 +1,8 @@
 <p-card class="card">
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">Tovarlar</p>
-    @if (itemModel.length > 0) {
-      <div class="flex w-full justify-between gap-2 p-4 pb-0">
-        <p-icon-field iconPosition="right" class="pr-2">
-          <p-inputicon class="pi pi-search"></p-inputicon>
-          <input
-            type="text"
-            pInputText
-            placeholder="Qidiruv"
-            [(ngModel)]="searchValue"
-            (input)="loadData()"
-          />
-        </p-icon-field>
-        <p-button
-          *kaHasRoles="['ROLE_ITEM_CREATE']"
-          class="ml-auto pr-2"
-          icon="pi pi-file-excel" label="Excel"
-        />
-        <p-button
-          *kaHasRoles="['ROLE_ITEM_CREATE']"
-          class="pr-2"
-          styleClass="shadow shadow-blue-500/50"
-          icon="pi pi-file-plus"
-          label="Yangi tovar qo'shish"
-          (onClick)="dialog.maximize()"
-          (click)="showItemModal = true"
-        />
-      </div>
-    }
   </ng-template>
-  @if (itemModel.length === 0) {
+  @if (itemModel.length === 0 && !searchValue) {
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
@@ -73,6 +45,50 @@
     </div>
     <p-divider></p-divider>
   } @else {
+    <div class="flex w-full justify-between gap-2 p-4 pb-0">
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValue"
+          (input)="loadData()"
+        />
+      </p-icon-field>
+
+      <p-menu #menu [model]="getExcelBtnAction()" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-xl">
+        <ng-template pTemplate="item" let-item>
+          <a
+            pRipple
+            class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+            [ngClass]="item.styleClass"
+            (click)="item.command?.($event)"
+          >
+            <i [class]="item.icon + ' mr-2'"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </ng-template>
+      </p-menu>
+      <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
+        (click)="toggleMenu($event, menu)"
+        label="Amallar"
+        [icon]="menuVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
+        iconPos="right"
+        severity="secondary"
+        class="ml-auto pr-2 rounded-md"
+      ></p-button>
+      <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi tovar qo'shish"
+        (onClick)="dialog.maximize()"
+        (click)="showItemModal = true"
+      />
+    </div>
     <p-table
       size="small"
       #dataTableItem
@@ -199,11 +215,17 @@
           <td class="text-nowrap text-center">
             {{ i + 1 }}
           </td>
-          <td><img
-            src="https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg"
-            alt="Bamboo Watch"
-            class="w-10 h-10 rounded"
-          /></td>
+          <td>
+            <div class="md:w-10 h-10 w-10 relative">
+              <img
+                ngSrc="{{ imagePathPrefix + row.primaryImageUrl }}"
+                fill
+                appImageFallback="assets/images/image.png"
+                decoding="async"
+                class="object-cover rounded-md"
+               alt=""/>
+            </div>
+          </td>
           <td class="text-nowrap text-center">{{ row.skuCode }}</td>
           <td class="text-nowrap text-center">{{ row.barcode }}</td>
           <td class="text-nowrap text-center">{{ row.name }}</td>
@@ -218,8 +240,20 @@
 
           <td pFrozenColumn alignFrozen="right" class="text-center">
 
-            <p-menu #actionTable [model]="getRowActions(row)" appendTo="body" [popup]="true" />
-            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-v"/>
+            <p-menu #actionTable [model]="getRowActions(row)" appendTo="body" [popup]="true">
+              <ng-template pTemplate="item" let-item>
+                <a
+                  pRipple
+                  class="flex items-center px-3 p-2 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+                  [ngClass]="item.styleClass"
+                  (click)="item.command?.($event)"
+                >
+                  <i [class]="item.icon + ' mr-2'"></i>
+                  <span>{{ item.label }}</span>
+                </a>
+              </ng-template>
+            </p-menu>
+            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-h"/>
           </td>
         </tr>
       </ng-template>
@@ -238,6 +272,8 @@
 </p-card>
 
 <p-dialog
+  (onHide)="onModalClose()"
+  (onShow)="onDialogShown()"
   [(visible)]="showItemModal"
   [modal]="true"
   [draggable]="false"
@@ -258,7 +294,9 @@
 
       <!-- Markaz: Sarlavha -->
       <div class="justify-self-center text-center">
-        <span class="text-3xl font-bold">Yangi tovar qo'shish</span>
+        <span class="text-3xl font-bold">
+          {{ editingId ? 'Tovarni tahrirlash' : 'Yangi tovar qo‘shish' }}
+        </span>
       </div>
 
       <!-- O'ng: Checkbox -->
@@ -619,18 +657,14 @@
         <p-divider></p-divider>
         <!-- (Optional) Preview -->
         <p-panel header="Rasm korinishi">
-          <div class="rounded-md p-3 flex items-center justify-center h-32">
+          <div class="relative rounded-md p-3 flex items-center justify-center h-32">
             @if (form.value?.primaryImageUrl) {
               <img
                 ngSrc="{{ imagePathPrefix + form.value?.primaryImageUrl }}"
                 fill
-                alt="{{ selectedImages[0].docName }}"
-                decoding="async"
                 class="max-h-28 object-contain"
-              />
-
-              <!--              <img [src]="form.value?.primaryImageUrl" class="max-h-28 object-contain" alt="image preview"/>-->
-            } @else if (!form.value?.primaryImageUrl) {
+               alt=""/>
+            } @else {
               <span class="text-sm">Rasm topilmadi</span>
             }
           </div>
@@ -744,6 +778,82 @@
     </ng-template>
   }
 </p-dialog>
+<p-dialog
+  position="top"
+  [(visible)]="showModalImportItem"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '40rem' }"
+  class="rounded-xl"
+>
+  <ng-template pTemplate="header">
+    <div class="flex justify-between items-center w-full">
+      <p-button icon="pi pi-times" [text]="true" (click)="showModalImportItem = false"></p-button>
+    </div>
+  </ng-template>
+  <div class="grid grid-flow-col auto-cols-fr auto-rows-max gap-4 my-4">
+    <div
+      class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer">
+      <i class="pi pi-file-excel text-4xl text-gray-500"></i>
+      <p class="text-2xl font-semibold">Tovarlar importi</p>
+      <p class="text-gray-600 text-sm mb-4">MS Excel xujjati orqali tovarlarni bir zumda yuklab oling</p>
+
+      <p-fileupload
+        #fu
+        chooseLabel="Мс Excel xujjatini tanlang"
+        uploadLabel="Yuklash"
+        cancelLabel="Tozalash"
+        name="demo[]"
+        customUpload="true"
+        mode="advanced"
+        chooseIcon="pi pi-excel"
+        accept=".xlsx"
+        maxFileSize="1000000"
+        (uploadHandler)="onSaveFromExcel($event)"
+      >
+        <ng-template #empty>
+          <div>
+            Excel tanlanmagan
+            <p-button icon="pi pi-download" label="MS Excel namunasi"
+                      (click)="downloadExcel($event, 'tovarlar_namuna.xlsx', 'assets')"
+                      severity="success" rounded/>
+          </div>
+        </ng-template>
+      </p-fileupload>
+      @if(loading){
+        <div class="loading-container">
+          <p-progress-bar [value]="progress" class="progress-spinner"></p-progress-bar>
+        </div>
+      }
+    </div>
+  </div>
+</p-dialog>
+<p-dialog
+  #errorListDialog
+  header="Хатоликлар"
+  [resizable]="true"
+  [modal]="true"
+  appendTo="body"
+  [(visible)]="dialogVisibleXlsxErrors"
+  [style]="{ width: '40vw' }"
+  [contentStyle]="{ height: '500px' }"
+>
+  <div class="w-full flex-none px-3">
+    @for (errorOne of errorResponse; track errorOne.lineNumber) {
+      <h6 class="font-bold">
+        Qator raqami: {{ errorOne.lineNumber }}:
+      </h6>
+
+      @for (errorColumns of errorOne.lineColumns; track errorColumns.field) {
+        <p class="italic">
+          <u class="text-red-600">{{ errorColumns.field }}</u>:
+          {{ errorColumns.message }}
+        </p>
+      }
+    }
+  </div>
+</p-dialog>
+
 
 <app-actionbar
   [bottomBarVisible]="bottomBarVisible"

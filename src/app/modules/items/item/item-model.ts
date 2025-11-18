@@ -1,3 +1,5 @@
+import {CategoryModel} from '../category/category-model';
+
 export interface ItemModel {
   insUser: string | null;
   updUser: string | null;
@@ -5,6 +7,7 @@ export interface ItemModel {
   updTime: Date;
   isDeleted: boolean;
   id: string;
+  category: CategoryModel;
   code: string;
   name: string;
   price: number | null;
@@ -29,4 +32,14 @@ export interface ItemRequestDto {
   brand?: string;            // Brend nomi
   unit?: string;             // Birlik (kg, dona, l)
   description?: string;      // Tavsif
+}
+
+export interface ErrorResponse {
+  lineColumns: ErrorSubResp[]
+  lineNumber: number
+}
+
+export interface ErrorSubResp {
+  field: string
+  message: string
 }

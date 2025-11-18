@@ -13,7 +13,7 @@
         "permissions": []
       },
       {
-        "label": "Kategoriyalar",
+        "label": "Guruhlar",
         "icon": "pi pi-stop",
         "type": "link",
         "route": "category",

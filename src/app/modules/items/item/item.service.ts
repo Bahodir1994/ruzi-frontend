@@ -77,6 +77,38 @@ export class ItemService {
     );
   }
 
+  update_item(id: string, formData: any): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_update').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.put<ResponseDto>(
+            `${this.moduleUrl.host}${this.moduleUrl.url}/${id}`,
+            formData
+          );
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
+  create_item_xlsx(file: File) {
+    const formData = new FormData();
+
+    formData.append("multipartFile", file);
+    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_create_xlsx').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.post<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, formData);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    )
+  }
+
   /* -tables- */
   data_table_main(dataTableInput: DataTableInput): Observable<DataTableOutput<ItemModel>> {
     this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_table').subscribe(value => {

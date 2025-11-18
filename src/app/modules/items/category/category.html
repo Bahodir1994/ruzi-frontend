@@ -1,31 +1,8 @@
 <p-card class="card" >
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">Guruhlar</p>
-    @if (categoryModel.length > 0) {
-      <div class="flex w-full justify-between gap-2 p-4 pb-0">
-        <p-icon-field iconPosition="right" class="pr-2">
-          <p-inputicon class="pi pi-search"></p-inputicon>
-          <input
-            type="text"
-            pInputText
-            placeholder="Qidiruv"
-            [(ngModel)]="searchValue"
-            (input)="loadDataTable()"
-          />
-        </p-icon-field>
-        <p-button
-          *kaHasRoles="['ROLE_CAT_CREATE']"
-          class="pr-2"
-          styleClass="shadow shadow-blue-500/50"
-          icon="pi pi-file-plus"
-          label="Yangi kategoriya qo'shish"
-          (onClick)="dialog.maximize()"
-          (click)="showModalCategory = true"
-        />
-      </div>
-    }
   </ng-template>
-  @if (categoryModel.length === 0) {
+  @if (categoryModel.length === 0 && !searchValue) {
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
     >
@@ -44,6 +21,27 @@
       />
     </div>
   } @else {
+    <div class="flex w-full justify-between gap-2 p-4 pb-0">
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValue"
+          (input)="loadDataTable()"
+        />
+      </p-icon-field>
+      <p-button
+        *kaHasRoles="['ROLE_CAT_CREATE']"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi kategoriya qo'shish"
+        (onClick)="dialog.maximize()"
+        (click)="showModalCategory = true"
+      />
+    </div>
     <p-table
       size="small"
       #dataTableCategory
