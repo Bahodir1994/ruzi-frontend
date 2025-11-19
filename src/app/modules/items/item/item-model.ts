@@ -15,6 +15,7 @@ export interface ItemModel {
   primaryImageUrl: string | null;
   skuCode: string;
   barcode: string | null;
+  exciseCode: string | null;
   brand: string | null;
   unit: string | null;
   description: string | null;

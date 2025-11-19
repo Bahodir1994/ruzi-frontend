@@ -497,6 +497,16 @@
         <!-- ⚖️ Birlik -->
         <div class="flex items-start gap-3 w-full">
           <div class="flex-1 min-h-[90px] flex flex-col justify-start">
+            <div class="flex items-center gap-2 mb-3">
+              <span
+                class="w-3 h-3 rounded-full"
+                [ngClass]="scannerIsActive ? 'bg-green-500' : 'bg-red-500'">
+              </span>
+                          <span class="text-sm">
+                {{ scannerIsActive ? 'Skaner faol' : 'Skaner o‘chgan' }}
+              </span>
+            </div>
+
             <p-floatlabel variant="in" class="w-full">
               <input
                 pInputText
@@ -504,8 +514,9 @@
                 id="barcode"
                 class="w-full"
                 [ngClass]="{
-          'ng-dirty ng-invalid': form.controls['barcode'].invalid && formCreateItemSubmit
-        }"
+                  'barcode-glow': barcodeGlow,
+                  'ng-dirty ng-invalid': form.controls['barcode'].invalid && formCreateItemSubmit
+                }"
               />
               <label for="barcode">Shtrix-kod</label>
             </p-floatlabel>
@@ -853,6 +864,14 @@
     }
   </div>
 </p-dialog>
+<p-dialog [(visible)]="exciseCodeModal" [modal]="true" header="Aksiz kodni tasdiqlang">
+  <div class="p-4">
+    <textarea pInputText [(ngModel)]="exciseCodeValue" rows="5" class="w-full"></textarea>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="Saqlash" (click)="saveExciseCode()"></button>
+  </ng-template>
+</p-dialog>
 
 
 <app-actionbar
@@ -888,3 +907,9 @@
     class="rounded-md"
   ></p-button>
 </ng-template>
+
+<app-barcode-scanner
+  (scanned)="onBarcode($event)"
+  (scannerStatus)="onScannerStatus($event)">
+</app-barcode-scanner>
+

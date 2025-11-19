@@ -43,6 +43,7 @@ import {environment} from '../../../../environments/environment';
 import {SplitButton} from 'primeng/splitbutton';
 import {FileUpload, FileUploadHandlerEvent} from 'primeng/fileupload';
 import {ProgressBar} from 'primeng/progressbar';
+import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner';
 
 @Component({
   selector: 'app-item',
@@ -80,7 +81,8 @@ import {ProgressBar} from 'primeng/progressbar';
     Actionbar,
     Menu,
     FileUpload,
-    ProgressBar
+    ProgressBar,
+    BarcodeScanner
   ],
   templateUrl: './item.html',
   standalone: true,
@@ -92,11 +94,14 @@ export class Item {
   @ViewChild('fu') fileUploadXlsx: FileUpload | undefined;
   shouldMaximize = false;
 
+  exciseCodeModal = false;
+  exciseCodeValue = '';
+
+  scannerIsActive = false;
   loading: boolean = false;
   progress: number = 0;
 
   errorResponse: ErrorResponse[] = []
-  uploadedFiles: any[] = [];
   uploadedFileXlsx: any[] = [];
 
   bottomBarVisible = signal(false);
@@ -191,6 +196,7 @@ export class Item {
       primaryImageUrl: [''],
       skuCode: ['', Validators.required],
       barcode: [''],
+      exciseCode: [''],
       brand: [''],
       unit: [''],
       description: [''],
@@ -532,5 +538,48 @@ export class Item {
 
   downloadExcel($event: PointerEvent, xlsx: string, assets: string) {
     return null;
+  }
+
+  onBarcode(scannedCode: string) {
+    console.log("SCANNED:", scannedCode);
+    if (/^[0-9]{13}$/.test(scannedCode)) {
+      // 1) Form dagi barcode maydoniga yozib qo‘yish
+      this.form.patchValue({barcode: scannedCode});
+
+      // 2) Highlight animatsiya boshlash
+      this.triggerBarcodeGlow();
+    }else if (scannedCode.startsWith("01") || scannedCode.length > 20) {
+      // Aksiz QR odatda juda uzun bo‘ladi
+      this.openExciseModal(scannedCode);
+    }
+
+    // 3) ChangeDetector majburiy chaqiramiz
+    this.cdr.detectChanges();
+  }
+
+  // Animation trigger flag
+  barcodeGlow = false;
+
+  triggerBarcodeGlow() {
+    this.barcodeGlow = true;
+
+    setTimeout(() => {
+      this.barcodeGlow = false;
+      this.cdr.detectChanges();
+    }, 600); // 0.6s highlight
+  }
+
+  onScannerStatus(active: boolean) {
+    this.scannerIsActive = active;
+  }
+
+  openExciseModal(code: string) {
+    this.exciseCodeValue = code;
+    this.exciseCodeModal = true;
+  }
+
+  saveExciseCode() {
+    this.form.patchValue({ exciseCode: this.exciseCodeValue });
+    this.exciseCodeModal = false;
   }
 }
