@@ -194,7 +194,27 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
-      }
+      },
+      {
+        url: "/route-purchase-order/create-order",
+        method: "POST",
+        label: "pur_order_create",
+        comment: "yangi kirim qo'shish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-purchase-order/update-order",
+        method: "PUT",
+        label: "update_pur_order",
+        comment: "kirimni yangilash",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {

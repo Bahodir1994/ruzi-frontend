@@ -7,7 +7,6 @@
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
       <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon" />
-<!--      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
       <p class="text-2xl font-bold">
         Kirim jadvali
       </p>
@@ -174,7 +173,6 @@
   }
 </p-card>
 
-
 <p-dialog
   [(visible)]="visiblePurchaseOrderModal"
   [modal]="true"
@@ -202,7 +200,7 @@
       </div>
 
       <!-- O'ng: Checkbox -->
-      <div class="justify-self-end flex items-center gap-2 ml-2">
+      <div class="justify-self-end flex items-center gap-2 ml-auto">
         <p-multiSelect
           [options]="actions"
           [(ngModel)]="selectedActions"
@@ -215,5 +213,13 @@
 
     </div>
   </ng-template>
+
+  <div class="grid grid-flow-col grid-rows-3 gap-4">
+    <div class="col-span-3 flex grid grid-flow-col grid-rows-5">
+      <div class="col-span-2 bg-gray-700"></div>
+      <div class="col-span-3"></div>
+    </div>
+    <div class="col-span-3 bg-gray-700">02</div>
+  </div>
 
 </p-dialog>

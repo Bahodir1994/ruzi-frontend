@@ -18,12 +18,11 @@ export class PurchaseOrderService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {
-  }
+  ) {}
 
   /* -CRUD- */
   create_order(formData: any): Observable<ResponseDto> {
-    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_create').pipe(
+    return this.apiConfigService.loadConfigAndGetResultUrl('purchase-order', 'pur_create').pipe(
       switchMap(value => {
         if (value) {
           this.moduleUrl = value;
@@ -36,7 +35,7 @@ export class PurchaseOrderService {
   }
 
   update_order(id: string, formData: any): Observable<ResponseDto> {
-    return this.apiConfigService.loadConfigAndGetResultUrl('items', 'item_update').pipe(
+    return this.apiConfigService.loadConfigAndGetResultUrl('purchase-order', 'update_pur_order').pipe(
       switchMap(value => {
         if (value) {
           this.moduleUrl = value;
