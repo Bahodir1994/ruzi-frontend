@@ -1,4 +1,4 @@
-import {WarehouseModel} from '../settings/account/business-info/warehouse/warehouse.model';
+import {WarehouseModel} from '../settings/warehouse/warehouse.model';
 
 export interface StockView {
   /** Stock ma'lumotlari */

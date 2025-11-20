@@ -64,6 +64,35 @@ export class CategoryService {
     );
   }
 
+  delete_category(id: string | number): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('category', 'category_delete_one').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.delete<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
+  delete_category_bulk(ids: (string | number)[]): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('category', 'category_delete_many').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.post<ResponseDto>(
+            `${this.moduleUrl.host}${this.moduleUrl.url}`,
+            { ids: ids }
+          );
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
   /* -tables- */
   data_table_main(dataTableInput: DataTableInput): Observable<DataTableOutput<CategoryModel>> {
     this.apiConfigService.loadConfigAndGetResultUrl('category', 'category_table').subscribe(value => {
