@@ -6,20 +6,34 @@
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
-      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>
+      <img ngSrc="assets/images/icons/items.gif" width="200" height="200" alt="icon" />
+<!--      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
       <p class="text-2xl font-bold">
         Tovarlar to'plami
       </p>
       <span class="text-sm max-w-3xl">Mahsulotlar kutubxonasi yordamida sotadigan narsalaringizni tartiblang. To'lovni tezlashtirish, savdo hisobotlarini ko'rish va inventarizatsiyani kuzatish uchun mahsulotlar yarating. Import qilingan mahsulotlarni yaratish va yangilash uchun shablonimizni yuklab oling..</span>
-      <p-button
-        *kaHasRoles="['ROLE_ITEM_CREATE']"
-        class="p-2"
-        styleClass="shadow shadow-blue-500/50"
-        icon="pi pi-file-plus"
-        label="Yangi tovar qo'shish"
-        (onClick)="dialog.maximize();"
-        (click)="showItemModal = true"
-      />
+      <div class="flex justify-between">
+        <p-button
+          *kaHasRoles="['ROLE_ITEM_CREATE']"
+          [outlined]="true"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+          (click)="showModalImportItem = true"
+        >
+          <ng-template pTemplate="content">
+            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon" />
+          </ng-template>
+        </p-button>
+        <p-button
+          *kaHasRoles="['ROLE_ITEM_CREATE']"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-excel"
+          label="Yangi tovar qo'shish"
+          (onClick)="dialog.maximize();"
+          (click)="showItemModal = true"
+        />
+      </div>
     </div>
     <p class="text-md font-bold p-4">Tezkor tovar kiritish</p>
     <div class="flex items-center justify-between gap-2">
@@ -869,7 +883,7 @@
     <textarea pInputText [(ngModel)]="exciseCodeValue" rows="5" class="w-full"></textarea>
   </div>
   <ng-template pTemplate="footer">
-    <button pButton label="Saqlash" (click)="saveExciseCode()"></button>
+    <p-button label="Saqlash" (click)="saveExciseCode()"></p-button>
   </ng-template>
 </p-dialog>
 

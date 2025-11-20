@@ -128,7 +128,27 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: true,
         showWarning: true,
         roles: []
-      }
+      },
+      {
+        url: "/route-category/delete",
+        method: "DELETE",
+        label: "category_delete_one",
+        comment: "bitta guruh ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-category/delete",
+        method: "POST",
+        label: "category_delete_many",
+        comment: "birnechta guruh ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {

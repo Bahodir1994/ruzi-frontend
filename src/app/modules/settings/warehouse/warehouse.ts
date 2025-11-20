@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
 import {NgClass} from '@angular/common';
 import {Button} from 'primeng/button';
-import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
-import {PermissionService} from '../../../../../service/validations/permission.service';
+import {DataTableInput} from '../../../component/datatables/datatable-input.model';
+import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {WarehouseModel} from './warehouse.model';
 import {WarehouseService} from './warehouse.service';

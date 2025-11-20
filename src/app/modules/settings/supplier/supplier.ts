@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
 import {TableModule} from 'primeng/table';
-import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
+import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {SupplierModel} from './supplier.model';
 import {Dialog} from 'primeng/dialog';
 import {PrimeTemplate} from 'primeng/api';
@@ -11,7 +11,7 @@ import {FormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {firstValueFrom} from 'rxjs';
 import {SupplierService} from './supplier.service';
-import {PermissionService} from '../../../../../service/validations/permission.service';
+import {PermissionService} from '../../../service/validations/permission.service';
 
 @Component({
   selector: 'app-supplier',

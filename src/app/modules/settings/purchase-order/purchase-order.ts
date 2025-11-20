@@ -3,15 +3,23 @@ import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
-import {FormsModule} from '@angular/forms';
+import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
-import {DataTableInput} from '../../../../../component/datatables/datatable-input.model';
-import {PermissionService} from '../../../../../service/validations/permission.service';
+import {DataTableInput} from '../../../component/datatables/datatable-input.model';
+import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
 import {PurchaseOrderModel} from './purchase-order.model';
 import {PurchaseOrderService} from './purchase-order.service';
-import {DatePipe, DecimalPipe, NgClass} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
+import {Card} from 'primeng/card';
+import {Divider} from 'primeng/divider';
+import {HasRolesDirective} from 'keycloak-angular';
+import {InputNumber} from 'primeng/inputnumber';
+import {Menu} from 'primeng/menu';
+import {Ripple} from 'primeng/ripple';
+import {MenuItem} from 'primeng/api';
+import {MultiSelect} from 'primeng/multiselect';
 
 @Component({
   selector: 'app-purchase-order',
@@ -25,7 +33,14 @@ import {DatePipe, DecimalPipe, NgClass} from '@angular/common';
     TableModule,
     DatePipe,
     DecimalPipe,
-    NgClass
+    NgClass,
+    Card,
+    HasRolesDirective,
+    NgOptimizedImage,
+    Menu,
+    Ripple,
+    MultiSelect,
+    ReactiveFormsModule
   ],
   templateUrl: './purchase-order.html',
   standalone: true,
@@ -35,9 +50,14 @@ export class PurchaseOrder {
   public permissions: Record<string, boolean> = {};
   visiblePurchaseOrderModal = false;
 
-  openDialog() {
-    this.visiblePurchaseOrderModal = true;
-  }
+  actions!: MenuItem[];
+  selectedActions!: MenuItem[];
+
+  form!: FormGroup;
+  formCreateItemSubmit = false;
+
+  menuVisible = false;
+  editingId!: string | null;
 
   totalRecords: number = 0;
   searchValue: string | undefined;
@@ -83,6 +103,21 @@ export class PurchaseOrder {
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
+
+    this.actions = [
+      {name: 'Saqlangach oynani yopma!', id: 'NY'},
+      {name: 'Saqlangach maydonlarni tozala!', id: 'RM'}
+    ];
+  }
+
+  onActionsChange() {
+    if (!this.hasNY) {
+      this.selectedActions = (this.selectedActions ?? []).filter(a => a.id !== 'RM');
+    }
+  }
+
+  get hasNY(): boolean {
+    return this.selectedActions?.some(a => a.id === 'NY') ?? false;
   }
 
   permission(status: string) {
@@ -111,6 +146,48 @@ export class PurchaseOrder {
       this.dataTableInput.start = event.first;
       this.dataTableInput.length = event.rows;
       this.loadData().then(r => null);
+    }
+  }
+
+  getExcelBtnAction(): MenuItem[] {
+    return [
+      {
+        label: 'Na`muna Excel yuklab olish',
+        icon: 'pi pi-download',
+        command: () => this.visiblePurchaseOrderModal = true
+      }
+    ];
+  }
+
+  toggleMenu(event: Event, menu: any) {
+    menu.toggle(event);
+    this.menuVisible = !this.menuVisible;
+  }
+
+  async onSubmit() {
+    this.formCreateItemSubmit = true;
+    if (this.form.invalid) return;
+
+
+    const data = {
+      ...this.form.value,
+    };
+
+    if (this.editingId) {
+      this.purchaseOrderService.update_order(this.editingId, data).subscribe({
+        next: () => {
+          this.loadData();
+          this.visiblePurchaseOrderModal = false;
+          this.editingId = null;
+        }
+      });
+    } else {
+      this.purchaseOrderService.create_order(data).subscribe({
+        next: () => {
+          this.loadData();
+          this.visiblePurchaseOrderModal = false;
+        }
+      });
     }
   }
 }

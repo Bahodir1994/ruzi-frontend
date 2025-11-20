@@ -4,9 +4,9 @@ import {Cashbox} from './modules/cashbox/cashbox';
 import {Category} from './modules/items/category/category';
 import {Item} from './modules/items/item/item';
 import {Unit} from './modules/items/unit/unit';
-import {Warehouse} from './modules/settings/account/business-info/warehouse/warehouse';
-import {PurchaseOrder} from './modules/settings/account/business-info/purchase-order/purchase-order';
-import {Supplier} from './modules/settings/account/business-info/supplier/supplier';
+import {Warehouse} from './modules/settings/warehouse/warehouse';
+import {PurchaseOrder} from './modules/settings/purchase-order/purchase-order';
+import {Supplier} from './modules/settings/supplier/supplier';
 import {canActivateAuthGuard} from './configuration/authentication/auth.guard';
 import {Image} from './modules/items/image/image';
 
@@ -54,8 +54,8 @@ export const routes: Routes = [
             component: Category,
             data: {
               roles: [],
-              title: 'Kategoriyalar',
-              breadcrumb: 'Kategoriyalar'
+              title: 'Guruhlar',
+              breadcrumb: 'Guruhlar'
             }
           },
           {

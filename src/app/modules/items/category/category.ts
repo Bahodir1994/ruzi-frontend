@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
 import {TableFilterEvent, TableModule} from 'primeng/table';
 import {CategoryModel} from './category-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
@@ -32,6 +32,7 @@ import {RouterLink} from '@angular/router';
 import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
 import {FormStateService} from '../../../service/states/form-state.service';
 import {environment} from '../../../../environments/environment';
+import {Actionbar} from '../../../component/actionbar/actionbar';
 
 @Component({
   selector: 'app-category',
@@ -63,6 +64,7 @@ import {environment} from '../../../../environments/environment';
     ButtonLabel,
     ButtonDirective,
     ImageFallbackDirective,
+    Actionbar,
   ],
   templateUrl: './category.html',
   standalone: true,
@@ -72,6 +74,9 @@ import {environment} from '../../../../environments/environment';
 export class Category implements OnInit {
   menuVisible = false;
   actions: MenuItem[] = [];
+
+  bottomBarVisible = signal(false);
+
 
   form!: FormGroup;
   formSubmitted = false;
@@ -110,6 +115,7 @@ export class Category implements OnInit {
   isLoadingImage: boolean = true;
 
   categoryModel: CategoryModel[] = [];
+  categorySelectedModel: CategoryModel[] = [];
   dataTableInputCategoryModel: DataTableInput = {
     draw: 0,
     start: 0,
@@ -504,5 +510,64 @@ export class Category implements OnInit {
 
   isSelected(img: any): boolean {
     return this.selectedImages.some((i) => i.id === img.id);
+  }
+
+  onTableSelectionChange(selected: any[]) {
+    this.bottomBarVisible.set(selected.length > 0);
+  }
+
+  getGroupAction(): MenuItem[] {
+    return [
+      {
+        label: 'O`chirish',
+        icon: 'pi pi-trash',
+        styleClass: 'text-red-600 hover:bg-red-50 hover:text-red-700 border-b',
+        command: () => this.onDeleteSelected()
+      }
+    ];
+  }
+
+  onDeleteSelected() {
+    const ids = this.categorySelectedModel.map(i => i.id);
+
+    this.categoryService.delete_category_bulk(ids).subscribe({
+      next: () => {
+        this.categorySelectedModel = [];
+        this.bottomBarVisible.set(false);
+        this.loadDataTable();
+      }
+    });
+  }
+
+  onDeleteRow(row: CategoryModel) {
+    this.categoryService.delete_category(row.id).subscribe({
+      next: () => {
+        this.categorySelectedModel = this.categorySelectedModel.filter(i => i.id !== row.id);
+        this.bottomBarVisible.set(this.categorySelectedModel.length > 0);
+
+        this.loadDataTable();
+      }
+    });
+  }
+
+  getRowActions(row: CategoryModel): MenuItem[] {
+    return [
+      {
+        label: 'O‘chirish',
+        icon: 'pi pi-trash',
+        styleClass: 'text-red-600 hover:bg-red-50',
+        command: () => this.onDeleteRow(row)
+      },
+      {
+        label: 'Tahrirlash',
+        icon: 'pi pi-pencil',
+        command: () => {
+          this.openEditCategory(row)
+          // this.openEditItem(row);
+          // this.shouldMaximize = true;
+          // this.showItemModal = true;
+        }
+      }
+    ];
   }
 }

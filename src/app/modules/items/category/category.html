@@ -6,7 +6,8 @@
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
     >
-      <i class="pi pi-folder mb-3 text-gray-500" style="font-size: 4rem;"></i>
+      <img ngSrc="assets/images/icons/category.gif" width="200" height="200" alt="icon" />
+<!--      <i class="pi pi-folder mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
       <p class="text-2xl font-bold">
         Tovarlar guruhi
       </p>
@@ -21,7 +22,7 @@
       />
     </div>
   } @else {
-    <div class="flex w-full justify-between gap-2 p-4 pb-0">
+    <div class="flex w-full justify-between gap-2 p-4 pb-2">
       <p-icon-field iconPosition="right" class="pr-2">
         <p-inputicon class="pi pi-search"></p-inputicon>
         <input
@@ -46,6 +47,8 @@
       size="small"
       #dataTableCategory
       [value]="categoryModel"
+      [(selection)]="categorySelectedModel"
+      (selectionChange)="onTableSelectionChange($event)"
       dataKey="id"
       [rowHover]="true"
       [rows]="10"
@@ -70,6 +73,9 @@
     >
       <ng-template pTemplate="header">
         <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox/>
+          </th>
           <th colspan="2">
             <div class="flex items-center gap-2">
               Nomi
@@ -84,6 +90,9 @@
       </ng-template>
       <ng-template pTemplate="body" let-item let-i="rowIndex">
         <tr>
+          <td>
+            <p-tableCheckbox [value]="item"/>
+          </td>
           <td colspan="2">
             <div class="flex items-center gap-3 pl-20">
               <div class="md:w-10 h-10 w-10 relative">
@@ -93,7 +102,7 @@
                   appImageFallback="assets/images/image.png"
                   decoding="async"
                   class="object-cover rounded-md"
-                />
+                 alt=""/>
               </div>
               <span class="font-bold">{{ item.code }}</span>
             </div>
@@ -102,13 +111,20 @@
             <div class="flex flex-col items-end gap-8 item-center">
               <div class="flex flex-row-reverse md:flex-row gap-2 pr-20">
                 <span class="font-semibold my-auto">{{ item.items.length }} ta tovar</span>
-                <p-button
-                  size="small"
-                  variant="outlined"
-                  icon="pi pi-pencil"
-                  (onClick)="dialog.maximize(); openEditCategory(item)"
-                  class="flex-auto md:flex-initial whitespace-nowrap"
-                />
+                <p-menu #actionTable [model]="getRowActions(item)" appendTo="body" [popup]="true">
+                  <ng-template pTemplate="item" let-item>
+                    <a
+                      pRipple
+                      class="flex items-center px-3 p-2 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+                      [ngClass]="item.styleClass"
+                      (click)="item.command?.($event)"
+                    >
+                      <i [class]="item.icon + ' mr-2'"></i>
+                      <span>{{ item.label }}</span>
+                    </a>
+                  </ng-template>
+                </p-menu>
+                <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-h"/>
               </div>
             </div>
           </td>
@@ -317,7 +333,6 @@
     </div>
   </form>
 </p-dialog>
-
 <p-dialog
   [(visible)]="showModalSelectItem"
   [closable]="false"
@@ -394,7 +409,6 @@
     </ng-template>
   </p-table>
 </p-dialog>
-
 <p-dialog
   [(visible)]="showModalSelectImage"
   [modal]="true"
@@ -501,3 +515,36 @@
   }
 </p-dialog>
 
+<app-actionbar
+  [bottomBarVisible]="bottomBarVisible"
+  [infoTemplate]="info"
+  [actionsTemplate]="actionSlot"
+></app-actionbar>
+<ng-template #info>
+  <span class="font-bold">{{ categorySelectedModel.length }} ta tanlangan tovar</span>
+  <p-button class="px-4" (onClick)="categorySelectedModel = []; onTableSelectionChange(categorySelectedModel)" severity="info"
+            label="tanlashni bekor qilish" [text]="true"></p-button>
+</ng-template>
+<ng-template #actionSlot>
+  <p-menu #menu [model]="getGroupAction()" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-xl">
+    <ng-template pTemplate="item" let-item>
+      <a
+        pRipple
+        class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+        [ngClass]="item.styleClass"
+        (click)="item.command?.($event)"
+      >
+        <i [class]="item.icon + ' mr-2'"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </ng-template>
+  </p-menu>
+  <p-button
+    (click)="toggleMenu($event, menu)"
+    label="Amallar"
+    [icon]="menuVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
+    iconPos="right"
+    severity="secondary"
+    class="rounded-md"
+  ></p-button>
+</ng-template>

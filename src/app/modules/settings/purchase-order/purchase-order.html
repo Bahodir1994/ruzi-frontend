@@ -1,0 +1,219 @@
+<p-card class="card">
+  <ng-template #header>
+    <p class="text-3xl font-bold px-4 pt-2">Kirim ma'lumotlari</p>
+  </ng-template>
+  @if (purchaseOrderModel.length === 0 && !searchValue) {
+    <div
+      class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
+    >
+      <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon" />
+<!--      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
+      <p class="text-2xl font-bold">
+        Kirim jadvali
+      </p>
+      <span class="text-sm max-w-3xl">Xarid buyurtmalarini yaratish, tahrirlash va boshqarish uchun mo‘ljallangan modul. Ushbu bo‘lim orqali foydalanuvchi yetkazib beruvchilar bilan kelishilgan xarid jarayonlarini tartibga soladi va har bir buyurtmaning to‘liq tafsilotlarini kiritadi</span>
+      <div class="flex justify-between">
+        <p-button
+          *kaHasRoles="['ROLE_ITEM_CREATE']"
+          [outlined]="true"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+        >
+          <ng-template pTemplate="content">
+            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon" />
+          </ng-template>
+        </p-button>
+        <p-button
+          *kaHasRoles="['ROLE_ITEM_CREATE']"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-excel"
+          label="Yangi kirim qo'shish"
+          (onClick)="dialog.maximize();"
+          (click)="visiblePurchaseOrderModal = true"
+        />
+      </div>
+    </div>
+  } @else {
+    <div class="flex w-full justify-between gap-2 p-4 pb-0">
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValue"
+          (input)="loadData()"
+        />
+      </p-icon-field>
+
+      <p-menu #menu [model]="getExcelBtnAction()" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-xl">
+        <ng-template pTemplate="item" let-item>
+          <a
+            pRipple
+            class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+            [ngClass]="item.styleClass"
+            (click)="item.command?.($event)"
+          >
+            <i [class]="item.icon + ' mr-2'"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </ng-template>
+      </p-menu>
+      <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
+        (click)="toggleMenu($event, menu)"
+        label="Amallar"
+        [icon]="menuVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
+        iconPos="right"
+        severity="secondary"
+        class="ml-auto pr-2 rounded-md"
+      ></p-button>
+      <p-button
+        *kaHasRoles="['ROLE_ITEM_CREATE']"
+        class="pr-2"
+        styleClass="shadow shadow-blue-500/50"
+        icon="pi pi-file-plus"
+        label="Yangi tovar qo'shish"
+        (onClick)="dialog.maximize()"
+        (click)="visiblePurchaseOrderModal = true"
+      />
+    </div>
+    <p-table
+      size="small"
+      #dataTableUnit
+      [value]="purchaseOrderModel"
+      dataKey="id"
+      [rowHover]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      loadingIcon="pi pi-spinner"
+      [paginator]="true"
+      currentPageReportTemplate="{totalPages} ta dan {currentPage}-saxifa, jami {totalRecords} ta dan {first}-{last} gacha"
+      [filterDelay]="0"
+      [scrollable]="true"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="pageChange($event)"
+      [first]="0"
+      [pageLinks]="5"
+      [showJumpToPageInput]="true"
+      scrollHeight="80vh"
+    >
+      <ng-template pTemplate="header">
+        <tr class="border shadow h-[60px]">
+          <th pSortableColumn="orderNumber" class="text-center text-nowrap sort-header">
+            Buyurtma №
+            <p-sortIcon field="orderNumber"/>
+          </th>
+          <th pSortableColumn="supplier.name" class="text-center text-nowrap sort-header">
+            Ta’minotchi
+            <p-sortIcon field="supplier.name"/>
+          </th>
+          <th pSortableColumn="warehouse.name" class="text-center text-nowrap sort-header">
+            Ombor
+            <p-sortIcon field="warehouse.name"/>
+          </th>
+          <th pSortableColumn="createdAt" class="text-center text-nowrap sort-header">
+            Sana
+            <p-sortIcon field="createdAt"/>
+          </th>
+          <th pSortableColumn="status" class="text-center text-nowrap sort-header">
+            Holat
+            <p-sortIcon field="status"/>
+          </th>
+          <th pSortableColumn="paymentStatus" class="text-center text-nowrap sort-header">
+            To‘lov
+            <p-sortIcon field="paymentStatus"/>
+          </th>
+          <th pSortableColumn="totalAmount" class="text-center text-nowrap sort-header">
+            Summasi
+            <p-sortIcon field="totalAmount"/>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-i="rowIndex">
+        <tr style="height:49px">
+          <td class="text-nowrap text-center">{{ row.orderNumber }}</td>
+          <td class="text-nowrap text-center">{{ row.supplier?.name }}</td>
+          <td class="text-nowrap text-center">{{ row.warehouse?.name }}</td>
+          <td class="text-nowrap text-center">{{ row.createdAt | date:'dd.MM.yyyy' }}</td>
+          <td class="text-nowrap text-center">
+      <span [ngClass]="{
+        'text-gray-500': row.status === 'DRAFT',
+        'text-green-600': row.status === 'APPROVED',
+        'text-red-600': row.status === 'CANCELLED'
+      }">
+        {{ row.status }}
+      </span>
+          </td>
+          <td class="text-nowrap text-center">
+      <span [ngClass]="{
+        'text-red-500': row.paymentStatus === 'UNPAID',
+        'text-orange-500': row.paymentStatus === 'PARTIAL',
+        'text-green-600': row.paymentStatus === 'PAID'
+      }">
+        {{ row.paymentStatus }}
+      </span>
+          </td>
+          <td class="text-nowrap text-center">{{ row.totalAmount | number:'1.2-2' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="7" class="mx-auto">
+            <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+              <i class="pi pi-info-circle text-3xl mb-2"></i>
+              <span>Buyurtmalar topilmadi</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>
+
+
+<p-dialog
+  [(visible)]="visiblePurchaseOrderModal"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+  [maximizable]="true"
+  [dismissableMask]="true"
+  [style]="{ minWidth: '50rem'}"
+  #dialog
+  [baseZIndex]="10000">
+  <ng-template #header>
+    <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
+
+      <!-- Chap: Saqlash -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">
+        <p-button type="submit" label="Saqlash" severity="primary"></p-button>
+      </form>
+
+      <!-- Markaz: Sarlavha -->
+      <div class="justify-self-center text-center">
+        <span class="text-3xl font-bold">
+          {{ editingId ? 'Tovarni tahrirlash' : 'Yangi kirim qo‘shish' }}
+        </span>
+      </div>
+
+      <!-- O'ng: Checkbox -->
+      <div class="justify-self-end flex items-center gap-2 ml-2">
+        <p-multiSelect
+          [options]="actions"
+          [(ngModel)]="selectedActions"
+          optionLabel="name"
+          placeholder="Amallar"
+          [filter]="false"
+          (onChange)="onActionsChange()"
+          [maxSelectedLabels]="2" class="w-full md:w-80"/>
+      </div>
+
+    </div>
+  </ng-template>
+
+</p-dialog>

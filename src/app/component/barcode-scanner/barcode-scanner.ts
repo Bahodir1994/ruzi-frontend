@@ -20,6 +20,14 @@ export class BarcodeScanner {
   @HostListener('document:keydown', ['$event'])
   onKeyDown(e: KeyboardEvent) {
 
+    const isScanner = this.isScannerEvent(e);
+
+    // 1) Faqat SCANNER bo‘lsa inputlarni bloklaymiz!
+    if (isScanner) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     /** --- SCANNER ACTIVE LOGIC --- */
     this.scannerActive = true;
     this.scannerStatus.emit(true);
@@ -43,4 +51,18 @@ export class BarcodeScanner {
       this.buffer = "";
     }, 50);
   }
+
+
+// =============== SCANNER ANIQLASH FUNKSIYASI ===============
+  private lastKeyTime = 0;
+
+  private isScannerEvent(e: KeyboardEvent): boolean {
+    const now = Date.now();
+    const diff = now - this.lastKeyTime;
+    this.lastKeyTime = now;
+
+    // Scanner juda tez yozadi → klaviatura yozganidan farqli
+    return diff < 30 && e.key.length === 1;
+  }
+
 }
