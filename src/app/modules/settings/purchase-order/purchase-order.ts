@@ -3,7 +3,7 @@ import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
@@ -11,7 +11,7 @@ import {PermissionService} from '../../../service/validations/permission.service
 import {firstValueFrom} from 'rxjs';
 import {PurchaseOrderModel} from './purchase-order.model';
 import {PurchaseOrderService} from './purchase-order.service';
-import {DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
+import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {Card} from 'primeng/card';
 import {Divider} from 'primeng/divider';
 import {HasRolesDirective} from 'keycloak-angular';
@@ -20,6 +20,10 @@ import {Menu} from 'primeng/menu';
 import {Ripple} from 'primeng/ripple';
 import {MenuItem} from 'primeng/api';
 import {MultiSelect} from 'primeng/multiselect';
+import {ScrollPanel} from 'primeng/scrollpanel';
+import {Textarea} from 'primeng/textarea';
+import {Select} from 'primeng/select';
+import {DatePicker} from 'primeng/datepicker';
 
 @Component({
   selector: 'app-purchase-order',
@@ -40,7 +44,11 @@ import {MultiSelect} from 'primeng/multiselect';
     Menu,
     Ripple,
     MultiSelect,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ScrollPanel,
+    Select,
+    DatePicker,
+    Textarea
   ],
   templateUrl: './purchase-order.html',
   standalone: true,
@@ -54,6 +62,7 @@ export class PurchaseOrder {
   selectedActions!: MenuItem[];
 
   form!: FormGroup;
+  formItem!: FormGroup;
   formCreateItemSubmit = false;
 
   menuVisible = false;
@@ -63,6 +72,7 @@ export class PurchaseOrder {
   searchValue: string | undefined;
   isLoading: boolean = true;
 
+  purchaseOrderModelById: PurchaseOrderModel[] = [];
   purchaseOrderModel: PurchaseOrderModel[] = [];
   dataTableInput: DataTableInput = {
     draw: 0,
@@ -96,7 +106,8 @@ export class PurchaseOrder {
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private cdr: ChangeDetectorRef,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private fb: FormBuilder
   ) {
   }
 
@@ -108,6 +119,31 @@ export class PurchaseOrder {
       {name: 'Saqlangach oynani yopma!', id: 'NY'},
       {name: 'Saqlangach maydonlarni tozala!', id: 'RM'}
     ];
+
+    this.form = this.fb.group({
+      orderNumber: ['', Validators.required],
+      supplierId: [null, Validators.required],
+      warehouseId: [null, Validators.required],
+      currency: [null, Validators.required],
+      dueDate: [null],
+      comment: ['']
+    });
+
+    this.formItem = this.fb.group({
+      itemId: [null, Validators.required],
+      packageCount: [0, Validators.required],
+      quantity: [0, Validators.required],
+      unitCode: [null, Validators.required],
+      altUnitCode: [null],
+      purchasePrice: [0, Validators.required],
+      salePrice: [null],
+      altSalePrice: [null],
+      minimalSum: [null],
+      discount: [null],
+      batchNumber: [''],
+      expiryDate: [null],
+    });
+
   }
 
   onActionsChange() {
@@ -139,6 +175,10 @@ export class PurchaseOrder {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  loadPurchaseOrderbyId() {
+    this.purchaseOrderModelById = []
   }
 
   pageChange(event: any) {

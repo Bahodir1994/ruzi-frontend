@@ -1,28 +1,13 @@
-.square-row {
-  display: grid;
-  grid-template-columns: 200px 1fr 150px;
-  align-items: center;
+.row-block {
+  @apply grid grid-cols-[200px_1fr] transition-colors;
 
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
-
+  /* Square: hover – very light gray */
   &:hover {
-    background: #f9fafb;
+    background-color: #f8f9fa;
   }
-}
 
-.square-label {
-  font-size: 14px;
-  color: #111827;
-  font-weight: 500;
-}
-
-.square-input {
-  padding-right: 10px;
-}
-
-.square-action {
-  text-align: right;
-  color: #3b82f6;
-  font-size: 13px;
+  /* Square: focus – blue tinted highlight */
+  &:focus-within {
+    background-color: #e6f0ff;
+  }
 }

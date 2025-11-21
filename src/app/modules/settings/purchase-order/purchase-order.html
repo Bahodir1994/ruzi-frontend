@@ -214,12 +214,254 @@
     </div>
   </ng-template>
 
-  <div class="grid grid-flow-col grid-rows-3 gap-4">
-    <div class="col-span-3 flex grid grid-flow-col grid-rows-5">
-      <div class="col-span-2 bg-gray-700"></div>
-      <div class="col-span-3"></div>
+  <p-scrollPanel [style]="{ width: '100%', height: '90vh' }">
+
+    <div class="max-w-4xl mx-auto">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm rounded-md">
+
+        <!-- Order Number -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-2 font-semibold text-[15px] flex items-center">
+            Buyurtma raqami
+          </div>
+          <div class="border-b border-gray-300 px-5" style="display: block">
+            <input
+              pInputText
+              formControlName="orderNumber"
+              placeholder="Avtomatik to'ldiriladi"
+              [disabled]="true"
+              class="w-full px-3"
+              [style]="{border: 'none', disabled: 'disabled'}"
+            />
+          </div>
+        </div>
+
+        <!-- Supplier -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div
+            class="bg-gray-100 border-b border-gray-300 px-5 py-3
+               font-semibold text-[15px] flex items-center">
+            Ta'minotchi
+          </div>
+          <div class="border-b border-gray-300 px-5">
+            <p-select
+              [options]="null"
+              optionLabel="name"
+              placeholder="Ta'minotchini tanlang"
+              formControlName="supplierId"
+              class="w-full"
+            ></p-select>
+          </div>
+        </div>
+
+        <!-- Warehouse -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div
+            class="bg-gray-100 border-b border-gray-300 px-5 py-3
+               font-semibold text-[15px] flex items-center">
+            Ombor
+          </div>
+          <div class="border-b border-gray-300 px-5">
+            <p-select
+              [options]="null"
+              optionLabel="name"
+              placeholder="Omborni tanlang"
+              formControlName="warehouseId"
+              class="w-full"
+            ></p-select>
+          </div>
+        </div>
+
+        <!-- Currency -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div
+            class="bg-gray-100 border-b border-gray-300 px-5 py-3
+               font-semibold text-[15px] flex items-center">
+            Valyuta
+          </div>
+          <div class="border-b border-gray-300 px-5 py-3">
+            <p-select
+              [options]="null"
+              placeholder="Valyutani tanlang"
+              formControlName="currency"
+              class="w-full"
+            ></p-select>
+          </div>
+        </div>
+
+        <!-- Due Date -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div
+            class="bg-gray-100 border-b border-gray-300 px-5 py-3
+               font-semibold text-[15px] flex items-center">
+            To‘lov muddati
+          </div>
+          <div class="border-b border-gray-300 px-5 py-3">
+            <p-datePicker
+              formControlName="dueDate"
+              dateFormat="dd.mm.yy"
+              class="w-full"
+            ></p-datePicker>
+          </div>
+        </div>
+
+        <!-- Comment -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div
+            class="bg-gray-100 px-5 py-3
+               font-semibold text-[15px] flex items-center">
+            Izoh
+          </div>
+          <div class="px-5 py-3">
+        <textarea
+          pInputTextarea
+          formControlName="comment"
+          rows="3"
+          class="w-full border border-gray-300 rounded px-3 py-2 resize-none"
+          placeholder="Qo‘shimcha ma’lumot..."
+        ></textarea>
+          </div>
+        </div>
+
+      </div>
+      </form>
     </div>
-    <div class="col-span-3 bg-gray-700">02</div>
-  </div>
+
+    <div class="max-w-4xl mx-auto mt-10">
+      <p class="font-bold text-xl mb-4">Kirim partiyasining tovar ma’lumotlari</p>
+
+      <form [formGroup]="formItem" (ngSubmit)="onSubmit()">
+        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm">
+
+        <!-- ITEM -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Tovar
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <p-select
+              [options]="null"
+              optionLabel="name"
+              placeholder="Tovarni tanlang"
+              class="w-full !border-none !shadow-none outline-none"
+              formControlName="itemId">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Package Count -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Qadoq soni
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <input pInputText type="number" formControlName="packageCount"
+                   class="w-full border border-gray-300 rounded px-3 py-2" />
+          </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Miqdor
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <input pInputText type="number" formControlName="quantity"
+                   class="w-full border border-gray-300 rounded px-3 py-2" />
+          </div>
+        </div>
+
+        <!-- Unit Code -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Birlik
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <p-select
+              [options]="null"
+              placeholder="Birlik"
+              class="w-full"
+              formControlName="unitCode">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Alt Unit Code -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Muqobil birlik
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <p-select
+              [options]="null"
+              placeholder="Tanlang"
+              class="w-full"
+              formControlName="altUnitCode">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Purchase price -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Xarid narxi
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <input pInputText type="number" formControlName="purchasePrice"
+                   class="w-full border border-gray-300 rounded px-3 py-2" />
+          </div>
+        </div>
+
+        <!-- Sale price -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Sotuv narxi
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <input pInputText type="number" formControlName="salePrice"
+                   class="w-full border border-gray-300 rounded px-3 py-2" />
+          </div>
+        </div>
+
+        <!-- Batch -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Partiya raqami
+          </div>
+          <div class="border-b border-gray-300 px-5 py-2">
+            <input pInputText type="text" formControlName="batchNumber"
+                   class="w-full border border-gray-300 rounded px-3 py-2" />
+          </div>
+        </div>
+
+        <!-- Expiry date -->
+        <div class="grid grid-cols-[220px_1fr]">
+          <div class="bg-gray-100 px-5 py-3
+                  font-semibold text-[15px] flex items-center">
+            Amal qilish muddati
+          </div>
+          <div class="px-5 py-2">
+            <p-datePicker
+              formControlName="expiryDate"
+              dateFormat="dd.mm.yy"
+              class="w-full">
+            </p-datePicker>
+          </div>
+        </div>
+
+      </div>
+      </form>
+    </div>
+
+  </p-scrollPanel>
 
 </p-dialog>
