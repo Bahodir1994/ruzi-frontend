@@ -11,3 +11,125 @@
     background-color: #e6f0ff;
   }
 }
+
+.square-item-card {
+  border-radius: 12px;
+  padding: 0;
+}
+
+
+.sq-th {
+  background: #FAFAFA;
+  font-weight: normal!important;
+  padding: 10px 8px;
+  font-size: 14px!important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.square-table > tr > td {
+  padding: 8px 8px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.sq-item-search-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 0!important;
+  border: 1px solid #1530ba;
+  font-size: 14px;
+}
+
+.sq-note-link {
+  color: #4a90e2;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.sq-note-link:hover {
+  text-decoration: underline;
+}
+
+.sq-add-tax-link {
+  color: #4a90e2;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.wrapper:focus-within .label-cell {
+  @apply bg-blue-100 border-blue-400;
+}
+
+.wrapper:focus-within .input-cell {
+  @apply text-blue-500 border-blue-400;
+
+}
+
+.pcInputText {
+  border: none!important;
+}
+
+.input-cell {
+
+  /* -----------------------------------------
+     UNIVERSAL RESET (faqat shu cell ichida)
+     ----------------------------------------- */
+  .p-inputtext,
+  .p-dropdown,
+  .p-inputnumber,
+  .p-select,
+  .p-calendar,
+  .p-inputwrapper,
+  .p-datepicker,
+  input,
+  select,
+  textarea {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* -----------------------------------------
+     PRIME-NG SPECIFIC COMPONENTS
+     ----------------------------------------- */
+
+  /* Dropdown trigger tugmasi */
+  .p-dropdown-trigger {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* InputNumber ichidagi input */
+  .p-inputnumber-input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* DatePicker wrapper — border, bg yo‘q */
+  p-datepicker,
+  .p-inputwrapper,
+  .p-datepicker {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* DatePicker ichki input */
+  .p-datepicker-input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Focus bo'lganda ham hech narsa chiqmaydi */
+  *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
+

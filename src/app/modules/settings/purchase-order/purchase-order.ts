@@ -1,19 +1,23 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, Input} from '@angular/core';
 import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Button} from 'primeng/button';
-import {TableModule} from 'primeng/table';
+import {TableEditCompleteEvent, TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
-import {PurchaseOrderModel} from './purchase-order.model';
+import {
+  PurchaseOrderItemModel,
+  PurchaseOrderModel,
+  PurchaseOrderPaymentStatus,
+  PurchaseOrderStatus
+} from './purchase-order.model';
 import {PurchaseOrderService} from './purchase-order.service';
-import {CurrencyPipe, DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {Card} from 'primeng/card';
-import {Divider} from 'primeng/divider';
 import {HasRolesDirective} from 'keycloak-angular';
 import {InputNumber} from 'primeng/inputnumber';
 import {Menu} from 'primeng/menu';
@@ -24,56 +28,73 @@ import {ScrollPanel} from 'primeng/scrollpanel';
 import {Textarea} from 'primeng/textarea';
 import {Select} from 'primeng/select';
 import {DatePicker} from 'primeng/datepicker';
+import {Tooltip} from 'primeng/tooltip';
+import {AutoComplete} from 'primeng/autocomplete';
+import {ItemModel} from '../../items/item/item-model';
+import {Divider} from 'primeng/divider';
+import {
+  PurchaseOrderPaymentStatusClass,
+  PurchaseOrderPaymentStatusLabel
+} from '../../../component/enums/PurchaseOrderPaymentStatus';
+import {PurchaseOrderStatusClass, PurchaseOrderStatusLabel} from '../../../component/enums/PurchaseOrderStatus';
 
 @Component({
   selector: 'app-purchase-order',
-  imports: [
-    Dialog,
-    IconField,
-    InputIcon,
-    InputText,
-    FormsModule,
-    Button,
-    TableModule,
-    DatePipe,
-    DecimalPipe,
-    NgClass,
-    Card,
-    HasRolesDirective,
-    NgOptimizedImage,
-    Menu,
-    Ripple,
-    MultiSelect,
-    ReactiveFormsModule,
-    ScrollPanel,
-    Select,
-    DatePicker,
-    Textarea
-  ],
-  templateUrl: './purchase-order.html',
   standalone: true,
-  styleUrl: './purchase-order.scss'
+  templateUrl: './purchase-order.html',
+  styleUrl: './purchase-order.scss',
+  imports: [
+    Dialog, IconField, InputIcon, InputText, FormsModule, Button, TableModule,
+    DatePipe, DecimalPipe, NgClass, Card, HasRolesDirective, NgOptimizedImage,
+    Menu, Ripple, ReactiveFormsModule, ScrollPanel,
+    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete
+  ]
 })
 export class PurchaseOrder {
+ /* ============================================================
+    --AUTOCOMPLETE
+    Tovar izlab uni partiyaga qoshish uchun ozgaruvchilar
+  =======================================*/
+  isNewOrder: boolean = true
+  searchItem: string = "";
+  filteredItems: ItemModel[] = [];
+
+  /* ============================================================
+     3) UI STATE VARIABLES
+     — Modal holati, loading flag'lar, permissionlar
+     ============================================================ */
   public permissions: Record<string, boolean> = {};
   visiblePurchaseOrderModal = false;
 
-  actions!: MenuItem[];
-  selectedActions!: MenuItem[];
+  menuVisible = false;
+  editingId!: string | null;
+  isLoading: boolean = true;
+  searchValue: string | undefined;
+  totalRecords: number = 0;
 
+  isLoadingPurItem: boolean = true;
+  searchValuePurItem: string | undefined;
+  totalRecordsPurItem: number = 0;
+
+  currentEditableOrderId = ''
+
+  /* ============================================================
+     4) FORM GROUPLAR
+     — Asosiy form (PurchaseOrder)
+     — Item form (PurchaseOrderItem)
+     ============================================================ */
   form!: FormGroup;
   formItem!: FormGroup;
   formCreateItemSubmit = false;
 
-  menuVisible = false;
-  editingId!: string | null;
-
-  totalRecords: number = 0;
-  searchValue: string | undefined;
-  isLoading: boolean = true;
-
-  purchaseOrderModelById: PurchaseOrderModel[] = [];
+  /* ============================================================
+     6) DATA TABLE MODELLARI (PurchaseOrder)
+     — Asosiy jadval uchun server-side struktura
+     ============================================================ */
+  purchaseOrderModelSingle!: PurchaseOrderModel;
   purchaseOrderModel: PurchaseOrderModel[] = [];
+  purchaseOrderItemModelSelected: PurchaseOrderItemModel[] = [];
+
   dataTableInput: DataTableInput = {
     draw: 0,
     start: 0,
@@ -83,45 +104,63 @@ export class PurchaseOrder {
     columns: [
       {data: 'orderNumber', name: 'orderNumber', searchable: true, orderable: true, search: {value: '', regex: false}},
       {data: 'supplier.name', name: 'supplier', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {
-        data: 'warehouse.name',
-        name: 'warehouse',
-        searchable: true,
-        orderable: false,
-        search: {value: '', regex: false}
-      },
+      {data: 'warehouse.name', name: 'warehouse', searchable: true, orderable: false, search: {value: '', regex: false}},
       {data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: {value: '', regex: false}},
       {data: 'status', name: 'status', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {
-        data: 'paymentStatus',
-        name: 'paymentStatus',
-        searchable: true,
-        orderable: false,
-        search: {value: '', regex: false}
-      },
+      {data: 'paymentStatus', name: 'paymentStatus', searchable: true, orderable: false, search: {value: '', regex: false}},
       {data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: true, search: {value: '', regex: false}}
     ]
-  }
+  };
 
+  /* ============================================================
+     7) DATA TABLE MODELLARI (PurchaseOrderItem)
+     — Itemlarni serverdan olish struktura
+     ============================================================ */
+  purchaseOrderItemModel: PurchaseOrderItemModel[] = [];
+  dataTableInputItem: DataTableInput = {
+    draw: 0,
+    start: 0,
+    length: 10,
+    search: { value: '', regex: false },
+    order: [{ column: 4, dir: 'desc' }],
+    columns: [
+      { data: 'purchaseOrder.id', name: 'id', searchable: true, orderable: true, search: { value: '', regex: false }},
+      { data: 'item.name', name: 'item', searchable: true, orderable: true, search: { value: '', regex: false }},
+      { data: 'packageCount', name: 'packageCount', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'quantity', name: 'quantity', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'unitCode', name: 'unitCode', searchable: true, orderable: true, search: { value: '', regex: false }},
+      { data: 'altUnitCode', name: 'altUnitCode', searchable: true, orderable: false, search: { value: '', regex: false }},
+      { data: 'purchasePrice', name: 'purchasePrice', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'salePrice', name: 'salePrice', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'discount', name: 'discount', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'sum', name: 'sum', searchable: false, orderable: true, search: { value: '', regex: false }},
+      { data: 'batchNumber', name: 'batchNumber', searchable: true, orderable: false, search: { value: '', regex: false }},
+      { data: 'expiryDate', name: 'expiryDate', searchable: false, orderable: true, search: { value: '', regex: false }}
+    ]
+  };
+
+  /* ============================================================
+     9) CONSTRUCTOR
+     ============================================================ */
   constructor(
     private purchaseOrderService: PurchaseOrderService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService,
     private fb: FormBuilder
-  ) {
-  }
+  ) {}
 
+  /* ============================================================
+     10) ngOnInit
+     — Formlarni yaratish
+     — Actionlar tayyorlash
+     — Asosiy jadvalni yuklash
+     ============================================================ */
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
 
-    this.actions = [
-      {name: 'Saqlangach oynani yopma!', id: 'NY'},
-      {name: 'Saqlangach maydonlarni tozala!', id: 'RM'}
-    ];
-
     this.form = this.fb.group({
-      orderNumber: ['', Validators.required],
+      orderNumber: new FormControl({value: '', disabled: true}, Validators.required),
       supplierId: [null, Validators.required],
       warehouseId: [null, Validators.required],
       currency: [null, Validators.required],
@@ -143,44 +182,82 @@ export class PurchaseOrder {
       batchNumber: [''],
       expiryDate: [null],
     });
-
   }
 
-  onActionsChange() {
-    if (!this.hasNY) {
-      this.selectedActions = (this.selectedActions ?? []).filter(a => a.id !== 'RM');
-    }
+  getRowActions(row: ItemModel): MenuItem[] {
+    return [
+      {
+        label: 'O‘chirish',
+        icon: 'pi pi-trash',
+        styleClass: 'text-red-600 hover:bg-red-50',
+        command: () => this.deleteOrder(row.id)
+      }
+    ];
   }
 
-  get hasNY(): boolean {
-    return this.selectedActions?.some(a => a.id === 'NY') ?? false;
-  }
-
+  /* ============================================================
+     11) PERMISSION CHECK
+     ============================================================ */
   permission(status: string) {
     this.permissions = {
       add_new_product: this.permissionService.canAccess(PurchaseOrder, 'add_new_product', status)
     };
   }
 
+  /* ============================================================
+     12) loadData - ASOSIY JADVAL va loadDataItem Tovar KIRIM TOVAR JADVALIINI YOZIB KELISH
+     ============================================================ */
   async loadData() {
     this.isLoading = true;
+
     if (this.searchValue != null) {
       this.dataTableInput.search.value = this.searchValue;
     }
+
     try {
-      const data = await firstValueFrom(this.purchaseOrderService.data_table_main(this.dataTableInput));
-      this.purchaseOrderModel = data.data as PurchaseOrderModel[];
-      this.totalRecords = data.recordsFiltered;
+      const res = await firstValueFrom(
+        this.purchaseOrderService.data_table_main(this.dataTableInput)
+      );
+
+      this.purchaseOrderModel = (res.data as PurchaseOrderModel[]).map(row => ({
+        ...row,
+        statusName: PurchaseOrderStatusLabel[row.status as PurchaseOrderStatus],
+        statusClass: PurchaseOrderStatusClass[row.status as PurchaseOrderStatus],
+        paymentStatusName: PurchaseOrderPaymentStatusLabel[row.paymentStatus as PurchaseOrderPaymentStatus],
+        paymentStatusClass: PurchaseOrderPaymentStatusClass[row.paymentStatus as PurchaseOrderPaymentStatus],
+      }));
+
+      this.totalRecords = res.recordsFiltered;
       this.cdr.detectChanges();
+
     } finally {
       this.isLoading = false;
     }
   }
 
-  loadPurchaseOrderbyId() {
-    this.purchaseOrderModelById = []
+
+  async loadPurItemData() {
+    this.isLoadingPurItem = true;
+
+    this.dataTableInputItem.columns[0].search.value = this.currentEditableOrderId;
+    this.dataTableInputItem.search.value = '';
+
+    try {
+      const data = await firstValueFrom(
+        this.purchaseOrderService.data_table_pur_item(this.dataTableInputItem)
+      );
+
+      this.purchaseOrderItemModel = data.data;
+      this.totalRecordsPurItem = data.recordsFiltered;
+      this.cdr.detectChanges()
+    } finally {
+      this.isLoadingPurItem = false;
+    }
   }
 
+  /* ============================================================
+     13) PAGE CHANGE EVENT
+     ============================================================ */
   pageChange(event: any) {
     if (event.first !== this.dataTableInput.start || event.rows !== this.dataTableInput.length) {
       this.dataTableInput.start = event.first;
@@ -189,6 +266,9 @@ export class PurchaseOrder {
     }
   }
 
+  /* ============================================================
+     14) ACTION MENU
+     ============================================================ */
   getExcelBtnAction(): MenuItem[] {
     return [
       {
@@ -204,10 +284,45 @@ export class PurchaseOrder {
     this.menuVisible = !this.menuVisible;
   }
 
+  /* ============================================================
+     15) ITEM TABLE (ADD / REMOVE / RECALCULATE)
+     ============================================================ */
+  recalculateRow(row: any) {
+    const qty = Number(row.quantity);
+    const price = Number(row.purchasePrice);
+    const discount = Number(row.discount);
+    row.sum = qty * price - discount;
+  }
+
+  /* ==================================================
+  --AUTOCOMPLETE
+  // Serverdan tovarni qidiruvchi funkisya
+  // Item tanlanganida jadvalga qo‘shish
+  // Agar topilmasa → yangi tovar yaratish
+  =================================================== */
+  async searchItems(event: any) {
+    const q = event.query;
+
+    if (!q || q.length < 2) {
+      this.filteredItems = [];
+      return;
+    }
+
+    const res = await firstValueFrom(this.purchaseOrderService.search_items(q));
+    this.filteredItems = res.data as ItemModel[];
+  }
+
+  createNewItem() {
+    console.log('Yangi tovar yaratish modal ochish...');
+    // shu yerda modal yoki navigate qilasiz
+  }
+
+  /* ============================================================
+     16) FORM SUBMIT (CREATE / UPDATE)
+     ============================================================ */
   async onSubmit() {
     this.formCreateItemSubmit = true;
     if (this.form.invalid) return;
-
 
     const data = {
       ...this.form.value,
@@ -230,4 +345,120 @@ export class PurchaseOrder {
       });
     }
   }
+
+  async onSubmitOrderItem() {
+    this.formCreateItemSubmit = true;
+    if (this.form.invalid) return;
+
+    const data = {
+      ...this.form.value,
+    };
+
+    if (this.editingId) {
+      this.purchaseOrderService.update_order(this.editingId, data).subscribe({
+        next: () => {
+          this.loadData();
+          this.visiblePurchaseOrderModal = false;
+          this.editingId = null;
+        }
+      });
+    } else {
+      this.purchaseOrderService.create_order(data).subscribe({
+        next: () => {
+          this.loadData();
+          this.visiblePurchaseOrderModal = false;
+        }
+      });
+    }
+  }
+
+  createNewOrder() {
+    this.isNewOrder = true;
+
+    const formData = {
+      id : ''
+    }
+
+    this.purchaseOrderService.create_order(formData).subscribe({
+      next: value => {
+        this.purchaseOrderModelSingle = value.data as PurchaseOrderModel;
+        this.visiblePurchaseOrderModal = true;
+        this.currentEditableOrderId = this.purchaseOrderModelSingle.id;
+        this.form.patchValue(this.purchaseOrderModelSingle);
+        this.loadPurItemData();
+      }
+    })
+  }
+
+  onItemSelect(item: any) {
+    console.log(item);
+    const formData = {
+      orderId : this.currentEditableOrderId,
+      itemId : item.value.id
+    }
+
+    this.purchaseOrderService.add_item_to_order(formData).subscribe({
+      next: () => {
+        this.loadPurItemData();
+        this.searchItem = "";
+        this.cdr.detectChanges();
+      }
+    })
+  }
+
+  deleteOrder(id: string) {
+    this.purchaseOrderService.delete_order(id).subscribe({
+      next: () => {
+        this.loadData()
+      }
+    });
+  }
+
+  removeRow(item: any) {
+    this.purchaseOrderService.delete_item_from_order(this.currentEditableOrderId, item.id).subscribe({
+      next: () => {
+        this.loadPurItemData()
+      }
+    });
+  }
+
+  onRowSelect(event: any) {
+    this.isNewOrder = false;
+
+    this.currentEditableOrderId = event.data.id;
+    this.purchaseOrderService.read_order(event.data.id).subscribe({
+      next: value => {
+        this.purchaseOrderModelSingle = value.data as PurchaseOrderModel;
+        this.visiblePurchaseOrderModal = true;
+        this.form.patchValue(this.purchaseOrderModelSingle);
+        this.loadPurItemData();
+      }
+    })
+  }
+
+  onCellEditComplete(event: any) {
+    const { data, field } = event;
+
+    // yangi qiymatni to‘g‘ri olish
+    const newValue = data[field];
+
+    console.log("Field:", field);
+    console.log("Row ID:", data.id);
+    console.log("Value:", newValue);
+
+    const payload = {
+      id: data.id,
+      field: field,
+      value: newValue
+    };
+
+    this.purchaseOrderService.update_item_field(payload).subscribe({
+      next: () => {
+        if (['quantity', 'purchasePrice', 'discount'].includes(field)) {
+          data.sum = (data.quantity * data.purchasePrice) - (data.discount || 0);
+        }
+      }
+    });
+  }
+
 }

@@ -6,7 +6,7 @@
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
-      <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon" />
+      <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon"/>
       <p class="text-2xl font-bold">
         Kirim jadvali
       </p>
@@ -19,7 +19,7 @@
           styleClass="shadow shadow-blue-500/50"
         >
           <ng-template pTemplate="content">
-            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon" />
+            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon"/>
           </ng-template>
         </p-button>
         <p-button
@@ -29,7 +29,7 @@
           icon="pi pi-file-excel"
           label="Yangi kirim qo'shish"
           (onClick)="dialog.maximize();"
-          (click)="visiblePurchaseOrderModal = true"
+          (click)="createNewOrder()"
         />
       </div>
     </div>
@@ -73,9 +73,9 @@
         class="pr-2"
         styleClass="shadow shadow-blue-500/50"
         icon="pi pi-file-plus"
-        label="Yangi tovar qo'shish"
+        label="Yangi kirim qo'shish"
         (onClick)="dialog.maximize()"
-        (click)="visiblePurchaseOrderModal = true"
+        (click)="createNewOrder()"
       />
     </div>
     <p-table
@@ -98,8 +98,10 @@
       [first]="0"
       [pageLinks]="5"
       [showJumpToPageInput]="true"
-      scrollHeight="80vh"
-    >
+      selectionMode="single"
+      (onRowSelect)="dialog.maximize(); onRowSelect($event)"
+      [(selection)]="purchaseOrderItemModelSelected"
+      scrollHeight="80vh">
       <ng-template pTemplate="header">
         <tr class="border shadow h-[60px]">
           <th pSortableColumn="orderNumber" class="text-center text-nowrap sort-header">
@@ -130,33 +132,42 @@
             Summasi
             <p-sortIcon field="totalAmount"/>
           </th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row let-i="rowIndex">
-        <tr style="height:49px">
+        <tr style="height:49px" [pSelectableRow]="row">
           <td class="text-nowrap text-center">{{ row.orderNumber }}</td>
           <td class="text-nowrap text-center">{{ row.supplier?.name }}</td>
           <td class="text-nowrap text-center">{{ row.warehouse?.name }}</td>
           <td class="text-nowrap text-center">{{ row.createdAt | date:'dd.MM.yyyy' }}</td>
           <td class="text-nowrap text-center">
-      <span [ngClass]="{
-        'text-gray-500': row.status === 'DRAFT',
-        'text-green-600': row.status === 'APPROVED',
-        'text-red-600': row.status === 'CANCELLED'
-      }">
-        {{ row.status }}
-      </span>
+            <span [ngClass]="row.statusClass">
+              {{ row.statusName }}
+            </span>
           </td>
           <td class="text-nowrap text-center">
-      <span [ngClass]="{
-        'text-red-500': row.paymentStatus === 'UNPAID',
-        'text-orange-500': row.paymentStatus === 'PARTIAL',
-        'text-green-600': row.paymentStatus === 'PAID'
-      }">
-        {{ row.paymentStatus }}
-      </span>
+            <span [ngClass]="row.paymentStatusClass">
+              {{ row.paymentStatusName }}
+            </span>
           </td>
           <td class="text-nowrap text-center">{{ row.totalAmount | number:'1.2-2' }}</td>
+          <td pFrozenColumn alignFrozen="right" class="text-center">
+            <p-menu #actionTable [model]="getRowActions(row)" appendTo="body" [popup]="true">
+              <ng-template pTemplate="item" let-item>
+                <a
+                  pRipple
+                  class="flex items-center px-3 p-2 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+                  [ngClass]="item.styleClass"
+                  (click)="item.command?.($event)"
+                >
+                  <i [class]="item.icon + ' mr-2'"></i>
+                  <span>{{ item.label }}</span>
+                </a>
+              </ng-template>
+            </p-menu>
+            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-h"/>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -182,286 +193,587 @@
   [maximizable]="true"
   [dismissableMask]="true"
   [style]="{ minWidth: '50rem'}"
+  (onHide)="loadData()"
   #dialog
   [baseZIndex]="10000">
   <ng-template #header>
-    <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
-
-      <!-- Chap: Saqlash -->
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">
-        <p-button type="submit" label="Saqlash" severity="primary"></p-button>
-      </form>
-
-      <!-- Markaz: Sarlavha -->
+    <div class="grid grid-cols-3 items-center gap-3 pb-2 border-b w-full">
+      <div class="flex gap-2">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">
+          <p-button icon="pi pi-save" type="submit" label="Saqlash" severity="primary"></p-button>
+          <p-button
+            icon="pi pi-save"
+            [outlined]="true"
+            type="submit"
+            label="Tasdiqlamasdan saqlash"
+            severity="primary"
+          ></p-button>
+        </form>
+      </div>
       <div class="justify-self-center text-center">
         <span class="text-3xl font-bold">
-          {{ editingId ? 'Tovarni tahrirlash' : 'Yangi kirim qo‘shish' }}
+          {{ isNewOrder ? 'Yangi kirim partiyasini qo‘shish' : 'Kirim partiyasini tahrirlash' }}
         </span>
       </div>
-
-      <!-- O'ng: Checkbox -->
       <div class="justify-self-end flex items-center gap-2 ml-auto">
-        <p-multiSelect
-          [options]="actions"
-          [(ngModel)]="selectedActions"
-          optionLabel="name"
-          placeholder="Amallar"
-          [filter]="false"
-          (onChange)="onActionsChange()"
-          [maxSelectedLabels]="2" class="w-full md:w-80"/>
       </div>
-
     </div>
   </ng-template>
-
-  <p-scrollPanel [style]="{ width: '100%', height: '90vh' }">
-
+  <p-scrollPanel [style]="{ width: '100%', height: '85vh' }">
     <div class="max-w-4xl mx-auto">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm rounded-md">
-
-        <!-- Order Number -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-2 font-semibold text-[15px] flex items-center">
-            Buyurtma raqami
+        <p class="font-bold py-3 text-xl">Partiya ma'lumotlari</p>
+        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm">
+          <!-- ORDER NUMBER -->
+          <div class="grid grid-cols-[220px_1fr] h-[52px] focus-within:bg-gray-200">
+            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Buyurtma raqami
+            </div>
+            <div class="border-b border-gray-300 px-5 flex items-center">
+              <input
+                pInputText
+                formControlName="orderNumber"
+                placeholder="Avtomatik to'ldiriladi"
+                class="w-full px-3"
+                [style]="{border: 'none', background: 'transparent', boxShadow: 'none', color: '#1530ba'}"
+              />
+            </div>
           </div>
-          <div class="border-b border-gray-300 px-5" style="display: block">
-            <input
-              pInputText
-              formControlName="orderNumber"
-              placeholder="Avtomatik to'ldiriladi"
-              [disabled]="true"
-              class="w-full px-3"
-              [style]="{border: 'none', disabled: 'disabled'}"
-            />
+          <!-- SUPPLIER -->
+          <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
+            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Ta'minotchi
+            </div>
+            <div class="input-cell border-b border-gray-300 px-5 flex items-center">
+              <p-select
+                [options]="null"
+                optionLabel="name"
+                placeholder="Ta'minotchini tanlang"
+                formControlName="supplierId"
+                class="w-full"
+              ></p-select>
+            </div>
           </div>
-        </div>
-
-        <!-- Supplier -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div
-            class="bg-gray-100 border-b border-gray-300 px-5 py-3
-               font-semibold text-[15px] flex items-center">
-            Ta'minotchi
+          <!-- WAREHOUSE -->
+          <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
+            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Ombor
+            </div>
+            <div class="input-cell border-b border-gray-300 px-5 flex items-center">
+              <p-select
+                [options]="null"
+                optionLabel="name"
+                placeholder="Omborni tanlang"
+                formControlName="warehouseId"
+                class="w-full"
+              ></p-select>
+            </div>
           </div>
-          <div class="border-b border-gray-300 px-5">
-            <p-select
-              [options]="null"
-              optionLabel="name"
-              placeholder="Ta'minotchini tanlang"
-              formControlName="supplierId"
-              class="w-full"
-            ></p-select>
+          <!-- CURRENCY -->
+          <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
+            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Valyuta
+            </div>
+            <div class="input-cell border-b border-gray-300 px-5 flex items-center">
+              <p-select
+                [options]="null"
+                placeholder="Valyutani tanlang"
+                formControlName="currency"
+                class="w-full"
+              ></p-select>
+            </div>
           </div>
-        </div>
-
-        <!-- Warehouse -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div
-            class="bg-gray-100 border-b border-gray-300 px-5 py-3
-               font-semibold text-[15px] flex items-center">
-            Ombor
+          <!-- DUE DATE -->
+          <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
+            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              To‘lov muddati
+            </div>
+            <div class="input-cell border-b border-gray-300 px-5 flex items-center">
+              <p-datePicker
+                [showClear]="true"
+                fluid
+                class="w-full"
+                appendTo="body"
+                formControlName="dueDate"
+                dateFormat="dd.mm.yy"
+                placeholder="kun.oy.yil (kk.OO.yyyy)"
+              ></p-datePicker>
+            </div>
           </div>
-          <div class="border-b border-gray-300 px-5">
-            <p-select
-              [options]="null"
-              optionLabel="name"
-              placeholder="Omborni tanlang"
-              formControlName="warehouseId"
-              class="w-full"
-            ></p-select>
-          </div>
-        </div>
-
-        <!-- Currency -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div
-            class="bg-gray-100 border-b border-gray-300 px-5 py-3
-               font-semibold text-[15px] flex items-center">
-            Valyuta
-          </div>
-          <div class="border-b border-gray-300 px-5 py-3">
-            <p-select
-              [options]="null"
-              placeholder="Valyutani tanlang"
-              formControlName="currency"
-              class="w-full"
-            ></p-select>
-          </div>
-        </div>
-
-        <!-- Due Date -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div
-            class="bg-gray-100 border-b border-gray-300 px-5 py-3
-               font-semibold text-[15px] flex items-center">
-            To‘lov muddati
-          </div>
-          <div class="border-b border-gray-300 px-5 py-3">
-            <p-datePicker
-              formControlName="dueDate"
-              dateFormat="dd.mm.yy"
-              class="w-full"
-            ></p-datePicker>
-          </div>
-        </div>
-
-        <!-- Comment -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div
-            class="bg-gray-100 px-5 py-3
-               font-semibold text-[15px] flex items-center">
-            Izoh
-          </div>
-          <div class="px-5 py-3">
+          <!-- COMMENT -->
+          <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
+            <div class="label-cell bg-gray-100 px-5 font-semibold text-[15px] flex items-center">
+              Izoh
+            </div>
+            <div class="input-cell px-5 flex items-center">
         <textarea
           pInputTextarea
           formControlName="comment"
-          rows="3"
-          class="w-full border border-gray-300 rounded px-3 py-2 resize-none"
+          rows="1"
+          class="w-full px-3"
           placeholder="Qo‘shimcha ma’lumot..."
+          [autoResize]="true"
         ></textarea>
+            </div>
           </div>
         </div>
-
-      </div>
       </form>
     </div>
+    <div class="w-full mx-auto mt-2">
+      <p class="font-bold text-md">Partiya tovar ma'lumotlari</p>
+      <div class="card square-item-card">
+        <p-table
+          size="small"
+          showGridlines
+          [resizableColumns]="false"
+          [value]="purchaseOrderItemModel"
+          (onEditComplete)="onCellEditComplete($event)"
+          stripedRows
+          dataKey="id"
+          editMode="cell"
+          class="square-table p-table-border">
+          <ng-template #header>
+            <tr>
+              <!-- ITEM -->
+              <th class="sq-th w-[50px]" >
+                <div class="flex items-center gap-1">
+                  Mahsulot
+                  <i class="pi pi-info-circle text-gray-500 cursor-pointer"
+                     tooltipPosition="top"
+                     pTooltip="Item — mahsulot katalogidan tanlanadi.
+                      Misollar:
+                      - “Shakar 1kg”
+                      - “Makaron 500g”
+                      - “Yog‘ 1L”">
+                  </i>
+                </div>
+              </th>
+              <!-- UNIT CODE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Birlik
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="unitCode – asosiy o‘lchov birligi.
+                      Misollar:
+                      kg, l, dona, pack">
+                  </i>
+                </div>
+              </th>
+              <!-- ALT UNIT CODE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Qo`shimcha-birlik
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="altUnitCode – ikkilamchi birlik, masalan:
+                        1 pack = 12 pcs
+                        1 quti = 6 dona">
+                  </i>
+                </div>
+              </th>
+              <!-- CONVERSION RATE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Konv.
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="conversionRate – 1 asosiy birlik nechta qo`shimcha birlikka teng bo‘lishi.
+                        Masalan:
+                        1 pack = 12 pcs => 12">
+                  </i>
+                </div>
+              </th>
+              <!-- PACKAGE COUNT -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Qadoq
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="packageCount – qadoqlar soni (box, pack, quti...)
+                        Misollar:
+                        5 quti → 5
+                        10 pack → 10">
+                  </i>
+                </div>
+              </th>
+              <!-- QTY -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Miqdor
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="quantity – umumiy miqdor (asosiy birlikda).
+                        Misollar:
+                        12.5 kg
+                        20 pack
+                        100 dona">
+                  </i>
+                </div>
+              </th>
+              <!-- PURCHASE PRICE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1 text-nowrap">
+                  Xarid narxi
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="purchasePrice – 1 birlik uchun kirim narxi.
+                          Misollar:
+                          1 kg → 18 000 so‘m
+                          1 dona → 5 000 so‘m">
+                  </i>
+                </div>
+              </th>
+              <!-- SALE PRICE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1 text-nowrap">
+                  Sotuv narxi
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="salePrice – kassaga sotiladigan narx.
+                        Bu narxni kirim paytida belgilashingiz mumkin.
+                        Misollar:
+                        1 kg → 22 000 so‘m
+                        1 dona → 7 500 so‘m">
+                  </i>
+                </div>
+              </th>
+              <!-- ALT SALE PRICE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Q'shimcha narx
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="altSalePrice – alt birlikdagi sotuv narxi.
+                        Misollar:
+                        1 pcs → 1200 so‘m
+                        1 dona → 750 so‘m">
+                  </i>
+                </div>
+              </th>
+              <!-- MINIMAL SUM -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Min summa
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="minimalSum – tovarni minimal sotish qiymati.
+                        Agar kassir past narx qo‘ysa — ogohlantirish chiqadi.">
+                  </i>
+                </div>
+              </th>
+              <!-- DISCOUNT -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Chegirma
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="discount – kirimdagi chegirma summasi.
+                        Misollar:
+                        5000 so‘m chegirma
+                        Yoki 10% (chegirma summaga aylantiriladi)">
+                  </i>
+                </div>
+              </th>
+              <!-- SUM -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Jami
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="sum = (purchasePrice × quantity) − discount.
+                        Misol:
+                        20 × 10 000 = 200 000
+                        Chegirma 10 000 →
+                        Jami: 190 000">
+                  </i>
+                </div>
+              </th>
+              <!-- BATCH -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Partiya
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="batchNumber – mahsulot partiya/seriya raqami.
+                        Misollar:
+                        BATCH-2025-01
+                        LOT-11-B">
+                  </i>
+                </div>
+              </th>
+              <!-- EXPIRY DATE -->
+              <th class="sq-th w-[50px] text-center" >
+                <div class="flex justify-center items-center gap-1">
+                  Muddati
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="expiryDate – yaroqlilik muddati.
+                        Misollar:
+                        2025-12-31
+                        2024-08-10">
+                  </i>
+                </div>
+              </th>
+              <!-- ADD BTN -->
+              <th class="sq-th w-[50px] text-center" >
+                <p-button icon="pi pi-plus" size="small" text ></p-button>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-row let-editing="editing">
+            <tr>
+              <td pEditableColumn >
+                {{ row.item.name }}
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="unitCode" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-select
+                      [options]="null"
+                      optionLabel="label"
+                      optionValue="value"
+                      fluid
+                      [(ngModel)]="row.unitCode"
+                    ></p-select>
+                  </ng-template>
 
-    <div class="max-w-4xl mx-auto mt-10">
-      <p class="font-bold text-xl mb-4">Kirim partiyasining tovar ma’lumotlari</p>
+                  <ng-template pTemplate="output">
+                    {{ row.unitCode }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="altUnitCode" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-select
+                      [options]="null"
+                      optionLabel="label"
+                      optionValue="value"
+                      fluid
+                      [(ngModel)]="row.altUnitCode"
+                    ></p-select>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ row.altUnitCode }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="conversionRate" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      [(ngModel)]="row.conversionRate"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="3"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
 
-      <form [formGroup]="formItem" (ngSubmit)="onSubmit()">
-        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm">
+                  <ng-template pTemplate="output">
+                    {{ row.conversionRate }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="packageCount" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      [(ngModel)]="row.packageCount"
+                      [min]="0"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="0"
+                      fluid
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ row.packageCount }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="quantity" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      fluid
+                      [(ngModel)]="row.quantity"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="3"
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
 
-        <!-- ITEM -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Tovar
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <p-select
-              [options]="null"
-              optionLabel="name"
-              placeholder="Tovarni tanlang"
-              class="w-full !border-none !shadow-none outline-none"
-              formControlName="itemId">
-            </p-select>
-          </div>
-        </div>
+                  <ng-template pTemplate="output">
+                    {{ row.quantity }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="purchasePrice" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [(ngModel)]="row.purchasePrice"
+                      fluid
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
 
-        <!-- Package Count -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Qadoq soni
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <input pInputText type="number" formControlName="packageCount"
-                   class="w-full border border-gray-300 rounded px-3 py-2" />
-          </div>
-        </div>
+                  <ng-template pTemplate="output">
+                    {{ row.purchasePrice | number:'1.2-2' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="salePrice" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [(ngModel)]="row.salePrice"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
 
-        <!-- Quantity -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Miqdor
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <input pInputText type="number" formControlName="quantity"
-                   class="w-full border border-gray-300 rounded px-3 py-2" />
-          </div>
-        </div>
+                  <ng-template pTemplate="output">
+                    {{ row.salePrice | number:'1.2-2' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="altSalePrice" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="2"
+                      [(ngModel)]="row.altSalePrice"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
 
-        <!-- Unit Code -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Birlik
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <p-select
-              [options]="null"
-              placeholder="Birlik"
+                  <ng-template pTemplate="output">
+                    {{ row.altSalePrice | number:'1.2-2' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="minimalSum" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="currency"
+                      [currency]="'UZS'"
+                      [locale]="'uz-UZ'"
+                      [(ngModel)]="row.minimalSum"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
+
+                  <ng-template pTemplate="output">
+                    {{ row.minimalSum | number:'1.2-2' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="discount" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="currency"
+                      [currency]="'UZS'"
+                      [locale]="'uz-UZ'"
+                      [(ngModel)]="row.discount"
+                      fluid
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
+
+                  <ng-template pTemplate="output">
+                    {{ row.discount | number:'1.2-2' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <!-- SUM (READONLY) -->
+              <td class="text-center font-semibold">
+                {{ row.sum | number:'1.2-2' }}
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="batchNumber" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText
+                           fluid [(ngModel)]="row.batchNumber"/>
+                  </ng-template>
+
+                  <ng-template pTemplate="output">
+                    {{ row.batchNumber }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="expiryDate" class="text-center">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-datePicker
+                      [(ngModel)]="row.expiryDate"
+                      appendTo="body"
+                      dateFormat="dd.mm.yy"
+                      fluid
+                    ></p-datePicker>
+                  </ng-template>
+
+                  <ng-template pTemplate="output">
+                    {{ row.expiryDate | date:'dd.MM.yyyy' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <!-- REMOVE -->
+              <td class="text-center">
+                <p-button icon="pi pi-times" severity="danger" rounded text (onClick)="removeRow(row)"></p-button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage"  let-columns>
+            <tr>
+              <td [attr.colspan]="15" class="mx-auto">
+                <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+                  <i class="pi pi-info-circle text-3xl mb-2"></i>
+                  <span>Tovar tanlanmagan</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <p-autoComplete
+          appendTo="body"
+          [(ngModel)]="searchItem"
+          [suggestions]="filteredItems"
+          (completeMethod)="searchItems($event)"
+          (onSelect)="onItemSelect($event)"
+          [dropdown]="true"
+          [forceSelection]="false"
+          optionLabel="name"
+          placeholder="Tovar nomi, SKU yoki Shtrix kod..."
+          class="w-full mt-2">
+          <ng-template let-item pTemplate="item">
+            <div class="flex flex-col">
+              <span class="font-medium">{{ item.name }}</span>
+              <span class="text-xs text-gray-500">SKU: {{ item.sku }}</span>
+              <span class="text-xs text-gray-500">Shtrix: {{ item.barcode }}</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="empty">
+          <div class="p-3 text-gray-600">
+            <p class="font-medium mb-2">Natija topilmadi</p>
+            <p-button
+              severity="info"
+              icon="pi pi-plus"
+              label="Yangi tovar yaratish"
               class="w-full"
-              formControlName="unitCode">
-            </p-select>
+              (click)="createNewItem()">
+            </p-button>
           </div>
-        </div>
-
-        <!-- Alt Unit Code -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Muqobil birlik
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <p-select
-              [options]="null"
-              placeholder="Tanlang"
-              class="w-full"
-              formControlName="altUnitCode">
-            </p-select>
-          </div>
-        </div>
-
-        <!-- Purchase price -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Xarid narxi
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <input pInputText type="number" formControlName="purchasePrice"
-                   class="w-full border border-gray-300 rounded px-3 py-2" />
-          </div>
-        </div>
-
-        <!-- Sale price -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Sotuv narxi
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <input pInputText type="number" formControlName="salePrice"
-                   class="w-full border border-gray-300 rounded px-3 py-2" />
-          </div>
-        </div>
-
-        <!-- Batch -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 border-b border-gray-300 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Partiya raqami
-          </div>
-          <div class="border-b border-gray-300 px-5 py-2">
-            <input pInputText type="text" formControlName="batchNumber"
-                   class="w-full border border-gray-300 rounded px-3 py-2" />
-          </div>
-        </div>
-
-        <!-- Expiry date -->
-        <div class="grid grid-cols-[220px_1fr]">
-          <div class="bg-gray-100 px-5 py-3
-                  font-semibold text-[15px] flex items-center">
-            Amal qilish muddati
-          </div>
-          <div class="px-5 py-2">
-            <p-datePicker
-              formControlName="expiryDate"
-              dateFormat="dd.mm.yy"
-              class="w-full">
-            </p-datePicker>
-          </div>
-        </div>
-
+        </ng-template>
+        </p-autoComplete>
       </div>
-      </form>
+      <div class="w-[320px] mt-6 ml-auto border border-gray-300 rounded-md">
+        <div class="flex justify-between p-3 text-[14px] border-b">
+          <span>Subtotal</span>
+          <span>$ {{ null | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between p-3 text-[14px] border-b">
+          <a class="sq-add-tax-link">Add Tax</a>
+          <span>$0.00</span>
+        </div>
+        <div class="flex justify-between p-3 font-bold text-[16px] bg-gray-100">
+          <span>Total Due</span>
+          <span>$ {{ null | number:'1.2-2' }}</span>
+        </div>
+      </div>
     </div>
-
   </p-scrollPanel>
-
 </p-dialog>

@@ -1,4 +1,5 @@
 import {WarehouseModel} from '../warehouse/warehouse.model';
+import {ItemModel} from '../../items/item/item-model';
 
 export interface PurchaseOrderModel {
   id: string;
@@ -47,7 +48,34 @@ export interface PurchaseOrderModel {
 
   /** Izoh */
   comment?: string;
+
+  /** no column*/
+  statusName?: string
+  paymentStatusName?: string
 }
+
+export interface PurchaseOrderItemModel {
+  id?: string;
+
+  item: ItemModel;            // Item bilan bog‘lanadi
+  packageCount: number;      // Qadoq soni
+  quantity: number;          // Miqdor
+  conversionRate?: number;   // Konversiya koeffitsiyenti
+  unitCode: string;          // Asosiy birlik (kg, dona...)
+  altUnitCode?: string;      // Muqobil birlik
+
+  purchasePrice: number;     // Xarid narxi
+  salePrice?: number;        // Sotuv narxi
+  altSalePrice?: number;     // Muqobil sotuv narxi
+
+  sum: number;               // purchasePrice * quantity
+  minimalSum?: number;       // Minimal summa
+  discount?: number;         // Chegirma
+
+  batchNumber?: string;      // Partiya raqami
+  expiryDate?: string;       // ISO date (yyyy-MM-dd)
+}
+
 
 export enum PurchaseOrderStatus {
   DRAFT = 'DRAFT',
@@ -60,3 +88,5 @@ export enum PurchaseOrderPaymentStatus {
   PARTIAL = 'PARTIAL',
   PAID = 'PAID'
 }
+
+

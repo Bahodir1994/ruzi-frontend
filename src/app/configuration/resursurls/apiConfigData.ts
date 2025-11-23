@@ -79,6 +79,16 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: true,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-item/search-item",
+        method: "GET",
+        label: "search_item",
+        comment: "tovarni izlash",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
       }
     ]
   },
@@ -196,12 +206,32 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
+        url: "/route-purchase-order/data-table-pur-order",
+        method: "post",
+        label: "purchase_order_item_table",
+        comment: "kirim tovar jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-purchase-order/create-order",
         method: "POST",
         label: "pur_order_create",
         comment: "yangi kirim qo'shish",
         active: true,
         showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-purchase-order/read-order",
+        method: "GET",
+        label: "pur_order_read",
+        comment: "kirimni o'qsh",
+        active: true,
+        showSuccess: false,
         showWarning: true,
         roles: []
       },
@@ -215,6 +245,46 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
+      {
+        url: "/route-purchase-order/delete-order",
+        method: "delete",
+        label: "delete_order",
+        comment: "partiyani ochirish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-purchase-order/add-item",
+        method: "post",
+        label: "add_item",
+        comment: "partiyaga tovar qoshish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-purchase-order/delete-order-item",
+        method: "delete",
+        label: "delete_order_item",
+        comment: "partiyadan tovar ochirish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-purchase-order/update-order-item",
+        method: "PATCH",
+        label: "update_pur_order_item",
+        comment: "kirim tovar maydonlarini yangilash",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      }
     ]
   },
   {
