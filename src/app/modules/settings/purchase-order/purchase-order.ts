@@ -37,6 +37,10 @@ import {
   PurchaseOrderPaymentStatusLabel
 } from '../../../component/enums/PurchaseOrderPaymentStatus';
 import {PurchaseOrderStatusClass, PurchaseOrderStatusLabel} from '../../../component/enums/PurchaseOrderStatus';
+import {SupplierModel} from '../supplier/supplier.model';
+import {Supplier} from '../supplier/supplier';
+import {WarehouseModel} from '../warehouse/warehouse.model';
+import {CurrencyOptions} from '../../../component/constants/currency.constant';
 
 @Component({
   selector: 'app-purchase-order',
@@ -55,9 +59,12 @@ export class PurchaseOrder {
     --AUTOCOMPLETE
     Tovar izlab uni partiyaga qoshish uchun ozgaruvchilar
   =======================================*/
+  currencyOptions = CurrencyOptions;
   isNewOrder: boolean = true
   searchItem: string = "";
   filteredItems: ItemModel[] = [];
+  supplierList: SupplierModel[] = [];
+  warehouseList: WarehouseModel[] = [];
 
   /* ============================================================
      3) UI STATE VARIABLES
@@ -158,6 +165,8 @@ export class PurchaseOrder {
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
+    this.loadSupplierList();
+    this.loadWarehouseList();
 
     this.form = this.fb.group({
       orderNumber: new FormControl({value: '', disabled: true}, Validators.required),
@@ -235,7 +244,6 @@ export class PurchaseOrder {
     }
   }
 
-
   async loadPurItemData() {
     this.isLoadingPurItem = true;
 
@@ -253,6 +261,22 @@ export class PurchaseOrder {
     } finally {
       this.isLoadingPurItem = false;
     }
+  }
+
+  async loadSupplierList() {
+      this.purchaseOrderService.read_supplier().subscribe({
+        next: value => {
+          this.supplierList = value.data as SupplierModel[];
+        }
+      })
+  }
+
+  async loadWarehouseList() {
+    this.purchaseOrderService.read_warehouse().subscribe({
+      next: value => {
+        this.warehouseList = value.data as WarehouseModel[];
+      }
+    })
   }
 
   /* ============================================================
@@ -328,48 +352,13 @@ export class PurchaseOrder {
       ...this.form.value,
     };
 
-    if (this.editingId) {
-      this.purchaseOrderService.update_order(this.editingId, data).subscribe({
-        next: () => {
-          this.loadData();
-          this.visiblePurchaseOrderModal = false;
-          this.editingId = null;
-        }
-      });
-    } else {
-      this.purchaseOrderService.create_order(data).subscribe({
-        next: () => {
-          this.loadData();
-          this.visiblePurchaseOrderModal = false;
-        }
-      });
-    }
-  }
 
-  async onSubmitOrderItem() {
-    this.formCreateItemSubmit = true;
-    if (this.form.invalid) return;
-
-    const data = {
-      ...this.form.value,
-    };
-
-    if (this.editingId) {
-      this.purchaseOrderService.update_order(this.editingId, data).subscribe({
-        next: () => {
-          this.loadData();
-          this.visiblePurchaseOrderModal = false;
-          this.editingId = null;
-        }
-      });
-    } else {
-      this.purchaseOrderService.create_order(data).subscribe({
-        next: () => {
-          this.loadData();
-          this.visiblePurchaseOrderModal = false;
-        }
-      });
-    }
+    this.purchaseOrderService.create_order(data).subscribe({
+      next: () => {
+        this.loadData();
+        this.visiblePurchaseOrderModal = false;
+      }
+    });
   }
 
   createNewOrder() {

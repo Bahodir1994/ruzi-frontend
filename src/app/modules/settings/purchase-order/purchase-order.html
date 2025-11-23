@@ -4,8 +4,7 @@
   </ng-template>
   @if (purchaseOrderModel.length === 0 && !searchValue) {
     <div
-      class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
-    >
+      class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0">
       <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon"/>
       <p class="text-2xl font-bold">
         Kirim jadvali
@@ -246,12 +245,34 @@
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
               <p-select
-                [options]="null"
-                optionLabel="name"
+                [options]="supplierList"
+                [filter]="true"
+                filterBy="name,phone,inn"
+                optionValue="id"
                 placeholder="Ta'minotchini tanlang"
                 formControlName="supplierId"
                 class="w-full"
-              ></p-select>
+                appendTo="body">
+                <ng-template pTemplate="item" let-item>
+                  <div class="flex flex-col py-1">
+                    <span class="font-semibold text-sm">{{ item.name }}</span>
+                    <span class="text-xs text-gray-500">
+                      📞 {{ item.phone }}
+                    </span>
+                    <span class="text-xs text-gray-500">
+                      🧾 INN: {{ item.inn }}
+                    </span>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="selectedItem" let-selected>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-medium">{{ selected?.name }}</span>
+                    <span class="text-xs text-gray-500">
+                    {{ selected?.phone }} • {{ selected?.inn }}
+                  </span>
+                  </div>
+                </ng-template>
+              </p-select>
             </div>
           </div>
           <!-- WAREHOUSE -->
@@ -261,12 +282,50 @@
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
               <p-select
-                [options]="null"
-                optionLabel="name"
-                placeholder="Omborni tanlang"
+                [options]="warehouseList"
                 formControlName="warehouseId"
+                optionValue="id"
+                [filter]="true"
+                filterBy="name,address,type,status"
+                placeholder="Omborni tanlang"
                 class="w-full"
-              ></p-select>
+                appendTo="body"
+              >
+                <ng-template pTemplate="item" let-warehouse>
+                  <div class="flex flex-col px-2 py-2">
+                    <!-- Ombor nomi -->
+                    <span class="font-semibold text-sm">
+                      {{ warehouse.name }}
+                    </span>
+                    <span class="text-xs text-gray-600 flex items-center gap-1 mt-1">
+                      <i class="pi pi-box text-blue-500"></i>
+                      Turi:
+                      <span class="font-medium">
+                        {{ warehouse.type }}
+                      </span>
+                    </span>
+                    <span class="text-xs flex items-center gap-1"
+                          [ngClass]="warehouse.status === 'ACTIVE' ? 'text-green-600' : 'text-red-600'">
+                      <i class="pi pi-circle-fill"
+                         [ngClass]="warehouse.status === 'ACTIVE' ? 'text-green-500' : 'text-red-500'"
+                         style="font-size: 0.5rem;">
+                      </i>
+                      Holati:
+                      <span class="font-medium">
+                        {{ warehouse.status }}
+                      </span>
+                    </span>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="selectedItem" let-selected>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-semibold">{{ selected?.name }}</span>
+                    <span class="text-xs text-gray-500">
+                      {{ selected?.type }} • {{ selected?.status }}
+                    </span>
+                  </div>
+                </ng-template>
+              </p-select>
             </div>
           </div>
           <!-- CURRENCY -->
@@ -276,11 +335,29 @@
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
               <p-select
-                [options]="null"
-                placeholder="Valyutani tanlang"
+                [options]="currencyOptions"
                 formControlName="currency"
+                optionLabel="label"
+                optionValue="value"
                 class="w-full"
-              ></p-select>
+                placeholder="Valyutani tanlang"
+                appendTo="body"
+              >
+                <ng-template pTemplate="selectedItem" let-selected>
+                  @if(selected){
+                    <div class="flex items-center gap-2">
+                      <i [class]="selected.icon"></i>
+                      <span>{{ selected.label }}</span>
+                    </div>
+                  }
+                </ng-template>
+                <ng-template pTemplate="item" let-option>
+                  <div class="flex items-center gap-2">
+                    <i [class]="option.icon"></i>
+                    <div>{{ option.label }}</div>
+                  </div>
+                </ng-template>
+              </p-select>
             </div>
           </div>
           <!-- DUE DATE -->

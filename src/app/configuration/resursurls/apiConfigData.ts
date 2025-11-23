@@ -294,6 +294,16 @@ export const apiConfigData: ApiUrls[] = [
     active: true,
     list: [
       {
+        url: "/route-warehouse/get-warehouses",
+        method: "GET",
+        label: "get_warehouses",
+        comment: "omborlar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-warehouse/data-table-main",
         method: "post",
         label: "warehouse_table",
@@ -313,14 +323,24 @@ export const apiConfigData: ApiUrls[] = [
     list: [
       {
         url: "/route-supplier/data-table-main",
-        method: "post",
+        method: "POST",
         label: "supplier_table",
         comment: "taminotchi asosy jadvali",
         active: true,
         showSuccess: false,
         showWarning: true,
         roles: []
-      }
+      },
+      {
+        url: "/route-supplier/get-suppliers",
+        method: "GET",
+        label: "get_suppliers",
+        comment: "taminotchilar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {

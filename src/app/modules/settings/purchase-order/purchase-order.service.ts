@@ -47,6 +47,32 @@ export class PurchaseOrderService {
     );
   }
 
+  read_supplier(): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('supplier', 'get_suppliers').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
+  read_warehouse(): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('warehouse', 'get_warehouses').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`);
+        } else {
+          throw new Error('ERROR9999');
+        }
+      })
+    );
+  }
+
   update_order(id: string, formData: any): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('purchase-order', 'update_pur_order').pipe(
       switchMap(value => {
