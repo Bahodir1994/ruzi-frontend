@@ -76,7 +76,6 @@ export interface PurchaseOrderItemModel {
   expiryDate?: string;       // ISO date (yyyy-MM-dd)
 }
 
-
 export enum PurchaseOrderStatus {
   DRAFT = 'DRAFT',
   APPROVED = 'APPROVED',
