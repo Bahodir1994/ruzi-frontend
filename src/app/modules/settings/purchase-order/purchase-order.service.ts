@@ -18,7 +18,8 @@ export class PurchaseOrderService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {}
+  ) {
+  }
 
   /* -CRUD- */
   create_order(formData: any): Observable<ResponseDto> {
@@ -91,7 +92,6 @@ export class PurchaseOrderService {
 
   search_items(query: string): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('items', 'search_item').pipe(
-
       switchMap(config => {
         if (!config) throw new Error('ERROR9999');
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import {Component, EventEmitter, HostListener, Output} from '@angular/core';
 
 @Component({
   selector: 'app-barcode-scanner',

@@ -14,16 +14,16 @@ import {Tooltip} from "primeng/tooltip";
 @Component({
   standalone: true,
   selector: 'app-menu',
-    imports: [
-        Ripple,
-        NgClass,
-        RouterLink,
-        RouterLinkActive,
-        StyleClass,
-        Button,
-        ThemeSwitcher,
-        Tooltip
-    ],
+  imports: [
+    Ripple,
+    NgClass,
+    RouterLink,
+    RouterLinkActive,
+    StyleClass,
+    Button,
+    ThemeSwitcher,
+    Tooltip
+  ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })

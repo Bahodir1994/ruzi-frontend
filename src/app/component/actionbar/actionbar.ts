@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, TemplateRef, WritableSignal} from '@angular/core';
-import {NgClass, NgTemplateOutlet} from '@angular/common';
+import {NgTemplateOutlet} from '@angular/common';
 
 @Component({
   selector: 'app-actionbar',

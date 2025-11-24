@@ -6,8 +6,8 @@
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
-      <img ngSrc="assets/images/icons/items.gif" width="200" height="200" alt="icon" />
-<!--      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
+      <img ngSrc="assets/images/icons/items.gif" width="200" height="200" alt="icon"/>
+      <!--      <i class="pi pi-tags mb-3 text-gray-500" style="font-size: 4rem;"></i>-->
       <p class="text-2xl font-bold">
         Tovarlar to'plami
       </p>
@@ -21,7 +21,7 @@
           (click)="showModalImportItem = true"
         >
           <ng-template pTemplate="content">
-            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon" />
+            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon"/>
           </ng-template>
         </p-button>
         <p-button
@@ -237,7 +237,7 @@
                 appImageFallback="assets/images/image.png"
                 decoding="async"
                 class="object-cover rounded-md"
-               alt=""/>
+                alt=""/>
             </div>
           </td>
           <td class="text-nowrap text-center">{{ row.skuCode }}</td>
@@ -516,7 +516,7 @@
                 class="w-3 h-3 rounded-full"
                 [ngClass]="scannerIsActive ? 'bg-green-500' : 'bg-red-500'">
               </span>
-                          <span class="text-sm">
+              <span class="text-sm">
                 {{ scannerIsActive ? 'Skaner faol' : 'Skaner o‘chgan' }}
               </span>
             </div>
@@ -626,7 +626,7 @@
                         appImageFallback="assets/images/image.png"
                         decoding="async"
                         class="rounded-md object-cover border border-gray-200"
-                       alt=""/>
+                        alt=""/>
                     </div>
                     <div class="text-sm font-medium truncate">
                       {{ selectedOption.code }}
@@ -645,7 +645,7 @@
                       appImageFallback="assets/images/image.png"
                       decoding="async"
                       class="rounded-md object-cover border border-gray-200"
-                     alt=""/>
+                      alt=""/>
                   </div>
                   <div class="text-sm text-gray-700 font-medium truncate">
                     {{ opt.code }}
@@ -688,7 +688,7 @@
                 ngSrc="{{ imagePathPrefix + form.value?.primaryImageUrl }}"
                 fill
                 class="max-h-28 object-contain"
-               alt=""/>
+                alt=""/>
             } @else {
               <span class="text-sm">Rasm topilmadi</span>
             }
@@ -845,7 +845,7 @@
           </div>
         </ng-template>
       </p-fileupload>
-      @if(loading){
+      @if (loading) {
         <div class="loading-container">
           <p-progress-bar [value]="progress" class="progress-spinner"></p-progress-bar>
         </div>

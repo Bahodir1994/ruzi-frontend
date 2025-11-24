@@ -19,11 +19,11 @@
 
 
 .sq-th {
-  background: #FAFAFA;
-  font-weight: normal!important;
+  background: rgb(219 234 254 / var(--tw-bg-opacity, 1));
+  font-weight: normal !important;
   padding: 10px 8px;
-  font-size: 14px!important;
-  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px !important;
+  border-bottom: 1px solid rgba(70, 128, 255, 0.72);
 }
 
 .square-table > tr > td {
@@ -34,7 +34,7 @@
 .sq-item-search-input {
   width: 100%;
   padding: 12px;
-  border-radius: 0!important;
+  border-radius: 0 !important;
   border: 1px solid #1530ba;
   font-size: 14px;
 }
@@ -65,7 +65,7 @@
 }
 
 .pcInputText {
-  border: none!important;
+  border: none !important;
 }
 
 .input-cell {

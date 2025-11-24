@@ -38,13 +38,13 @@ export interface PurchaseOrderModel {
   paymentStatus: PurchaseOrderPaymentStatus;
 
   /** Umumiy summa */
-  totalAmount: number;
+  totalAmount?: number;
 
   /** To‘langan summa */
-  paidAmount: number;
+  paidAmount?: number;
 
   /** Qarzdorlik summasi */
-  debtAmount: number;
+  debtAmount?: number;
 
   /** Izoh */
   comment?: string;

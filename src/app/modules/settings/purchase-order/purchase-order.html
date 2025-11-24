@@ -219,10 +219,10 @@
     </div>
   </ng-template>
   <p-scrollPanel [style]="{ width: '100%', height: '85vh' }">
-    <div class="max-w-4xl mx-auto">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex max-w-6xl mx-auto">
+      <form [formGroup]="form">
         <p class="font-bold py-3 text-xl">Partiya ma'lumotlari</p>
-        <div class="w-[850px] border border-gray-300 overflow-hidden shadow-sm">
+        <div class="w-[700px] border border-gray-300 overflow-hidden shadow-sm">
           <!-- ORDER NUMBER -->
           <div class="grid grid-cols-[220px_1fr] h-[52px] focus-within:bg-gray-200">
             <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
@@ -240,7 +240,8 @@
           </div>
           <!-- SUPPLIER -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div
+              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Ta'minotchi
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -277,7 +278,8 @@
           </div>
           <!-- WAREHOUSE -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div
+              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Ombor
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -330,7 +332,8 @@
           </div>
           <!-- CURRENCY -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div
+              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Valyuta
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -344,7 +347,7 @@
                 appendTo="body"
               >
                 <ng-template pTemplate="selectedItem" let-selected>
-                  @if(selected){
+                  @if (selected) {
                     <div class="flex items-center gap-2">
                       <i [class]="selected.icon"></i>
                       <span>{{ selected.label }}</span>
@@ -362,7 +365,8 @@
           </div>
           <!-- DUE DATE -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div
+              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               To‘lov muddati
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -395,6 +399,85 @@
           </div>
         </div>
       </form>
+      <div class="w-[400px] mt-auto border border-gray-300 overflow-hidden shadow-sm">
+        <form [formGroup]="form">
+          <!-- TOTAL AMOUNT -->
+          <div class="grid grid-cols-[150px_1fr] h-[52px] border-0">
+            <p-badge [value]="form.controls['status'].value | number:'1.0-0'" severity="info"></p-badge>
+          </div>
+          <div class="grid grid-cols-[150px_1fr] h-[52px]">
+            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Jami summa
+            </div>
+
+            <div class="border-b border-gray-300 px-5 flex items-center">
+              <p-inputNumber
+                formControlName="totalAmount"
+                mode="currency" currency="UZS"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [disabled]="true"
+                inputId="totalAmount"
+                class="w-full text-right"
+                [inputStyle]="{
+                  border: 'none',
+                  background: 'transparent',
+                  boxShadow: 'none',
+                  color: '#1530ba'
+                }"
+              ></p-inputNumber>
+            </div>
+          </div>
+
+          <!-- PAID AMOUNT -->
+          <div class="grid grid-cols-[150px_1fr] h-[52px]">
+            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              To‘langan
+            </div>
+
+            <div class="border-b border-gray-300 px-5 flex items-center">
+              <p-inputNumber
+                formControlName="paidAmount"
+                mode="currency" currency="UZS"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="2"
+                class="w-full text-right"
+                [inputStyle]="{
+                  border: 'none',
+                  background: 'transparent',
+                  boxShadow: 'none',
+                  color: '#1530ba'
+                }"
+              ></p-inputNumber>
+            </div>
+          </div>
+
+          <!-- DEBT AMOUNT -->
+          <div class="grid grid-cols-[150px_1fr] h-[52px]">
+            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              Qarzdorlik
+            </div>
+
+            <div class="border-b border-gray-300 px-5 flex items-center">
+              <p-inputNumber
+                formControlName="debtAmount"
+                mode="currency" currency="UZS"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="2"
+                [disabled]="true"
+                class="w-full text-right text-red-600"
+                [inputStyle]="{
+                  border: 'none',
+                  background: 'transparent',
+                  boxShadow: 'none',
+                  color: '#c60000'
+                }"
+              ></p-inputNumber>
+            </div>
+          </div>
+        </form>
+
+      </div>
     </div>
     <div class="w-full mx-auto mt-2">
       <p class="font-bold text-md">Partiya tovar ma'lumotlari</p>
@@ -405,14 +488,13 @@
           [resizableColumns]="false"
           [value]="purchaseOrderItemModel"
           (onEditComplete)="onCellEditComplete($event)"
-          stripedRows
           dataKey="id"
           editMode="cell"
           class="square-table p-table-border">
           <ng-template #header>
             <tr>
               <!-- ITEM -->
-              <th class="sq-th w-[50px]" >
+              <th class="sq-th bg-gray-200 w-[50px]">
                 <div class="flex items-center gap-1">
                   Mahsulot
                   <i class="pi pi-info-circle text-gray-500 cursor-pointer"
@@ -426,7 +508,7 @@
                 </div>
               </th>
               <!-- UNIT CODE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Birlik
                   <i class="pi pi-info-circle"
@@ -437,7 +519,7 @@
                 </div>
               </th>
               <!-- ALT UNIT CODE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Qo`shimcha-birlik
                   <i class="pi pi-info-circle"
@@ -448,7 +530,7 @@
                 </div>
               </th>
               <!-- CONVERSION RATE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Konv.
                   <i class="pi pi-info-circle"
@@ -459,7 +541,7 @@
                 </div>
               </th>
               <!-- PACKAGE COUNT -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Qadoq
                   <i class="pi pi-info-circle"
@@ -484,7 +566,7 @@
                 </div>
               </th>
               <!-- PURCHASE PRICE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1 text-nowrap">
                   Xarid narxi
                   <i class="pi pi-info-circle"
@@ -496,7 +578,7 @@
                 </div>
               </th>
               <!-- SALE PRICE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1 text-nowrap">
                   Sotuv narxi
                   <i class="pi pi-info-circle"
@@ -509,7 +591,7 @@
                 </div>
               </th>
               <!-- ALT SALE PRICE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Q'shimcha narx
                   <i class="pi pi-info-circle"
@@ -521,7 +603,7 @@
                 </div>
               </th>
               <!-- MINIMAL SUM -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Min summa
                   <i class="pi pi-info-circle"
@@ -531,7 +613,7 @@
                 </div>
               </th>
               <!-- DISCOUNT -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Chegirma
                   <i class="pi pi-info-circle"
@@ -543,7 +625,7 @@
                 </div>
               </th>
               <!-- SUM -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Jami
                   <i class="pi pi-info-circle"
@@ -556,7 +638,7 @@
                 </div>
               </th>
               <!-- BATCH -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Partiya
                   <i class="pi pi-info-circle"
@@ -568,7 +650,7 @@
                 </div>
               </th>
               <!-- EXPIRY DATE -->
-              <th class="sq-th w-[50px] text-center" >
+              <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
                   Muddati
                   <i class="pi pi-info-circle"
@@ -580,14 +662,14 @@
                 </div>
               </th>
               <!-- ADD BTN -->
-              <th class="sq-th w-[50px] text-center" >
-                <p-button icon="pi pi-plus" size="small" text ></p-button>
+              <th class="sq-th w-[50px] text-center">
+                <p-button icon="pi pi-plus" size="small" text></p-button>
               </th>
             </tr>
           </ng-template>
           <ng-template #body let-row let-editing="editing">
             <tr>
-              <td pEditableColumn >
+              <td pEditableColumn>
                 {{ row.item.name }}
               </td>
               <td [pEditableColumn]="row" pEditableColumnField="unitCode" class="text-center">
@@ -794,7 +876,7 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage"  let-columns>
+          <ng-template pTemplate="emptymessage" let-columns>
             <tr>
               <td [attr.colspan]="15" class="mx-auto">
                 <div class="flex flex-col items-center justify-center p-6 text-gray-500">
@@ -824,32 +906,18 @@
             </div>
           </ng-template>
           <ng-template pTemplate="empty">
-          <div class="p-3 text-gray-600">
-            <p class="font-medium mb-2">Natija topilmadi</p>
-            <p-button
-              severity="info"
-              icon="pi pi-plus"
-              label="Yangi tovar yaratish"
-              class="w-full"
-              (click)="createNewItem()">
-            </p-button>
-          </div>
-        </ng-template>
+            <div class="p-3 text-gray-600">
+              <p class="font-medium mb-2">Natija topilmadi</p>
+              <p-button
+                severity="info"
+                icon="pi pi-plus"
+                label="Yangi tovar yaratish"
+                class="w-full"
+                (click)="createNewItem()">
+              </p-button>
+            </div>
+          </ng-template>
         </p-autoComplete>
-      </div>
-      <div class="w-[320px] mt-6 ml-auto border border-gray-300 rounded-md">
-        <div class="flex justify-between p-3 text-[14px] border-b">
-          <span>Subtotal</span>
-          <span>$ {{ null | number:'1.2-2' }}</span>
-        </div>
-        <div class="flex justify-between p-3 text-[14px] border-b">
-          <a class="sq-add-tax-link">Add Tax</a>
-          <span>$0.00</span>
-        </div>
-        <div class="flex justify-between p-3 font-bold text-[16px] bg-gray-100">
-          <span>Total Due</span>
-          <span>$ {{ null | number:'1.2-2' }}</span>
-        </div>
       </div>
     </div>
   </p-scrollPanel>

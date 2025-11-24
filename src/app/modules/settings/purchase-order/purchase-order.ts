@@ -1,11 +1,11 @@
-import {ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {InputText} from 'primeng/inputtext';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Button} from 'primeng/button';
-import {TableEditCompleteEvent, TableModule} from 'primeng/table';
+import {TableModule} from 'primeng/table';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
 import {PermissionService} from '../../../service/validations/permission.service';
 import {firstValueFrom} from 'rxjs';
@@ -23,7 +23,6 @@ import {InputNumber} from 'primeng/inputnumber';
 import {Menu} from 'primeng/menu';
 import {Ripple} from 'primeng/ripple';
 import {MenuItem} from 'primeng/api';
-import {MultiSelect} from 'primeng/multiselect';
 import {ScrollPanel} from 'primeng/scrollpanel';
 import {Textarea} from 'primeng/textarea';
 import {Select} from 'primeng/select';
@@ -31,16 +30,15 @@ import {DatePicker} from 'primeng/datepicker';
 import {Tooltip} from 'primeng/tooltip';
 import {AutoComplete} from 'primeng/autocomplete';
 import {ItemModel} from '../../items/item/item-model';
-import {Divider} from 'primeng/divider';
 import {
   PurchaseOrderPaymentStatusClass,
   PurchaseOrderPaymentStatusLabel
 } from '../../../component/enums/PurchaseOrderPaymentStatus';
 import {PurchaseOrderStatusClass, PurchaseOrderStatusLabel} from '../../../component/enums/PurchaseOrderStatus';
 import {SupplierModel} from '../supplier/supplier.model';
-import {Supplier} from '../supplier/supplier';
 import {WarehouseModel} from '../warehouse/warehouse.model';
 import {CurrencyOptions} from '../../../component/constants/currency.constant';
+import {Badge} from 'primeng/badge';
 
 @Component({
   selector: 'app-purchase-order',
@@ -51,14 +49,14 @@ import {CurrencyOptions} from '../../../component/constants/currency.constant';
     Dialog, IconField, InputIcon, InputText, FormsModule, Button, TableModule,
     DatePipe, DecimalPipe, NgClass, Card, HasRolesDirective, NgOptimizedImage,
     Menu, Ripple, ReactiveFormsModule, ScrollPanel,
-    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete
+    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Badge
   ]
 })
 export class PurchaseOrder {
- /* ============================================================
-    --AUTOCOMPLETE
-    Tovar izlab uni partiyaga qoshish uchun ozgaruvchilar
-  =======================================*/
+  /* ============================================================
+     --AUTOCOMPLETE
+     Tovar izlab uni partiyaga qoshish uchun ozgaruvchilar
+   =======================================*/
   currencyOptions = CurrencyOptions;
   isNewOrder: boolean = true
   searchItem: string = "";
@@ -111,10 +109,22 @@ export class PurchaseOrder {
     columns: [
       {data: 'orderNumber', name: 'orderNumber', searchable: true, orderable: true, search: {value: '', regex: false}},
       {data: 'supplier.name', name: 'supplier', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {data: 'warehouse.name', name: 'warehouse', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'warehouse.name',
+        name: 'warehouse',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
       {data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: {value: '', regex: false}},
       {data: 'status', name: 'status', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {data: 'paymentStatus', name: 'paymentStatus', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'paymentStatus',
+        name: 'paymentStatus',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
       {data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: true, search: {value: '', regex: false}}
     ]
   };
@@ -128,21 +138,33 @@ export class PurchaseOrder {
     draw: 0,
     start: 0,
     length: 10,
-    search: { value: '', regex: false },
-    order: [{ column: 4, dir: 'desc' }],
+    search: {value: '', regex: false},
+    order: [{column: 4, dir: 'desc'}],
     columns: [
-      { data: 'purchaseOrder.id', name: 'id', searchable: true, orderable: true, search: { value: '', regex: false }},
-      { data: 'item.name', name: 'item', searchable: true, orderable: true, search: { value: '', regex: false }},
-      { data: 'packageCount', name: 'packageCount', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'quantity', name: 'quantity', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'unitCode', name: 'unitCode', searchable: true, orderable: true, search: { value: '', regex: false }},
-      { data: 'altUnitCode', name: 'altUnitCode', searchable: true, orderable: false, search: { value: '', regex: false }},
-      { data: 'purchasePrice', name: 'purchasePrice', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'salePrice', name: 'salePrice', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'discount', name: 'discount', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'sum', name: 'sum', searchable: false, orderable: true, search: { value: '', regex: false }},
-      { data: 'batchNumber', name: 'batchNumber', searchable: true, orderable: false, search: { value: '', regex: false }},
-      { data: 'expiryDate', name: 'expiryDate', searchable: false, orderable: true, search: { value: '', regex: false }}
+      {data: 'purchaseOrder.id', name: 'id', searchable: true, orderable: true, search: {value: '', regex: false}},
+      {data: 'item.name', name: 'item', searchable: true, orderable: true, search: {value: '', regex: false}},
+      {
+        data: 'packageCount',
+        name: 'packageCount',
+        searchable: false,
+        orderable: true,
+        search: {value: '', regex: false}
+      },
+      {data: 'quantity', name: 'quantity', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'unitCode', name: 'unitCode', searchable: true, orderable: true, search: {value: '', regex: false}},
+      {data: 'altUnitCode', name: 'altUnitCode', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'purchasePrice',
+        name: 'purchasePrice',
+        searchable: false,
+        orderable: true,
+        search: {value: '', regex: false}
+      },
+      {data: 'salePrice', name: 'salePrice', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'discount', name: 'discount', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'sum', name: 'sum', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'batchNumber', name: 'batchNumber', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {data: 'expiryDate', name: 'expiryDate', searchable: false, orderable: true, search: {value: '', regex: false}}
     ]
   };
 
@@ -154,7 +176,8 @@ export class PurchaseOrder {
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService,
     private fb: FormBuilder
-  ) {}
+  ) {
+  }
 
   /* ============================================================
      10) ngOnInit
@@ -174,7 +197,11 @@ export class PurchaseOrder {
       warehouseId: [null, Validators.required],
       currency: [null, Validators.required],
       dueDate: [null],
-      comment: ['']
+      comment: [''],
+      status: [''],
+      totalAmount: [{value: 0, disabled: true}],
+      paidAmount: [0],
+      debtAmount: [{value: 0, disabled: true}],
     });
 
     this.formItem = this.fb.group({
@@ -244,6 +271,16 @@ export class PurchaseOrder {
     }
   }
 
+  async loadPurOrderSingle() {
+    this.purchaseOrderService.read_order(this.currentEditableOrderId).subscribe({
+      next: value => {
+        this.purchaseOrderModelSingle = value.data as PurchaseOrderModel;
+        this.form.patchValue(this.purchaseOrderModelSingle);
+        this.cdr.detectChanges()
+      }
+    })
+  }
+
   async loadPurItemData() {
     this.isLoadingPurItem = true;
 
@@ -264,17 +301,19 @@ export class PurchaseOrder {
   }
 
   async loadSupplierList() {
-      this.purchaseOrderService.read_supplier().subscribe({
-        next: value => {
-          this.supplierList = value.data as SupplierModel[];
-        }
-      })
+    this.purchaseOrderService.read_supplier().subscribe({
+      next: value => {
+        this.supplierList = value.data as SupplierModel[];
+        this.cdr.detectChanges()
+      }
+    })
   }
 
   async loadWarehouseList() {
     this.purchaseOrderService.read_warehouse().subscribe({
       next: value => {
         this.warehouseList = value.data as WarehouseModel[];
+        this.cdr.detectChanges()
       }
     })
   }
@@ -334,6 +373,7 @@ export class PurchaseOrder {
 
     const res = await firstValueFrom(this.purchaseOrderService.search_items(q));
     this.filteredItems = res.data as ItemModel[];
+    this.cdr.detectChanges()
   }
 
   createNewItem() {
@@ -352,7 +392,6 @@ export class PurchaseOrder {
       ...this.form.value,
     };
 
-
     this.purchaseOrderService.create_order(data).subscribe({
       next: () => {
         this.loadData();
@@ -365,7 +404,7 @@ export class PurchaseOrder {
     this.isNewOrder = true;
 
     const formData = {
-      id : ''
+      id: ''
     }
 
     this.purchaseOrderService.create_order(formData).subscribe({
@@ -382,8 +421,8 @@ export class PurchaseOrder {
   onItemSelect(item: any) {
     console.log(item);
     const formData = {
-      orderId : this.currentEditableOrderId,
-      itemId : item.value.id
+      orderId: this.currentEditableOrderId,
+      itemId: item.value.id
     }
 
     this.purchaseOrderService.add_item_to_order(formData).subscribe({
@@ -407,6 +446,8 @@ export class PurchaseOrder {
     this.purchaseOrderService.delete_item_from_order(this.currentEditableOrderId, item.id).subscribe({
       next: () => {
         this.loadPurItemData()
+        this.loadPurOrderSingle()
+        this.cdr.detectChanges()
       }
     });
   }
@@ -426,7 +467,7 @@ export class PurchaseOrder {
   }
 
   onCellEditComplete(event: any) {
-    const { data, field } = event;
+    const {data, field} = event;
 
     // yangi qiymatni to‘g‘ri olish
     const newValue = data[field];
@@ -446,8 +487,9 @@ export class PurchaseOrder {
         if (['quantity', 'purchasePrice', 'discount'].includes(field)) {
           data.sum = (data.quantity * data.purchasePrice) - (data.discount || 0);
         }
+        this.loadPurOrderSingle()
+        this.cdr.detectChanges()
       }
     });
   }
-
 }

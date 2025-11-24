@@ -68,7 +68,7 @@ export class ItemService {
           this.moduleUrl = value;
           return this.http.post<ResponseDto>(
             `${this.moduleUrl.host}${this.moduleUrl.url}`,
-            { ids: ids }
+            {ids: ids}
           );
         } else {
           throw new Error('ERROR9999');
