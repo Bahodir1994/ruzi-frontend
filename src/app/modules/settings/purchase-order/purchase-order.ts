@@ -39,6 +39,8 @@ import {SupplierModel} from '../supplier/supplier.model';
 import {WarehouseModel} from '../warehouse/warehouse.model';
 import {CurrencyOptions} from '../../../component/constants/currency.constant';
 import {Badge} from 'primeng/badge';
+import {Tag} from 'primeng/tag';
+import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner';
 
 @Component({
   selector: 'app-purchase-order',
@@ -49,7 +51,7 @@ import {Badge} from 'primeng/badge';
     Dialog, IconField, InputIcon, InputText, FormsModule, Button, TableModule,
     DatePipe, DecimalPipe, NgClass, Card, HasRolesDirective, NgOptimizedImage,
     Menu, Ripple, ReactiveFormsModule, ScrollPanel,
-    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Badge
+    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Badge, Tag, BarcodeScanner
   ]
 })
 export class PurchaseOrder {
@@ -137,7 +139,7 @@ export class PurchaseOrder {
   dataTableInputItem: DataTableInput = {
     draw: 0,
     start: 0,
-    length: 10,
+    length: -1,
     search: {value: '', regex: false},
     order: [{column: 4, dir: 'desc'}],
     columns: [
@@ -345,6 +347,23 @@ export class PurchaseOrder {
   toggleMenu(event: Event, menu: any) {
     menu.toggle(event);
     this.menuVisible = !this.menuVisible;
+  }
+
+  async onBarcode(scannedCode: string) {
+
+    // 1) Autocomplete inputga scanner qiymatini yozish
+    this.searchItem = scannedCode;
+
+    // 2) Autocomplete completeMethod ni qo‘lda chaqirish
+    await this.searchItems({ query: scannedCode });
+
+    // 3) Tovarlar listi yangilanishi uchun detectChanges
+    this.cdr.detectChanges();
+
+    // 4) Agar bitta tovar bo‘lsa → avtomatik qo‘shamiz
+    if (this.filteredItems.length === 1) {
+      this.onItemSelect({ value: this.filteredItems[0] });
+    }
   }
 
   /* ============================================================
