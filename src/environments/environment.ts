@@ -17,6 +17,6 @@ export const environment = {
   },
 
   get wsUrl() {
-    return `ws://${this.host}:${this.port}`;
+    return `http://${this.host}:${this.port}`;
   }
 };

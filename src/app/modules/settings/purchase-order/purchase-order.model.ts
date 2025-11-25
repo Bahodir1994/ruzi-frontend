@@ -1,5 +1,7 @@
 import {WarehouseModel} from '../warehouse/warehouse.model';
 import {ItemModel} from '../../items/item/item-model';
+import {Supplier} from '../supplier/supplier';
+import {SupplierModel} from '../supplier/supplier.model';
 
 export interface PurchaseOrderModel {
   id: string;
@@ -8,7 +10,7 @@ export interface PurchaseOrderModel {
   orderNumber: string;
 
   /** Ta'minotchi */
-  // supplier: Supplier;
+  supplier: SupplierModel;
 
   /** Ombor */
   warehouse: WarehouseModel;

@@ -139,7 +139,7 @@
           <td class="text-nowrap text-center">{{ row.orderNumber }}</td>
           <td class="text-nowrap text-center">{{ row.supplier?.name }}</td>
           <td class="text-nowrap text-center">{{ row.warehouse?.name }}</td>
-          <td class="text-nowrap text-center">{{ row.createdAt | date:'dd.MM.yyyy' }}</td>
+          <td class="text-nowrap text-center">{{ row.approvedAt | date:'dd.MM.yyyy' }}</td>
           <td class="text-nowrap text-center">
             <span [ngClass]="row.statusClass">
               {{ row.statusName }}
@@ -198,15 +198,24 @@
   <ng-template #header>
     <div class="grid grid-cols-3 items-center gap-3 pb-2 border-b w-full">
       <div class="flex gap-2">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">
-          <p-button icon="pi pi-save" type="submit" label="Saqlash" severity="primary"></p-button>
+        <form [formGroup]="form" class="contents">
+          <!-- APPROVED bo‘lib saqlash -->
+          <p-button
+            icon="pi pi-save"
+            label="Saqlash"
+            severity="primary"
+            (onClick)="onSubmit('APPROVED')">
+          </p-button>
+
+          <!-- DRAFT holatda saqlash -->
           <p-button
             icon="pi pi-save"
             [outlined]="true"
-            type="submit"
             label="Tasdiqlamasdan saqlash"
             severity="primary"
-          ></p-button>
+            (onClick)="onSubmit('DRAFT')">
+          </p-button>
+
         </form>
       </div>
       <div class="justify-self-center text-center">
@@ -266,7 +275,7 @@
                 </ng-template>
                 <ng-template pTemplate="selectedItem" let-selected>
                   <div class="flex flex-col">
-                    <span class="text-xs font-medium">{{ selected?.name }}</span>
+                    <span class="text-xs font-medium text-blue-700">{{ selected?.name }}</span>
                     <span class="text-xs text-gray-500">
                     {{ selected?.phone }} • {{ selected?.inn }}
                   </span>
@@ -320,7 +329,7 @@
                 </ng-template>
                 <ng-template pTemplate="selectedItem" let-selected>
                   <div class="flex flex-col">
-                    <span class="text-xs font-semibold">{{ selected?.name }}</span>
+                    <span class="text-xs font-semibold text-blue-700">{{ selected?.name }}</span>
                     <span class="text-xs text-gray-500">
                       {{ selected?.type }} • {{ selected?.status }}
                     </span>
@@ -347,7 +356,7 @@
               >
                 <ng-template pTemplate="selectedItem" let-selected>
                   @if (selected) {
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 text-blue-700">
                       <i [class]="selected.icon"></i>
                       <span>{{ selected.label }}</span>
                     </div>
@@ -377,6 +386,12 @@
                 formControlName="dueDate"
                 dateFormat="dd.mm.yy"
                 placeholder="kun.oy.yil (kk.OO.yyyy)"
+                [inputStyle]="{
+                  border: 'none',
+                  background: 'transparent',
+                  boxShadow: 'none',
+                  color: '#2f5bd9'
+                }"
               ></p-datePicker>
             </div>
           </div>

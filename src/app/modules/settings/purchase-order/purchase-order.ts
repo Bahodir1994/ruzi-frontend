@@ -50,8 +50,8 @@ import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner
   imports: [
     Dialog, IconField, InputIcon, InputText, FormsModule, Button, TableModule,
     DatePipe, DecimalPipe, NgClass, Card, HasRolesDirective, NgOptimizedImage,
-    Menu, Ripple, ReactiveFormsModule, ScrollPanel,
-    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Badge, Tag, BarcodeScanner
+    Menu, Ripple, ReactiveFormsModule,
+    Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Tag, BarcodeScanner
   ]
 })
 export class PurchaseOrder {
@@ -276,11 +276,20 @@ export class PurchaseOrder {
   async loadPurOrderSingle() {
     this.purchaseOrderService.read_order(this.currentEditableOrderId).subscribe({
       next: value => {
-        this.purchaseOrderModelSingle = value.data as PurchaseOrderModel;
-        this.form.patchValue(this.purchaseOrderModelSingle);
-        this.cdr.detectChanges()
+        const data = value.data as PurchaseOrderModel;
+
+        this.purchaseOrderModelSingle = data;
+
+        this.form.patchValue({
+          ...data,
+          supplierId: data.supplier?.id,
+          warehouseId: data.warehouse?.id,
+          dueDate: data.dueDate ? new Date(data.dueDate) : null,
+        });
+
+        this.cdr.detectChanges();
       }
-    })
+    });
   }
 
   async loadPurItemData() {
@@ -403,18 +412,20 @@ export class PurchaseOrder {
   /* ============================================================
      16) FORM SUBMIT (CREATE / UPDATE)
      ============================================================ */
-  async onSubmit() {
+  async onSubmit(statusAsButton: string) {
     this.formCreateItemSubmit = true;
     if (this.form.invalid) return;
 
     const data = {
       ...this.form.value,
+      status: statusAsButton
     };
 
-    this.purchaseOrderService.create_order(data).subscribe({
+    this.purchaseOrderService.update_order(this.currentEditableOrderId, data).subscribe({
       next: () => {
         this.loadData();
         this.visiblePurchaseOrderModal = false;
+        this.cdr.detectChanges()
       }
     });
   }
@@ -475,14 +486,10 @@ export class PurchaseOrder {
     this.isNewOrder = false;
 
     this.currentEditableOrderId = event.data.id;
-    this.purchaseOrderService.read_order(event.data.id).subscribe({
-      next: value => {
-        this.purchaseOrderModelSingle = value.data as PurchaseOrderModel;
-        this.visiblePurchaseOrderModal = true;
-        this.form.patchValue(this.purchaseOrderModelSingle);
-        this.loadPurItemData();
-      }
-    })
+
+    this.visiblePurchaseOrderModal = true;
+    this.loadPurOrderSingle()
+    this.loadPurItemData();
   }
 
   onCellEditComplete(event: any) {

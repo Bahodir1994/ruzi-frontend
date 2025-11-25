@@ -13,7 +13,7 @@ import {Button} from 'primeng/button';
 import {RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
-import {DatePipe, DecimalPipe, NgClass} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
 import {InputText} from 'primeng/inputtext';
 import {DataView} from 'primeng/dataview';
@@ -38,35 +38,39 @@ import {ContextMenu} from 'primeng/contextmenu';
 import {MenuItem} from 'primeng/api';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Divider} from 'primeng/divider';
+import {ImageFallbackDirective} from "../../configuration/directives/image.fallback";
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-cashbox',
-  imports: [
-    Splitter,
-    Button,
-    FormsModule,
-    TableModule,
-    InputText,
-    RouterLink,
-    DataView,
-    NgClass,
-    Tag,
-    DecimalPipe,
-    Tooltip,
-    DatePipe,
-    Ripple,
-    ThemeSwitcher,
-    Menu,
-    Popover,
-    Listbox,
-    Chip,
-    PaymentsDialog,
-    Dialog,
-    InputNumber,
-    ContextMenu,
-    FloatLabel,
-    Divider
-  ],
+    imports: [
+        Splitter,
+        Button,
+        FormsModule,
+        TableModule,
+        InputText,
+        RouterLink,
+        DataView,
+        NgClass,
+        Tag,
+        DecimalPipe,
+        Tooltip,
+        DatePipe,
+        Ripple,
+        ThemeSwitcher,
+        Menu,
+        Popover,
+        Listbox,
+        Chip,
+        PaymentsDialog,
+        Dialog,
+        InputNumber,
+        ContextMenu,
+        FloatLabel,
+        Divider,
+        ImageFallbackDirective,
+        NgOptimizedImage
+    ],
   templateUrl: './cashbox.html',
   standalone: true,
   styleUrl: './cashbox.scss',
@@ -95,6 +99,8 @@ export class Cashbox implements OnInit, AfterViewInit {
   originalPrice = 0;
   minimalPrice = 0;
   computedPrice = 0;
+
+  imagePathPrefix = environment.minioThumbUrl;
 
   popoverOpen = false;
 
