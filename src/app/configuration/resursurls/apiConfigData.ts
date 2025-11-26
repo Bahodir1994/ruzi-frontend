@@ -467,6 +467,26 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
+      {
+        url: "/route-cart/checkout",
+        method: "POST",
+        label: "checkout",
+        comment: "cart sessiyani yopish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/payments",
+        method: "GET",
+        label: "get_pay",
+        comment: "cart sessiya id boyicha tolovlar qatorini olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {

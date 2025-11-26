@@ -1,0 +1,63 @@
+<p-dialog [(visible)]="visible"
+          [modal]="true"
+          [closable]="false"
+          [draggable]="false"
+          [style]="{width:'480px'}"
+          header="To‘lov amalga oshirildi">
+
+  <div class="text-center py-4">
+
+    <h2 class="text-green-600 text-2xl font-bold mb-2">
+      ✔ To‘lov tasdiqlandi
+    </h2>
+
+    <div class="text-sm opacity-70 mb-4">
+      Chek raqami: <b>{{ cartNumber }}</b>
+    </div>
+
+    <div class="flex flex-col gap-2 text-lg">
+
+      <div class="flex justify-between">
+        <span>Jami:</span>
+        <b>{{ total | number:'1.0-2' }} so‘m</b>
+      </div>
+
+      <div class="flex justify-between">
+        <span>To‘langan:</span>
+        <b class="text-green-700">{{ paid | number:'1.0-2' }} so‘m</b>
+      </div>
+
+      <div class="flex justify-between" *ngIf="change > 0">
+        <span>Qaytim:</span>
+        <b class="text-blue-600">{{ change | number:'1.0-2' }} so‘m</b>
+      </div>
+
+      <div class="flex justify-between" *ngIf="debt > 0">
+        <span>Qarz:</span>
+        <b class="text-red-600">{{ debt | number:'1.0-2' }} so‘m</b>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between gap-2 w-full">
+
+      <button pButton class="w-full"
+              label="Yangi savdo"
+              icon="pi pi-refresh"
+              (click)="newSale.emit()">
+      </button>
+
+      <button pButton class="w-full"
+              label="Chek chiqarish"
+              icon="pi pi-print"
+              severity="success"
+              (click)="onPrint()">
+<!--              (click)="printReceipt.emit()">-->
+      </button>
+
+    </div>
+  </ng-template>
+
+</p-dialog>

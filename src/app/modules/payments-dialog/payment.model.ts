@@ -19,7 +19,7 @@ export interface CheckoutResultDto {
   paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID';
   totalAmount: number;
   paidAmount: number;
-  debt: number;
+  debtAmount: number;
   change: number;
   closedAtIso: string;
 }

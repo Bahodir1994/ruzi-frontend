@@ -1,5 +1,5 @@
 import {Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {CheckoutDto, PaymentMethod, PaymentPartDto} from './payment.model';
+import {CheckoutDto, CheckoutResultDto, PaymentMethod, PaymentPartDto} from './payment.model';
 import {MessageService} from 'primeng/api';
 import {PaymentService} from './payment-service';
 
@@ -16,8 +16,14 @@ import {Divider} from 'primeng/divider';
 import {Tag} from 'primeng/tag';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonGroup} from 'primeng/buttongroup';
+import {PaymentSuccessDialog} from '../payment-success-dialog/payment-success-dialog';
 
-type Row = { method: PaymentMethod; amount: number; externalTxnId?: string | null; loading?: boolean };
+type Row = {
+  method: PaymentMethod;
+  amount: number;
+  externalTxnId?: string | null;
+  loading?: boolean
+};
 
 @Component({
   selector: 'app-payments-dialog',
@@ -26,7 +32,7 @@ type Row = { method: PaymentMethod; amount: number; externalTxnId?: string | nul
     CommonModule, FormsModule,
     DialogModule, InputNumberModule, ButtonModule,
     SelectButtonModule, TooltipModule, CheckboxModule, ToastModule, Divider, Tag,
-    InputTextModule, ButtonGroup
+    InputTextModule, ButtonGroup, PaymentSuccessDialog
   ],
   templateUrl: './payments-dialog.html',
   styleUrl: './payments-dialog.scss'
@@ -40,6 +46,9 @@ export class PaymentsDialog implements OnChanges {
   @Output() closed = new EventEmitter<{ success: boolean; result?: any }>();
   @ViewChild('dlg') dlg!: Dialog;
   @Input() hasReferrer? = false;
+
+  successVisible = false;
+  successData: any = {};
 
   /** --- Hotkeys (raqamlar + kupyuralar) --- */
   @HostListener('document:keydown', ['$event'])
@@ -125,7 +134,10 @@ export class PaymentsDialog implements OnChanges {
     {label: 'Karta', value: 'CARD' as PaymentMethod},
   ];
 
-  constructor(private api: PaymentService, private ms: MessageService) {
+  constructor(
+    private api: PaymentService,
+    private ms: MessageService
+  ) {
   }
 
   ngOnInit() {
@@ -316,15 +328,47 @@ export class PaymentsDialog implements OnChanges {
 
     this.api.checkout(body).subscribe({
       next: (res) => {
-        this.ms.add({severity: 'success', summary: 'OK', detail: res.message || 'Chek yopildi'});
-        this.visible = false;
+
+        this.visible = false;  // eski dialog yopiladi
+
+        // Yangi dialogga ma'lumot yuboramiz
+        const dataResult = res.data as CheckoutResultDto
+
+        this.successData = {
+          total: this.total,
+          paid: this.paid,
+          change: this.change,
+          debt: this.debt,
+          cartNumber: dataResult.cartSessionId
+        };
+
+        this.successVisible = true;  // yangi dialogni ochamiz
+
         this.closed.emit({success: true, result: res.data});
       },
       error: (err) => {
-        const msg = err?.error?.message || 'Xatolik';
-        this.ms.add({severity: 'error', summary: 'Xato', detail: msg});
+        this.ms.add({severity: 'error', summary: 'Xato', detail: err?.error?.message || 'Xatolik'});
       }
     });
+  }
+
+  startNewSale() {
+    this.successVisible = false
+    // savatni tozalaymiz / yangi sessiya
+  }
+
+  onPrintReceipt() {
+    this.api.printReceipt("a7eb484e-f6fc-4f02-ade4-7e0119ca5254", "192.168.1.45").subscribe(() => {
+      this.ms.add({severity:'success', summary:'OK', detail:'Chek printerni chiqdi'});
+    });
+  }
+
+  getPayments() {
+    this.api.getPayments(this.rows).subscribe({
+      next: ()=> {
+        console.log("saved")
+      }
+    })
   }
 
   onHide() {
