@@ -1,0 +1,7 @@
+<div
+  class="tile" (click)="onClick()"
+  [ngClass]="{ 'tile-selected': selected }"
+>
+  <img [src]="icon" class="icon" />
+  <span class="label">{{ label }}</span>
+</div>

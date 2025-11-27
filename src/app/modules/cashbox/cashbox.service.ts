@@ -157,7 +157,6 @@ export class CashboxService {
     );
   }
 
-
   add_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_customer_referrer').pipe(
       switchMap(value => {
@@ -169,6 +168,36 @@ export class CashboxService {
         }
       })
     );
+  }
+
+  create_customer_referrer(form: any, type: 'customer' | 'referrer'): Observable<ResponseDto> {
+    if (type === 'customer') {
+      return this.apiConfigService.loadConfigAndGetResultUrl('customer', 'create_customer').pipe(
+        switchMap(value => {
+          if (value) {
+            this.moduleUrl = value;
+            return this.http.post<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, form);
+          } else {
+            throw new Error('URL не был получен');
+          }
+        })
+      );
+    }
+    if (type === 'referrer') {
+      return this.apiConfigService.loadConfigAndGetResultUrl('referrer', 'create_referrer').pipe(
+        switchMap(value => {
+          if (value) {
+            this.moduleUrl = value;
+            return this.http.post<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, form);
+          } else {
+            throw new Error('URL не был получен');
+          }
+        })
+      );
+    }
+    else {
+      return new Observable();
+    }
   }
 
   remove_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {

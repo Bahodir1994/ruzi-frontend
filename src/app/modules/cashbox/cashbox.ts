@@ -3,15 +3,15 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
-  OnInit,
+  HostListener, OnChanges,
+  OnInit, SimpleChanges,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
 import {Splitter} from 'primeng/splitter';
 import {Button} from 'primeng/button';
 import {RouterLink} from '@angular/router';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TableModule} from 'primeng/table';
 import {DatePipe, DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {CarService} from '../../service/modules/cashbox/car-service';
@@ -21,7 +21,7 @@ import {Tag} from 'primeng/tag';
 import {CashboxService} from './cashbox.service';
 import {firstValueFrom} from 'rxjs';
 import {DataTableInput} from '../../component/datatables/datatable-input.model';
-import {AddCartItemDto, AddPersonToCart, CartItem, CartSession, Customer, Referrer, StockView} from './cashbox.model';
+import {AddCartItemDto, AddPersonToCart, CartItem, CartSession, StockView} from './cashbox.model';
 import {Tooltip} from 'primeng/tooltip';
 import {CashBoxWebsocketService} from './cashbox.websocket';
 import {Ripple} from 'primeng/ripple';
@@ -40,44 +40,65 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {Divider} from 'primeng/divider';
 import {ImageFallbackDirective} from "../../configuration/directives/image.fallback";
 import {environment} from '../../../environments/environment';
+import {Drawer} from 'primeng/drawer';
+import {Card} from 'primeng/card';
+import {QuickTile} from '../../component/quick-tile/quick-tile';
+import {IconField} from 'primeng/iconfield';
+import {FocusTrap} from 'primeng/focustrap';
+import {InputIcon} from 'primeng/inputicon';
+import {Checkbox} from 'primeng/checkbox';
+import {AutoFocus} from 'primeng/autofocus';
+import {CustomerModel} from '../settings/customer/customer.model';
+import {ReferrerModel} from '../settings/referrer/referrer.model';
+import {Carts} from '../carts/carts';
 
 @Component({
   selector: 'app-cashbox',
-    imports: [
-        Splitter,
-        Button,
-        FormsModule,
-        TableModule,
-        InputText,
-        RouterLink,
-        DataView,
-        NgClass,
-        Tag,
-        DecimalPipe,
-        Tooltip,
-        DatePipe,
-        Ripple,
-        ThemeSwitcher,
-        Menu,
-        Popover,
-        Listbox,
-        Chip,
-        PaymentsDialog,
-        Dialog,
-        InputNumber,
-        ContextMenu,
-        FloatLabel,
-        Divider,
-        ImageFallbackDirective,
-        NgOptimizedImage
-    ],
+  imports: [
+    Splitter,
+    Button,
+    FormsModule,
+    TableModule,
+    InputText,
+    RouterLink,
+    DataView,
+    NgClass,
+    Tag,
+    DecimalPipe,
+    Tooltip,
+    DatePipe,
+    Ripple,
+    ThemeSwitcher,
+    Menu,
+    Popover,
+    Listbox,
+    Chip,
+    PaymentsDialog,
+    Dialog,
+    InputNumber,
+    ContextMenu,
+    FloatLabel,
+    Divider,
+    ImageFallbackDirective,
+    NgOptimizedImage,
+    Drawer,
+    QuickTile,
+    IconField,
+    FocusTrap,
+    InputIcon,
+    Checkbox,
+    AutoFocus,
+    Card,
+    ReactiveFormsModule,
+    Carts
+  ],
   templateUrl: './cashbox.html',
   standalone: true,
   styleUrl: './cashbox.scss',
   providers: [CarService],
   encapsulation: ViewEncapsulation.None
 })
-export class Cashbox implements OnInit, AfterViewInit {
+export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   isMobile = false;
   isTablet = false;
   isDesktop = false;
@@ -102,7 +123,13 @@ export class Cashbox implements OnInit, AfterViewInit {
 
   imagePathPrefix = environment.minioThumbUrl;
 
+  formCustomer!: FormGroup;
+  formReferrer!: FormGroup;
+  selectedForm: 'customer' | 'referrer' | null = null;
+  visibleDrawerUsers = false;
   popoverOpen = false;
+
+  visibleDrawerCartsList = false;
 
   onPopoverShow() {
     this.popoverOpen = true;
@@ -143,8 +170,8 @@ export class Cashbox implements OnInit, AfterViewInit {
 
   cartSessionModel?: CartSession;
   cartItems?: CartItem[] | [];
-  customers?: Customer[] | [];
-  referrers?: Referrer[] | [];
+  customers?: CustomerModel[] | [];
+  referrers?: ReferrerModel[] | [];
 
   layout: "grid" | "list" = "list";
   options = ['list', 'grid'];
@@ -214,6 +241,7 @@ export class Cashbox implements OnInit, AfterViewInit {
 
   constructor(
     private deviceService: DeviceDetectorService,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private cashBoxService: CashboxService,
     private cashBoxWebSocketService: CashBoxWebsocketService,
@@ -224,11 +252,6 @@ export class Cashbox implements OnInit, AfterViewInit {
     this.isMobile = this.deviceService.isMobile();
     this.isTablet = this.deviceService.isTablet();
     this.isDesktop = this.deviceService.isDesktop();
-    console.log({
-      isMobile: this.isMobile,
-      isTablet: this.isTablet,
-      isDesktop: this.isDesktop
-    });
 
     this.contextMenuItems = [
       {
@@ -268,8 +291,7 @@ export class Cashbox implements OnInit, AfterViewInit {
     firstValueFrom(this.cashBoxService.create_cart({
       activeSessionId: savedSessionId,
       forceNew: false
-    }))
-      .then(res => {
+    })).then(res => {
         /** 3- Backenddan qaytgan sessiyani o‘rnatamiz */
         this.cartSessionModel = res.data as CartSession;
 
@@ -289,13 +311,29 @@ export class Cashbox implements OnInit, AfterViewInit {
       });
     });
 
+    this.formCustomer = this.fb.group({
+      fullName: [''],
+      phoneNumber: [''],
+    })
+
+    this.formReferrer = this.fb.group({
+      fullName: [''],
+      phone: [''],
+    })
+
     /** mijozlar royxatini chaqirish*/
-    this.openCustomers();
-    this.openReferrers();
+    this.openCustomers().then(null);
+    this.openReferrers().then(null);
   }
 
   ngAfterViewInit() {
     this.searchInput.nativeElement.focus();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.visibleDrawerUsers) {
+      this.resetDrawer();
+    }
   }
 
   async loadData() {
@@ -465,7 +503,7 @@ export class Cashbox implements OnInit, AfterViewInit {
   async openCustomers() {
     const response = await firstValueFrom(this.cashBoxService.get_customers())
     if (response.success && response.data) {
-      this.customers = response.data as Customer[];
+      this.customers = response.data as CustomerModel[];
       this.cdr.detectChanges();
     }
   }
@@ -473,7 +511,7 @@ export class Cashbox implements OnInit, AfterViewInit {
   async openReferrers() {
     const response = await firstValueFrom(this.cashBoxService.get_referrers())
     if (response.success && response.data) {
-      this.referrers = response.data as Referrer[];
+      this.referrers = response.data as ReferrerModel[];
       this.cdr.detectChanges();
     }
   }
@@ -723,6 +761,40 @@ export class Cashbox implements OnInit, AfterViewInit {
       //   alert('Miqdor yangilanmadi: ' + err.error?.message);
       // }
     });
+  }
+
+  onAddCustomer() {
+    this.selectedForm = 'customer';
+    this.formCustomer.reset();
+  }
+  createCustomer() {
+    const fromCustomer = this.formCustomer.value;
+    this.cashBoxService.create_customer_referrer(fromCustomer, 'customer').subscribe({
+      next: (res) => {
+        this.openCustomers();
+        this.formCustomer.reset()
+      }
+    })
+  }
+
+  onAddReferrer() {
+    this.selectedForm = 'referrer';
+    this.formReferrer.reset();
+  }
+  createReferrer() {
+    const formReferrer = this.formReferrer.value;
+    this.cashBoxService.create_customer_referrer(formReferrer, 'referrer').subscribe({
+      next: (res) => {
+        this.openReferrers();
+        this.formReferrer.reset()
+      }
+    })
+  }
+
+  resetDrawer() {
+    this.selectedForm = null;
+    this.formCustomer.reset();
+    this.formReferrer.reset();
   }
 
   formatStock(

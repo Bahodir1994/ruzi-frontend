@@ -418,6 +418,16 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
+        url: "/route-cart/get-carts/lazy",
+        method: "get",
+        label: "get_carts",
+        comment: "cart lar ni olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-cart/delete-item",
         method: "delete",
         label: "delete_item",
@@ -504,6 +514,16 @@ export const apiConfigData: ApiUrls[] = [
         showSuccess: false,
         showWarning: true,
         roles: []
+      },
+      {
+        url: "/route-customer/create-customer",
+        method: "post",
+        label: "create_customer",
+        comment: "mijoz qoshish",
+        active: true,
+        showSuccess: true,
+        showWarning: true,
+        roles: []
       }
     ]
   },
@@ -520,6 +540,16 @@ export const apiConfigData: ApiUrls[] = [
         comment: "xamkorlar royxati",
         active: true,
         showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-referrer/create-referrer",
+        method: "post",
+        label: "create_referrer",
+        comment: "xamkor qoshish",
+        active: true,
+        showSuccess: true,
         showWarning: true,
         roles: []
       }

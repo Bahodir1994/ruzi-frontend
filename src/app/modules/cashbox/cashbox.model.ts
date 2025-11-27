@@ -1,4 +1,6 @@
 import {WarehouseModel} from '../settings/warehouse/warehouse.model';
+import {CustomerModel} from '../settings/customer/customer.model';
+import {ReferrerModel} from '../settings/referrer/referrer.model';
 
 export interface StockView {
   /** Stock ma'lumotlari */
@@ -61,8 +63,8 @@ export interface CartSession {
 
   warehouse: WarehouseModel;
   items: CartItem[];
-  referrer: Referrer;
-  customer: Customer;
+  referrer: ReferrerModel;
+  customer: CustomerModel;
 }
 
 export interface AddCartItemDto {
@@ -101,61 +103,6 @@ export interface CartItem {
   conversionRate?: number;     // 1 alt = X asosiy birlik
   altQuantity?: number;        // alt birlik miqdori (masalan, 2 pack)
   altSalePrice?: number;       // alt birlik uchun sotuv narxi
-}
-
-
-export interface Customer {
-  id: string;
-  insTime: string;        // timestamp(6)
-  insUser?: string;       // varchar(50)
-  isDeleted: boolean;
-  updTime?: string;       // timestamp(6)
-  updUser?: string;       // varchar(50)
-  address?: string;       // varchar(300)
-  birthDate?: string;     // date (ISO format: 'YYYY-MM-DD')
-  clientCode: string;     // varchar(50), unique
-  companyName?: string;   // varchar(255)
-  customerType?: 'LEGAL' | 'INDIVIDUAL' | string; // varchar(20)
-  email?: string;         // varchar(150)
-  fullName: string;       // varchar(255), not null
-  gender?: 'Male' | 'Female' | string; // varchar(10)
-  isActive?: boolean;
-  loyaltyPoints?: number; // double precision
-  note?: string;          // text
-  phoneNumber?: string;   // varchar(30)
-  region?: string;        // varchar(120)
-  tin?: string;           // varchar(15)
-}
-
-/**
- * Usta yoki referal hamkorni ifodalaydi.
- * Backenddagi `app.ruzi.entity.app.Referrer` entitiga mos model.
- */
-export interface Referrer {
-  /** UUID — birlamchi identifikator */
-  id: string;
-
-  /** Qaysi klient tizimiga tegishli (multi-tenant) */
-  clientId?: string;
-
-  /** Ustaga berilgan unikal kod (masalan: USTA-001, REF-9955) */
-  referrerCode: string;
-
-  /** Usta ismi yoki tashkilot nomi */
-  fullName: string;
-
-  /** Telefon raqami yoki aloqa ma’lumoti */
-  phone?: string;
-
-  /** Joriy bonus balansi */
-  balance: number;
-
-  /** Audit ustunlari (backendda AbstractAuditingEntity dan) */
-  insUser?: string;
-  updUser?: string;
-  insTime?: string;
-  updTime?: string;
-  isDeleted?: boolean;
 }
 
 export interface AddPersonToCart {
