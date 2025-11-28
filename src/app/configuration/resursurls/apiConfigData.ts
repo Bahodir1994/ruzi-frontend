@@ -368,6 +368,16 @@ export const apiConfigData: ApiUrls[] = [
     active: true,
     list: [
       {
+        url: "/route-cart/data-table-cart",
+        method: "post",
+        label: "cart_table",
+        comment: "cart sessiya jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-cart/create",
         method: "post",
         label: "create_cart",
@@ -412,6 +422,16 @@ export const apiConfigData: ApiUrls[] = [
         method: "get",
         label: "get_item",
         comment: "cart sessiya id boyicha  tovarlar ni olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/get-carts/lazy",
+        method: "get",
+        label: "get_carts",
+        comment: "cart lar ni olish",
         active: true,
         showSuccess: false,
         showWarning: true,
@@ -467,6 +487,26 @@ export const apiConfigData: ApiUrls[] = [
         showWarning: true,
         roles: []
       },
+      {
+        url: "/route-cart/checkout",
+        method: "POST",
+        label: "checkout",
+        comment: "cart sessiyani yopish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/payments",
+        method: "GET",
+        label: "get_pay",
+        comment: "cart sessiya id boyicha tolovlar qatorini olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
     ]
   },
   {
@@ -482,6 +522,16 @@ export const apiConfigData: ApiUrls[] = [
         comment: "mijozlar royxati",
         active: true,
         showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-customer/create-customer",
+        method: "post",
+        label: "create_customer",
+        comment: "mijoz qoshish",
+        active: true,
+        showSuccess: true,
         showWarning: true,
         roles: []
       }
@@ -500,6 +550,16 @@ export const apiConfigData: ApiUrls[] = [
         comment: "xamkorlar royxati",
         active: true,
         showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-referrer/create-referrer",
+        method: "post",
+        label: "create_referrer",
+        comment: "xamkor qoshish",
+        active: true,
+        showSuccess: true,
         showWarning: true,
         roles: []
       }

@@ -4,7 +4,7 @@ import {DatatableService} from '../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../configuration/resursurls/apiConfig.service';
 import {DataTableInput, DataTableOutput} from '../../component/datatables/datatable-input.model';
 import {Observable, switchMap} from 'rxjs';
-import {AddCartItemDto, AddPersonToCart, StockView, UpdateCartItemDto} from './cashbox.model';
+import {AddCartItemDto, AddPersonToCart, CartSession, StockView, UpdateCartItemDto} from './cashbox.model';
 import {ResponseDto} from '../../configuration/resursurls/responseDto';
 import {HttpClient} from '@angular/common/http';
 
@@ -19,8 +19,7 @@ export class CashboxService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {
-  }
+  ) {}
 
   /* -crud- */
   create_cart(dto?: any): Observable<ResponseDto> {
@@ -157,7 +156,6 @@ export class CashboxService {
     );
   }
 
-
   add_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_customer_referrer').pipe(
       switchMap(value => {
@@ -169,6 +167,36 @@ export class CashboxService {
         }
       })
     );
+  }
+
+  create_customer_referrer(form: any, type: 'customer' | 'referrer'): Observable<ResponseDto> {
+    if (type === 'customer') {
+      return this.apiConfigService.loadConfigAndGetResultUrl('customer', 'create_customer').pipe(
+        switchMap(value => {
+          if (value) {
+            this.moduleUrl = value;
+            return this.http.post<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, form);
+          } else {
+            throw new Error('URL не был получен');
+          }
+        })
+      );
+    }
+    if (type === 'referrer') {
+      return this.apiConfigService.loadConfigAndGetResultUrl('referrer', 'create_referrer').pipe(
+        switchMap(value => {
+          if (value) {
+            this.moduleUrl = value;
+            return this.http.post<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`, form);
+          } else {
+            throw new Error('URL не был получен');
+          }
+        })
+      );
+    }
+    else {
+      return new Observable();
+    }
   }
 
   remove_customer_referrer(dto: AddPersonToCart): Observable<ResponseDto> {
@@ -193,5 +221,15 @@ export class CashboxService {
     })
 
     return this.datatableService.getData<StockView>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
+  }
+
+  data_table_card(dataTableInput: DataTableInput): Observable<DataTableOutput<CartSession>> {
+    this.apiConfigService.loadConfigAndGetResultUrl('cart', 'cart_table').subscribe(value => {
+      if (value) {
+        this.moduleUrl = value;
+      }
+    })
+
+    return this.datatableService.getData<CartSession>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
   }
 }

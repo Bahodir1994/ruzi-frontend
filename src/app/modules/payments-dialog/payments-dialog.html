@@ -239,3 +239,14 @@
     </div>
   </ng-template>
 </p-dialog>
+
+<app-payment-success-dialog
+  [visible]="successVisible"
+  [total]="successData.total"
+  [paid]="successData.paid"
+  [change]="successData.change"
+  [debt]="successData.debt"
+  [cartNumber]="successData.cartNumber"
+  (newSale)="startNewSale()"
+  (printReceipt)="onPrintReceipt()">
+</app-payment-success-dialog>
