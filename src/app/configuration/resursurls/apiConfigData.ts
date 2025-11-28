@@ -368,6 +368,16 @@ export const apiConfigData: ApiUrls[] = [
     active: true,
     list: [
       {
+        url: "/route-cart/data-table-cart",
+        method: "post",
+        label: "cart_table",
+        comment: "cart sessiya jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-cart/create",
         method: "post",
         label: "create_cart",

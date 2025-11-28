@@ -4,7 +4,7 @@ import {DatatableService} from '../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../configuration/resursurls/apiConfig.service';
 import {DataTableInput, DataTableOutput} from '../../component/datatables/datatable-input.model';
 import {Observable, switchMap} from 'rxjs';
-import {AddCartItemDto, AddPersonToCart, StockView, UpdateCartItemDto} from './cashbox.model';
+import {AddCartItemDto, AddPersonToCart, CartSession, StockView, UpdateCartItemDto} from './cashbox.model';
 import {ResponseDto} from '../../configuration/resursurls/responseDto';
 import {HttpClient} from '@angular/common/http';
 
@@ -19,8 +19,7 @@ export class CashboxService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {
-  }
+  ) {}
 
   /* -crud- */
   create_cart(dto?: any): Observable<ResponseDto> {
@@ -222,5 +221,15 @@ export class CashboxService {
     })
 
     return this.datatableService.getData<StockView>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
+  }
+
+  data_table_card(dataTableInput: DataTableInput): Observable<DataTableOutput<CartSession>> {
+    this.apiConfigService.loadConfigAndGetResultUrl('cart', 'cart_table').subscribe(value => {
+      if (value) {
+        this.moduleUrl = value;
+      }
+    })
+
+    return this.datatableService.getData<CartSession>(this.moduleUrl.host + this.moduleUrl.url, dataTableInput);
   }
 }

@@ -312,11 +312,11 @@
         </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
-        <div class="flex justify-start p-2 border-bottom">
+        <div class="flex justify-start p-2" [ngClass]="((cartSessionModel && cartSessionModel.customer) || (cartSessionModel && cartSessionModel.referrer)) ? 'border-b': '' ">
           @if (cartSessionModel && cartSessionModel.customer != null) {
             <p-chip
               label="Mijoz: {{ cartSessionModel.customer.fullName }}"
-              image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png"
+              image="assets/images/icons/adduser.gif"
               alt="Avatar image"
               [removable]="true"
               (onRemove)="removeCusRefFromCart(cartSessionModel.customer.id, 'CUSTOMER')"
@@ -325,7 +325,7 @@
           @if (cartSessionModel && cartSessionModel.referrer != null) {
             <p-chip
               label="Xamkor: {{ cartSessionModel.referrer.fullName }}"
-              image="https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png" alt="Avatar image"
+              image="assets/images/icons/customer.gif" alt="Avatar image"
               [removable]="true"
               (onRemove)="removeCusRefFromCart(cartSessionModel.referrer.id, 'REFERRER')"
             />
@@ -437,7 +437,7 @@
     [text]="true"
     [raised]="true"
     [outlined]="false"
-    (onClick)="visibleDrawerCartsList = true"
+    (onClick)="visibleDrawerCartsList = true; loadCarts()"
   >
     <i class="pi pi-shop p-5" style="font-size: 2.5rem"></i>
   </p-button>
@@ -706,12 +706,146 @@
 </p-drawer>
 
 <p-drawer
-  header="Savatlar ro'yxati"
   [(visible)]="visibleDrawerCartsList"
   styleClass="!w-full md:!w-80 lg:!w-[30rem]"
-  class=""
 >
-  <app-carts></app-carts>
+  <ng-template #header>
+    <div class="flex w-full items-center justify-between gap-3">
+      <button
+        (click)="setCartFilter('OPEN')"
+        [ngClass]="{
+          'bg-emerald-500 text-white shadow-md': cartFilterStatus === 'OPEN',
+          'bg-gray-200 text-gray-700': cartFilterStatus !== 'OPEN'
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center transition">
+        <i class="pi pi-cart-arrow-down text-xl"></i>
+      </button>
+      <button
+        (click)="setCartFilter('CHECKED_OUT')"
+        [ngClass]="{
+          'bg-blue-500 text-white shadow-md': cartFilterStatus === 'CHECKED_OUT',
+          'bg-gray-200 text-gray-700': cartFilterStatus !== 'CHECKED_OUT'
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center transition">
+        <i class="pi pi-shopping-cart text-xl"></i>
+      </button>
+      <p-icon-field iconPosition="right" class="pr-2">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          type="search"
+          pInputText
+          placeholder="Qidiruv"
+          [(ngModel)]="searchValueCart"
+          (input)="loadCarts()"
+        />
+      </p-icon-field>
+    </div>
+  </ng-template>
+  <p-divider></p-divider>
+  <p-table
+    size="small"
+    stripedRows
+    #dataTableItem
+    [value]="cartSessionTable"
+    [(selection)]="cartSessionSelectedTable"
+    dataKey="id"
+    [rowHover]="true"
+    [rows]="rowsCartTable"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    loadingIcon="pi pi-spinner"
+    [paginator]="false"
+    [filterDelay]="0"
+    [scrollable]="true"
+    [totalRecords]="totalRecords"
+    [lazy]="true"
+    (onLazyLoad)="pageChange($event)"
+    [first]="firstCartTable"
+    [pageLinks]="5"
+    [showJumpToPageInput]="true"
+    scrollHeight="75vh"
+  >
+    <ng-template #body let-item>
+      <tr (click)="onSelectCart(item)">
+        <th>
+          <div
+            class="p-3 m-2 border-round-2xl shadow-lg flex justify-between items-center cursor-pointer transition"
+            [ngClass]="{
+               'bg-emerald-100 dark:bg-emerald-900/40 border-l-4 border-emerald-600': item.id === cartSessionModel?.id
+            }"
+          >
+            <div class="flex flex-col">
+              <div class="font-bold text-sm">
+                Savat № {{ item?.cartNumber }}
+              </div>
+
+              <div class="text-xs text-gray-500">
+                Kassir: {{ item?.createdByUser }}
+              </div>
+
+              <div class="text-xs text-gray-400">
+                {{ item?.closedAt | date : 'dd MMM yyyy, HH:mm' }}
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="font-semibold text-green-600 text-sm">
+                {{ item?.totalAmount | number }} so'm
+              </div>
+
+              <span
+                class="px-2 py-1 text-[10px] rounded-full"
+                [ngClass]="{
+          'bg-green-100 text-green-700': item?.status === 'OPEN',
+          'bg-blue-100 text-blue-700': item?.status === 'CHECKED_OUT',
+          'bg-red-100 text-red-700': item?.status === 'CANCELLED'
+        }">
+        {{ item?.status }}
+      </span>
+            </div>
+
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+  </p-table>
+  <ng-template #footer>
+    <div class="w-full px-4 pb-4">
+      <div class="flex items-center justify-center gap-3">
+
+        <button
+          (click)="prev()"
+          [disabled]="isFirstPage()"
+          class="flex-1 flex items-center justify-center h-12
+               rounded-xl bg-gray-200 hover:bg-gray-300
+               text-gray-700 transition disabled:opacity-50"
+        >
+          <i class="pi pi-chevron-left text-xl"></i>
+        </button>
+
+        <button
+          (click)="reset()"
+          class="flex-1 flex items-center justify-center h-12
+               rounded-xl bg-gray-200 hover:bg-gray-300
+               text-gray-700 transition"
+        >
+          <i class="pi pi-refresh text-xl"></i>
+        </button>
+
+        <button
+          (click)="next()"
+          [disabled]="isLastPage()"
+          class="flex-1 flex items-center justify-center h-12
+               rounded-xl bg-gray-200 hover:bg-gray-300
+               text-gray-700 transition disabled:opacity-50"
+        >
+          <i class="pi pi-chevron-right text-xl"></i>
+        </button>
+
+      </div>
+    </div>
+  </ng-template>
+
 </p-drawer>
 
 @if (cartSessionModel) {

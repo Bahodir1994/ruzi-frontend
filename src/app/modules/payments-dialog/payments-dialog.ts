@@ -148,6 +148,17 @@ export class PaymentsDialog implements OnChanges {
   }
 
   ngOnChanges(ch: SimpleChanges) {
+    if (ch['visible'] && this.visible === true) {
+      // dialog har ochilganda default rowni qayta tiklaymiz
+      this.rows = [{
+        method: 'CASH',
+        amount: this.total,
+        externalTxnId: null
+      }];
+      this.activeIndex = 0;
+      this.recalc();
+    }
+
     if (ch['hasReferrer']) {
       if (!this.hasReferrer) {
         this.refPercent = 0; // xamkor yo‘q – 0%

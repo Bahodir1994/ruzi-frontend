@@ -47,10 +47,8 @@ import {IconField} from 'primeng/iconfield';
 import {FocusTrap} from 'primeng/focustrap';
 import {InputIcon} from 'primeng/inputicon';
 import {Checkbox} from 'primeng/checkbox';
-import {AutoFocus} from 'primeng/autofocus';
 import {CustomerModel} from '../settings/customer/customer.model';
 import {ReferrerModel} from '../settings/referrer/referrer.model';
-import {Carts} from '../carts/carts';
 
 @Component({
   selector: 'app-cashbox',
@@ -87,10 +85,9 @@ import {Carts} from '../carts/carts';
     FocusTrap,
     InputIcon,
     Checkbox,
-    AutoFocus,
     Card,
-    ReactiveFormsModule,
-    Carts
+    ReactiveFormsModule
+
   ],
   templateUrl: './cashbox.html',
   standalone: true,
@@ -141,7 +138,6 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       if (input) (input as HTMLInputElement).focus();
     }, 50);
   }
-
   onPopoverHide() {
     this.popoverOpen = false;
   }
@@ -160,7 +156,6 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     action(); // darhol bajar
     this.holdInterval = setInterval(action, 120);
   }
-
   stopHold() {
     if (this.holdInterval) {
       clearInterval(this.holdInterval);
@@ -194,10 +189,13 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     }
   ];
 
+  cartFilterStatus: 'ALL' | 'OPEN' | 'CHECKED_OUT' = 'ALL';
+
+
+  /** item lar table ==> start*/
   totalRecords: number = 0;
   searchValue: string | undefined;
   isLoading: boolean = true;
-
   stockView: StockView[] = [];
   dataTableInputProductModel: DataTableInput = {
     draw: 0,
@@ -230,6 +228,32 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       }
     ]
   }
+
+
+  /** cart lar table ==> start*/
+  firstCartTable = 0;
+  rowsCartTable = 10;
+  totalRecordsCart: number = 0;
+  searchValueCart: string | undefined;
+  isLoadingCart: boolean = true;
+  cartSessionTable: CartSession[] = [];
+  cartSessionSelectedTable: CartSession[] = [];
+  dataTableInputCartSessionModel: DataTableInput = {
+    draw: 0,
+    start: 0,
+    length: 10,
+    search: {value: '', regex: false},
+    order: [{column: 3, dir: 'desc'}],
+    columns: [
+      {data: 'id', name: 'id', searchable: false, orderable: false, search: {value: '', regex: false}},
+      {data: 'cartNumber', name: 'cartNumber', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {data: 'createdByUser', name: 'createdByUser', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: {value: '', regex: false}},
+      {data: 'closedAt', name: 'closedAt', searchable: false, orderable: false, search: {value: '', regex: false}},
+      {data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: false, search: {value: '', regex: false}},
+      {data: 'status', name: 'status', searchable: true, orderable: false, search: {value: '', regex: false}}
+    ]
+  };
 
   /** To‘lov oynasi uchun: */
   payVisible = false;
@@ -351,6 +375,35 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
+  async loadCarts() {
+    this.isLoadingCart = true;
+
+    if (this.searchValueCart != null) {
+      this.dataTableInputCartSessionModel.search.value = this.searchValueCart;
+    }
+
+    if (this.cartFilterStatus !== 'ALL') {
+      this.dataTableInputCartSessionModel.columns[5].search.value = this.cartFilterStatus;
+    } else {
+      this.dataTableInputCartSessionModel.columns[5].search.value = '';
+    }
+
+    try {
+      const data = await firstValueFrom(this.cashBoxService.data_table_card(this.dataTableInputCartSessionModel));
+      // this.cartSessionTable = data.data as CartSession[];
+      this.cartSessionTable = data.data.sort((a, b) => {
+        if (a.id === this.cartSessionModel?.id) return -1;
+        if (b.id === this.cartSessionModel?.id) return 1;
+        return 0;
+      });
+
+      this.totalRecordsCart = data.recordsFiltered;
+      this.cdr.detectChanges();
+    } finally {
+      this.isLoadingCart = false;
+    }
+  }
+
   async getActiveCartSessionItem(id: string) {
     const response = await firstValueFrom(this.cashBoxService.get_item(id))
 
@@ -378,6 +431,47 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
         this.isLoading = false;
       }
     });
+  }
+
+  setCartFilter(status: 'OPEN' | 'CHECKED_OUT') {
+    // Agar bir xil tugma qayta bosilsa — ALL bo‘lib qaytsin
+    if (this.cartFilterStatus === status) {
+      this.cartFilterStatus = 'ALL';
+    } else {
+      this.cartFilterStatus = status;
+    }
+
+    this.firstCartTable = 0;                // paginator reset
+    this.dataTableInputCartSessionModel.start = 0;
+
+    this.loadCarts();                       // qayta yuklash
+  }
+
+  async onSelectCart(item: CartSession) {
+    // 1) Avvalo loading
+    this.isLoadingCart = true;
+
+    // 2) Active sessionni backend orqali almashtiramiz
+    const res = await firstValueFrom(
+      this.cashBoxService.create_cart({
+        activeSessionId: item.id,
+        forceNew: false
+      })
+    );
+
+    // 3) Yangi active cart modelni o‘rnatamiz
+    this.cartSessionModel = res.data as CartSession;
+
+    // 4) LocalStorage ga yozamiz
+    localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+
+    // 5) Cart itemlarini yuklaymiz
+    await this.getActiveCartSessionItem(this.cartSessionModel.id);
+
+    this.isLoadingCart = false;
+
+    // 6) UI yangilab qo‘yamiz
+    this.cdr.detectChanges();
   }
 
   updateStockRow(updated: any) {
@@ -795,6 +889,25 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.selectedForm = null;
     this.formCustomer.reset();
     this.formReferrer.reset();
+  }
+
+  next() {
+    this.firstCartTable = this.firstCartTable + this.rowsCartTable;
+    this.loadCarts()
+  }
+  prev() {
+    this.firstCartTable = this.firstCartTable - this.rowsCartTable;
+    this.loadCarts()
+  }
+  isLastPage(): boolean {
+    return this.cartSessionTable ? this.firstCartTable + this.rowsCartTable >= this.cartSessionTable.length : true;
+  }
+  isFirstPage(): boolean {
+    return this.cartSessionTable ? this.firstCartTable === 0 : true;
+  }
+  reset() {
+    this.firstCartTable = 0;
+    this.loadCarts()
   }
 
   formatStock(

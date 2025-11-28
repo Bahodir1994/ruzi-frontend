@@ -55,15 +55,9 @@ export const appConfig: ApplicationConfig = {
       },
       initOptions: {
         onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: 'silent-check-sso.html',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         checkLoginIframe: true
       },
-      features: [
-        withAutoRefreshToken({
-          onInactivityTimeout: 'logout',
-          sessionTimeout: 3600000
-        })
-      ],
       providers: [AutoRefreshTokenService, UserActivityService]
     }),
     {provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: [globalCondition]},
