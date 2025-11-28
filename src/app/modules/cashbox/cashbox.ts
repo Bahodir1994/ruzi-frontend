@@ -448,10 +448,8 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   }
 
   async onSelectCart(item: CartSession) {
-    // 1) Avvalo loading
     this.isLoadingCart = true;
 
-    // 2) Active sessionni backend orqali almashtiramiz
     const res = await firstValueFrom(
       this.cashBoxService.create_cart({
         activeSessionId: item.id,
@@ -459,20 +457,19 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       })
     );
 
-    // 3) Yangi active cart modelni o‘rnatamiz
-    this.cartSessionModel = res.data as CartSession;
+    // ❗ NG0100 ni shu tuzatadi
+    setTimeout(async () => {
+      this.cartSessionModel = res.data as CartSession;
+      localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
 
-    // 4) LocalStorage ga yozamiz
-    localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+      await this.getActiveCartSessionItem(this.cartSessionModel.id);
 
-    // 5) Cart itemlarini yuklaymiz
-    await this.getActiveCartSessionItem(this.cartSessionModel.id);
+      this.isLoadingCart = false;
 
-    this.isLoadingCart = false;
-
-    // 6) UI yangilab qo‘yamiz
-    this.cdr.detectChanges();
+      this.cdr.detectChanges();
+    }, 0);
   }
+
 
   updateStockRow(updated: any) {
     const idx = this.stockView.findIndex(x => x.stockId === updated.stockId);
@@ -728,6 +725,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   checkout() {
     if (!this.cartItems || this.cartItems.length === 0) return;
     this.payVisible = true;
+    this.cdr.detectChanges();
   }
 
   onPayClosed(ev: { success: boolean; result?: any }) {

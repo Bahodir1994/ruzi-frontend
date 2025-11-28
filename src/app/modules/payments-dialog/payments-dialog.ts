@@ -148,7 +148,7 @@ export class PaymentsDialog implements OnChanges {
   }
 
   ngOnChanges(ch: SimpleChanges) {
-    if (ch['visible'] && this.visible === true) {
+    if (ch['visible'] && this.visible) {
       // dialog har ochilganda default rowni qayta tiklaymiz
       this.rows = [{
         method: 'CASH',
