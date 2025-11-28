@@ -209,21 +209,22 @@
           }
         </div>
         <!-- Markaz: Actions -->
-        <div class="justify-self-center flex items-center gap-2">
-          <button
-            pButton
+        <div class="justify-self-center flex items-center gap-4">
+          <p-button
+            size="large"
+            [outlined]="true"
+            severity="danger"
             label="Bekor qilish"
-            class="p-button-text"
             (click)="visible=false">
-          </button>
+          </p-button>
 
-          <button
-            pButton
+          <p-button
+            size="large"
             label="Tasdiqlash"
             icon="pi pi-check"
             [disabled]="!canConfirm()"
             (click)="confirm()">
-          </button>
+          </p-button>
         </div>
         <!-- O'ng ustun bo'sh: center’ni ushlab turish uchun -->
         <div></div>

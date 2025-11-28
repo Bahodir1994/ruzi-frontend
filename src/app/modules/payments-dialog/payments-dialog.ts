@@ -17,7 +17,12 @@ import {Tag} from 'primeng/tag';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonGroup} from 'primeng/buttongroup';
 
-type Row = { method: PaymentMethod; amount: number; externalTxnId?: string | null; loading?: boolean };
+type Row = {
+  method: PaymentMethod;
+  amount: number;
+  externalTxnId?: string | null;
+  loading?: boolean
+};
 
 @Component({
   selector: 'app-payments-dialog',
