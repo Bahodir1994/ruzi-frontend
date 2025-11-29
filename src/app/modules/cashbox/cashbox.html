@@ -1,6 +1,9 @@
 <div class="flex h-screen w-screen">
-  <p-splitter class="w-full" gutterSize="10" panelStyleClass="shadow-lg" [panelSizes]="[60, 40]" [minSizes]="[60, 40]"
-              [style]="{border: '0!important'}">
+  <p-splitter
+    class="w-full" gutterSize="10"
+    panelStyleClass="shadow-lg" [panelSizes]="[60, 40]"
+    [minSizes]="[60, 40]"
+    [style]="{border: '0!important'}">
     <ng-template #panel>
       <div class="flex flex-col h-full">
         <div class="p-1 shadow-sm flex-none bg-[var(--p-primary-color)]">
@@ -61,7 +64,8 @@
         </div>
         <div class="flex-1 overflow-y-auto p-2">
           <p-dataView
-            #dv [value]="stockView"
+            #dv
+            [value]="stockView"
             [layout]="layout"
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
@@ -128,19 +132,17 @@
                     <div class="font-bold text-xl text-emerald-600">
                       {{ item.salePrice | number:'1.2-2' }} soʻm
                     </div>
-
                     <div class="flex items-center gap-1 text-sm mt-1">
                       <i class="pi pi-box text-sky-500"></i>
                       <span>Qoldiq:</span>
 
                       <span class="font-semibold text-surface-900 dark:text-surface-0">
-                        {{ formatStock(item.availableAltQuantity, item.conversionRate, item.altUnitName || item.unitName) }}
+                        {{ formatStock(item) }}
                       </span>
                     </div>
-
-                    @if (item.reservedQuantity > 0) {
+                    @if (item.reservedQuantity > 0 || item.reservedAltQuantity > 0) {
                       <div class="text-xs text-orange-500">
-                        (Rezerv: {{ item.reservedQuantity }})
+                        (Rezerv: {{ formatReserved(item) }})
                       </div>
                     }
                   </div>
@@ -232,7 +234,7 @@
                                     'text-surface-900 dark:text-surface-0 font-semibold': product.availableAlt >= 3
                                   }"
                               >
-                                  {{ formatStock(product.availableAltQuantity, product.conversionRate, product.altUnitName || product.unitName) }}
+                                  {{ formatStock(product) }}
                                 </span>
                             </div>
                             <span class="text-gray-500 text-xs">({{ product.altUnitName || 'pack/pcs' }})</span>
@@ -344,7 +346,7 @@
               <div class="flex flex-col flex-1 min-w-[150px] sm:min-w-[180px]">
                 <span class="font-semibold truncate">{{ item.itemName }}</span>
                 <span class="text-xs sm:text-sm text-gray-500">
-                  {{ item.unitPrice | number: '1.2-2' }} soʻm / dona
+                  {{ item.unitPrice | number: '1.2-2' }} soʻm / {{ getUnitName(item.unitCode) }}
                 </span>
               </div>
 
@@ -364,9 +366,13 @@
                     (touchstart)="startHold(decrease.bind(this, item))"
                     (touchend)="stopHold()"
                   ></p-button>
-                  <span class="font-semibold w-8 sm:w-10 text-center select-none text-xs sm:text-sm">
-                    {{ item.quantity }}
+                  <span class="font-semibold w-20 text-center select-none text-xs sm:text-sm">
+                    {{ item.quantity }} {{ getUnitName(item.unitCode) }}
+                    @if(item.altQuantity && item.altQuantity > 0){
+                        + {{ item.altQuantity }} {{ item.altUnitName }}
+                    }
                   </span>
+
                   <p-button
                     icon="pi pi-plus"
                     size="small"
@@ -410,22 +416,25 @@
         </p-list-box>
         <p-contextMenu #cm [model]="contextMenuCartItems" [baseZIndex]="1000"></p-contextMenu>
       </div>
-      <footer
-        class="sticky bottom-0 w-full border-t shadow-inner px-2 flex flex-wrap justify-between items-center gap-3 "
-      >
-        <div>
-          <div class="text-sm">Jami summa:</div>
-          <div class="text-2xl font-bold text-emerald-600">
-            {{ subtotal() | number:'1.2-2' }} so‘m
+      <footer class="sticky bottom-0 w-full border-t shadow-inner px-2 gap-3 ">
+        <div class="grid grid-cols-2">
+          <div class="grid grid-rows-2 gap-0 p-2">
+            <div class="text-sm">Jami summa:</div>
+            <div class="text-2xl font-bold text-emerald-600">
+              {{ subtotal() | number:'1.2-2' }} so‘m
+            </div>
+          </div>
+          <div class="w-full my-auto">
+            <p-button
+              fluid
+              size="large"
+              label="To‘lash"
+              icon="pi pi-credit-card"
+              class="w-full"
+              (click)="checkout()"
+            ></p-button>
           </div>
         </div>
-        <p-button
-          size="large"
-          label="To‘lash"
-          icon="pi pi-credit-card"
-          class="!text-lg !px-6 !py-3"
-          (click)="checkout()"
-        ></p-button>
       </footer>
     </ng-template>
   </p-splitter>
@@ -588,7 +597,22 @@
         id="qtyInput"
         class="w-full"
       />
-      <label for="qtyInput">Yangi miqdor</label>
+      <label for="qtyInput">Yangi miqdor (asosiy)</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="in" class="my-2">
+      <p-inputNumber
+        [(ngModel)]="editedAltQuantity"
+        [min]="0"
+        [maxFractionDigits]="3"
+        [step]="0.01"
+        mode="decimal"
+        locale="en-US"
+        inputId="qtyInput"
+        id="qtyInputAlt"
+        class="w-full"
+      />
+      <label for="qtyInput">Yangi miqdor (qoshimcha)</label>
     </p-floatlabel>
   </div>
 

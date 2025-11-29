@@ -74,6 +74,19 @@ export class PurchaseOrderService {
     );
   }
 
+  get_unit(): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('units', 'unit_list').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
   update_order(id: string, formData: any): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('purchase-order', 'update_pur_order').pipe(
       switchMap(value => {

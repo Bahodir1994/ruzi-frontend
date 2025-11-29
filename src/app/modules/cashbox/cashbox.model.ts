@@ -34,6 +34,7 @@ export interface StockView {
 
 
   /** 🆕 Qo‘shimcha birlik (alt unit) ma'lumotlari */
+  packageCount?: number;           // 🎯 qancha rulon/qop/dona keldi
   altUnitName?: string;             // Qo‘shimcha birlik nomi (masalan, “pack”)
   altUnitCode?: string;             // Qo‘shimcha birlik kodi (agar mavjud bo‘lsa)
   conversionRate?: number;          // 1 asosiy birlik = N qo‘shimcha birlik
@@ -70,10 +71,11 @@ export interface CartSession {
 export interface AddCartItemDto {
   sessionId: string;
   purchaseOrderItemId: string;
-  quantity: number;
-  unitPrice: number;
-  unitType: string;
+  packQuantity?: number;   // rulon
+  altQuantity?: number;    // metr
 }
+
+
 
 export interface UpdateCartItemDto {
   cartItemId: string;

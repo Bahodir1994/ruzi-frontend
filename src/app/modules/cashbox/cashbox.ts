@@ -49,6 +49,9 @@ import {InputIcon} from 'primeng/inputicon';
 import {Checkbox} from 'primeng/checkbox';
 import {CustomerModel} from '../settings/customer/customer.model';
 import {ReferrerModel} from '../settings/referrer/referrer.model';
+import {ItemModel} from '../items/item/item-model';
+import {UnitModel} from '../items/unit/unit-model';
+import {UnitService} from '../items/unit/unit-service';
 
 @Component({
   selector: 'app-cashbox',
@@ -112,6 +115,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   discountOnly = false;
   editedItem: any = null;
   editedQuantity = 0;
+  editedAltQuantity = 0;
   editedPrice = 0;
   editedDiscount = 0;
   originalPrice = 0;
@@ -167,6 +171,8 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   cartItems?: CartItem[] | [];
   customers?: CustomerModel[] | [];
   referrers?: ReferrerModel[] | [];
+  units?: UnitModel[] | [];
+
 
   layout: "grid" | "list" = "list";
   options = ['list', 'grid'];
@@ -264,6 +270,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   }
 
   constructor(
+    private unitService: UnitService,
     private deviceService: DeviceDetectorService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -346,6 +353,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     })
 
     /** mijozlar royxatini chaqirish*/
+    this.loadUnits();
     this.openCustomers().then(null);
     this.openReferrers().then(null);
   }
@@ -383,9 +391,9 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     }
 
     if (this.cartFilterStatus !== 'ALL') {
-      this.dataTableInputCartSessionModel.columns[5].search.value = this.cartFilterStatus;
+      this.dataTableInputCartSessionModel.columns[6].search.value = this.cartFilterStatus;
     } else {
-      this.dataTableInputCartSessionModel.columns[5].search.value = '';
+      this.dataTableInputCartSessionModel.columns[6].search.value = '';
     }
 
     try {
@@ -406,7 +414,6 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
 
   async getActiveCartSessionItem(id: string) {
     const response = await firstValueFrom(this.cashBoxService.get_item(id))
-
     if (response.success && response.data) {
       this.cartItems = response.data as CartItem[];
       this.cdr.detectChanges();
@@ -470,7 +477,6 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     }, 0);
   }
 
-
   updateStockRow(updated: any) {
     const idx = this.stockView.findIndex(x => x.stockId === updated.stockId);
     if (idx !== -1) {
@@ -492,10 +498,10 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     const dto: AddCartItemDto = {
       sessionId: this.cartSessionModel!.id,
       purchaseOrderItemId: item.purchaseOrderItemId,
-      quantity: 1,
-      unitPrice: item.salePrice,
-      unitType: 'PACK'
+      packQuantity: 1,
+      altQuantity: 0
     };
+
 
     this.cashBoxService.add_item(dto).subscribe({
       next: (res) => {
@@ -514,21 +520,24 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   addAltUnitItem(item: StockView) {
     if (!item || !this.cartSessionModel) return;
 
-    // alt birlikda qo‘shish uchun quantity = 1, narx = asosiy narx / conversionRate
     const conversionRate = item.conversionRate || 1;
-    const altPrice = item.altSalePrice ? item.altSalePrice : 0.00;
+
+    const inputAltQty = 35; // bu yerga sen UI’dan kiritgan alt miqdor keladi!
+
+    // ALT → PACK + ALT split
+    const packQty = Math.floor(inputAltQty / conversionRate);
+    const altQty = inputAltQty % conversionRate;
 
     const dto: AddCartItemDto = {
       sessionId: this.cartSessionModel.id,
       purchaseOrderItemId: item.purchaseOrderItemId,
-      quantity: 1,
-      unitPrice: altPrice,
-      unitType: 'PCS'
+      packQuantity: packQty,
+      altQuantity: altQty
     };
 
     this.isLoading = true;
     this.cashBoxService.add_item(dto).subscribe({
-      next: (res) => {
+      next: () => {
         this.getActiveCartSessionItem(this.cartSessionModel!.id).then(() => {
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -540,6 +549,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       }
     });
   }
+
 
   increase(item: CartItem) {
     const dto = {cartItemId: item.cartItemId, newQuantity: item.quantity + 1};
@@ -829,6 +839,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
 
     this.editQuantityVisible = true;
     this.editedQuantity = this.editedItem.quantity || 0;
+    this.editedAltQuantity = this.editedItem.altQuantity || 0;
   }
 
   applyQuantityChange() {
@@ -908,26 +919,43 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.loadCarts()
   }
 
-  formatStock(
-    availableAltQuantity?: number,
-    conversionRate?: number,
-    displayUnit?: string
-  ): string {
-    const avail = availableAltQuantity ?? 0;
-    const rate = conversionRate ?? 1;
-
-    if (avail <= 0) return `0 ${displayUnit ?? ''}`;
-
-    const packs = Math.floor(avail / rate);
-    const remainder = avail % rate;
-
-    if (packs > 0 && remainder > 0)
-      return `${packs} ${displayUnit ?? ''} ${remainder} pcs`;
-    if (packs > 0)
-      return `${packs} ${displayUnit ?? ''}`;
-    if (remainder > 0)
-      return `${remainder} pcs`;
-
-    return `0 ${displayUnit ?? ''}`;
+  loadUnits() {
+    this.unitService.unit_list().subscribe({
+      next: value => {
+        this.units = value.data as UnitModel[];
+        this.cdr.detectChanges()
+      }
+    })
   }
+
+  getUnitName(code: string): string {
+    return this.units?.find(u => u.code === code)?.name || code;
+  }
+
+  formatReserved(item: StockView): string {
+    const pack = item.reservedQuantity ?? 0;
+    const alt = item.reservedAltQuantity ?? 0;
+
+    if (pack <= 0 && alt <= 0) return '';
+
+    const unit = item.unitName || 'asosiy';
+    const altUnit = item.altUnitName || 'alt';
+
+    if (alt > 0) {
+      return `${pack} ${unit} (${alt} ${altUnit})`;
+    }
+    return `${pack} ${unit}`;
+  }
+
+  formatStock(item: StockView): string {
+
+    const pack = item.availableQuantity ?? 0;
+    const alt = item.availableAltQuantity ?? 0;
+
+    if (pack <= 0 && alt <= 0) return `0 ${item.unitName || ''}`;
+
+    // 15 rulon (300 metr)
+    return `${pack} ${item.unitName || ''} (${alt} ${item.altUnitName || ''})`;
+  }
+
 }

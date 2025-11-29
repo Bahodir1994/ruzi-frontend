@@ -41,6 +41,8 @@ import {CurrencyOptions} from '../../../component/constants/currency.constant';
 import {Badge} from 'primeng/badge';
 import {Tag} from 'primeng/tag';
 import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner';
+import {UnitModel} from '../../items/unit/unit-model';
+import {UnitService} from '../../items/unit/unit-service';
 
 @Component({
   selector: 'app-purchase-order',
@@ -65,6 +67,7 @@ export class PurchaseOrder {
   filteredItems: ItemModel[] = [];
   supplierList: SupplierModel[] = [];
   warehouseList: WarehouseModel[] = [];
+  units?: UnitModel[] | [];
 
   /* ============================================================
      3) UI STATE VARIABLES
@@ -175,6 +178,7 @@ export class PurchaseOrder {
      ============================================================ */
   constructor(
     private purchaseOrderService: PurchaseOrderService,
+    private unitService: UnitService,
     private cdr: ChangeDetectorRef,
     private permissionService: PermissionService,
     private fb: FormBuilder
@@ -190,6 +194,8 @@ export class PurchaseOrder {
   ngOnInit(): void {
     this.loadData().then(r => null);
     this.permission('null');
+    this.loadUnits()
+
     this.loadSupplierList();
     this.loadWarehouseList();
 
@@ -324,6 +330,15 @@ export class PurchaseOrder {
     this.purchaseOrderService.read_warehouse().subscribe({
       next: value => {
         this.warehouseList = value.data as WarehouseModel[];
+        this.cdr.detectChanges()
+      }
+    })
+  }
+
+  loadUnits() {
+    this.unitService.unit_list().subscribe({
+      next: value => {
+        this.units = value.data as UnitModel[];
         this.cdr.detectChanges()
       }
     })
@@ -517,5 +532,9 @@ export class PurchaseOrder {
         this.cdr.detectChanges()
       }
     });
+  }
+
+  getUnitName(code: string): string {
+    return this.units?.find(u => u.code === code)?.name || code;
   }
 }

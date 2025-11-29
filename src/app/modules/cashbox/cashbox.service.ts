@@ -36,7 +36,7 @@ export class CashboxService {
     );
   }
 
-  add_item(dto: AddCartItemDto): Observable<ResponseDto> {
+    add_item(dto: AddCartItemDto): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_item').pipe(
       switchMap(value => {
         if (value) {

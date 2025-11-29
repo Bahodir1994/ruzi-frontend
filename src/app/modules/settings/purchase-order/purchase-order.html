@@ -233,7 +233,7 @@
         <div class="w-[700px] border border-gray-300 overflow-hidden shadow-sm">
           <!-- ORDER NUMBER -->
           <div class="grid grid-cols-[220px_1fr] h-[52px] focus-within:bg-gray-200">
-            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="bg-gray-100 dark:bg-transparent border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Buyurtma raqami
             </div>
             <div class="border-b border-gray-300 px-5 flex items-center">
@@ -248,8 +248,7 @@
           </div>
           <!-- SUPPLIER -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div
-              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="label-cell bg-gray-100 dark:bg-transparent border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Ta'minotchi
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -287,7 +286,7 @@
           <!-- WAREHOUSE -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
             <div
-              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              class="label-cell bg-gray-100 dark:bg-transparent border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Ombor
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -341,7 +340,7 @@
           <!-- CURRENCY -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
             <div
-              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              class="label-cell bg-gray-100 dark:bg-transparent border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Valyuta
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -374,7 +373,7 @@
           <!-- DUE DATE -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
             <div
-              class="label-cell bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+              class="label-cell bg-gray-100 dark:bg-transparent border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               To‘lov muddati
             </div>
             <div class="input-cell border-b border-gray-300 px-5 flex items-center">
@@ -397,7 +396,7 @@
           </div>
           <!-- COMMENT -->
           <div class="wrapper grid grid-cols-[220px_1fr] h-[52px]">
-            <div class="label-cell bg-gray-100 px-5 font-semibold text-[15px] flex items-center">
+            <div class="label-cell bg-gray-100 dark:bg-transparent px-5 font-semibold text-[15px] flex items-center">
               Izoh
             </div>
             <div class="input-cell px-5 flex items-center">
@@ -417,7 +416,7 @@
         <form [formGroup]="form">
           <!-- TOTAL AMOUNT -->
           <div class="grid grid-cols-[150px_1fr] h-[52px]">
-            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="bg-gray-100 border-b dark:bg-transparent border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Holati
             </div>
             <div class="border-b border-gray-300 px-5 py-2 flex items-center">
@@ -425,10 +424,9 @@
             </div>
           </div>
           <div class="grid grid-cols-[150px_1fr] h-[52px]">
-            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="bg-gray-100 border-b dark:bg-transparent border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Jami summa
             </div>
-
             <div class="border-b border-gray-300 px-5 flex items-center">
               <p-inputNumber
                 formControlName="totalAmount"
@@ -449,10 +447,9 @@
 
           <!-- PAID AMOUNT -->
           <div class="grid grid-cols-[150px_1fr] h-[52px]">
-            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="bg-gray-100 border-b dark:bg-transparent border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               To‘langan
             </div>
-
             <div class="border-b border-gray-300 px-5 flex items-center">
               <p-inputNumber
                 formControlName="paidAmount"
@@ -472,10 +469,9 @@
 
           <!-- DEBT AMOUNT -->
           <div class="grid grid-cols-[150px_1fr] h-[52px]">
-            <div class="bg-gray-100 border-b border-gray-300 px-5 font-semibold text-[15px] flex items-center">
+            <div class="bg-gray-100 border-b dark:bg-transparent border-gray-300 px-5 font-semibold text-[15px] flex items-center">
               Qarzdorlik
             </div>
-
             <div class="border-b border-gray-300 px-5 flex items-center">
               <p-inputNumber
                 formControlName="debtAmount"
@@ -493,7 +489,6 @@
             </div>
           </div>
         </form>
-
       </div>
     </div>
     <div class="w-full mx-auto mt-2">
@@ -524,6 +519,7 @@
                   </i>
                 </div>
               </th>
+
               <!-- UNIT CODE -->
               <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
@@ -532,28 +528,6 @@
                      tooltipPosition="top" pTooltip="unitCode – asosiy o‘lchov birligi.
                       Misollar:
                       kg, l, dona, pack">
-                  </i>
-                </div>
-              </th>
-              <!-- ALT UNIT CODE -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Qo`shimcha-birlik
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="altUnitCode – ikkilamchi birlik, masalan:
-                        1 pack = 12 pcs
-                        1 quti = 6 dona">
-                  </i>
-                </div>
-              </th>
-              <!-- CONVERSION RATE -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Konv.
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="conversionRate – 1 asosiy birlik nechta qo`shimcha birlikka teng bo‘lishi.
-                        Masalan:
-                        1 pack = 12 pcs => 12">
                   </i>
                 </div>
               </th>
@@ -566,6 +540,18 @@
                         Misollar:
                         5 quti → 5
                         10 pack → 10">
+                  </i>
+                </div>
+              </th>
+
+              <!-- ALT UNIT CODE -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Qo`sh.birlik
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="altUnitCode – ikkilamchi birlik, masalan:
+                        1 pack = 12 pcs
+                        1 quti = 6 dona">
                   </i>
                 </div>
               </th>
@@ -582,6 +568,19 @@
                   </i>
                 </div>
               </th>
+
+              <!-- CONVERSION RATE -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Konv.
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="conversionRate – 1 asosiy birlik nechta qo`shimcha birlikka teng bo‘lishi.
+                        Masalan:
+                        1 pack = 12 pcs => 12">
+                  </i>
+                </div>
+              </th>
+
               <!-- PURCHASE PRICE -->
               <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1 text-nowrap">
@@ -689,39 +688,75 @@
               <td pEditableColumn>
                 {{ row.item.name }}
               </td>
-              <td [pEditableColumn]="row" pEditableColumnField="unitCode" class="text-center">
+              <td [pEditableColumn]="row" pEditableColumnField="unitCode" class="text-center bg-primary-500">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-select
-                      [options]="null"
-                      optionLabel="label"
-                      optionValue="value"
+                      appendTo="body"
+                      [options]="units"
+                      optionLabel="name"
+                      optionValue="code"
                       fluid
                       [(ngModel)]="row.unitCode"
                     ></p-select>
                   </ng-template>
-
                   <ng-template pTemplate="output">
-                    {{ row.unitCode }}
+                    <span class="text-white">{{ getUnitName(row.unitCode) }}</span>
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]="row" pEditableColumnField="altUnitCode" class="text-center">
+              <td [pEditableColumn]="row" pEditableColumnField="packageCount" class="text-center bg-primary-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      [(ngModel)]="row.packageCount"
+                      [min]="0"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="0"
+                      fluid
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.packageCount }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+
+              <td [pEditableColumn]="row" pEditableColumnField="altUnitCode" class="text-center bg-yellow-500">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-select
-                      [options]="null"
-                      optionLabel="label"
-                      optionValue="value"
+                      appendTo="body"
+                      [options]="units"
+                      optionLabel="name"
+                      optionValue="code"
                       fluid
                       [(ngModel)]="row.altUnitCode"
                     ></p-select>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ row.altUnitCode }}
+                    <span class="text-white">{{ getUnitName(row.altUnitCode) }}</span>
                   </ng-template>
                 </p-cellEditor>
               </td>
+              <td [pEditableColumn]="row" pEditableColumnField="quantity" class="text-center bg-yellow-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      fluid
+                      [(ngModel)]="row.quantity"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="3"
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.quantity }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+
               <td [pEditableColumn]="row" pEditableColumnField="conversionRate" class="text-center">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
@@ -738,40 +773,7 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]="row" pEditableColumnField="packageCount" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      [(ngModel)]="row.packageCount"
-                      [min]="0"
-                      [minFractionDigits]="0"
-                      [maxFractionDigits]="0"
-                      fluid
-                      (onInput)="recalculateRow(row)"
-                    ></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{ row.packageCount }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td [pEditableColumn]="row" pEditableColumnField="quantity" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      fluid
-                      [(ngModel)]="row.quantity"
-                      [minFractionDigits]="0"
-                      [maxFractionDigits]="3"
-                      (onInput)="recalculateRow(row)"
-                    ></p-inputNumber>
-                  </ng-template>
 
-                  <ng-template pTemplate="output">
-                    {{ row.quantity }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
               <td [pEditableColumn]="row" pEditableColumnField="purchasePrice" class="text-center">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
