@@ -543,44 +543,6 @@
                   </i>
                 </div>
               </th>
-
-              <!-- ALT UNIT CODE -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Qo`sh.birlik
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="altUnitCode – ikkilamchi birlik, masalan:
-                        1 pack = 12 pcs
-                        1 quti = 6 dona">
-                  </i>
-                </div>
-              </th>
-              <!-- QTY -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Miqdor
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="quantity – umumiy miqdor (asosiy birlikda).
-                        Misollar:
-                        12.5 kg
-                        20 pack
-                        100 dona">
-                  </i>
-                </div>
-              </th>
-
-              <!-- CONVERSION RATE -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Konv.
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="conversionRate – 1 asosiy birlik nechta qo`shimcha birlikka teng bo‘lishi.
-                        Masalan:
-                        1 pack = 12 pcs => 12">
-                  </i>
-                </div>
-              </th>
-
               <!-- PURCHASE PRICE -->
               <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1 text-nowrap">
@@ -606,25 +568,64 @@
                   </i>
                 </div>
               </th>
+              <!-- MINIMAL SUM -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Min.sotuv.narxi
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="minimalSum – tovarni minimal sotish qiymati.
+                        Agar kassir past narx qo‘ysa — ogohlantirish chiqadi.">
+                  </i>
+                </div>
+              </th>
+
+              <!-- CONVERSION RATE -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Konv.
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="1 qadoqda qancha miqdor borligi.
+                        Masalan:
+                        1 quti kafelda 20 ta kafel bor">
+                  </i>
+                </div>
+              </th>
+
+              <!-- ALT UNIT CODE -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Qo`sh.birlik
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="1 ta qadoqdagi miqdor nimada o'lchanishi.
+                        Masalan:
+                        1 qop = 50 kg (kg tanlaysiz)
+                        1 quti = 6 dona (dona tanlaysiz)">
+                  </i>
+                </div>
+              </th>
+              <!-- QTY -->
+              <th class="sq-th w-[50px] text-center">
+                <div class="flex justify-center items-center gap-1">
+                  Miqdor
+                  <i class="pi pi-info-circle"
+                     tooltipPosition="top" pTooltip="quantity – umumiy miqdor (asosiy birlikda).
+                        Misollar:
+                        12.5 kg
+                        20 pack
+                        100 dona">
+                  </i>
+                </div>
+              </th>
+
               <!-- ALT SALE PRICE -->
               <th class="sq-th w-[50px] text-center">
                 <div class="flex justify-center items-center gap-1">
-                  Q'shimcha narx
+                  Qo'sh.narx
                   <i class="pi pi-info-circle"
                      tooltipPosition="top" pTooltip="altSalePrice – alt birlikdagi sotuv narxi.
                         Misollar:
                         1 pcs → 1200 so‘m
                         1 dona → 750 so‘m">
-                  </i>
-                </div>
-              </th>
-              <!-- MINIMAL SUM -->
-              <th class="sq-th w-[50px] text-center">
-                <div class="flex justify-center items-center gap-1">
-                  Min summa
-                  <i class="pi pi-info-circle"
-                     tooltipPosition="top" pTooltip="minimalSum – tovarni minimal sotish qiymati.
-                        Agar kassir past narx qo‘ysa — ogohlantirish chiqadi.">
                   </i>
                 </div>
               </th>
@@ -722,6 +723,65 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
+              <td [pEditableColumn]="row" pEditableColumnField="purchasePrice" class="text-center bg-primary-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [(ngModel)]="row.purchasePrice"
+                      fluid
+                      (onInput)="recalculateRow(row)"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.purchasePrice | number:'1.2-2' }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="salePrice" class="text-center bg-primary-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [(ngModel)]="row.salePrice"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.salePrice | number:'1.2-2' }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]="row" pEditableColumnField="minimalSum" class="text-center bg-primary-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      mode="decimal"
+                      [(ngModel)]="row.minimalSum"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.minimalSum | number:'1.2-2' }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+
+              <td [pEditableColumn]="row" pEditableColumnField="conversionRate" class="text-center bg-green-500">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      [(ngModel)]="row.conversionRate"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="3"
+                      fluid
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span class="text-white">{{ row.conversionRate }}</span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
 
               <td [pEditableColumn]="row" pEditableColumnField="altUnitCode" class="text-center bg-yellow-500">
                 <p-cellEditor>
@@ -756,56 +816,7 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-
-              <td [pEditableColumn]="row" pEditableColumnField="conversionRate" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      [(ngModel)]="row.conversionRate"
-                      [minFractionDigits]="0"
-                      [maxFractionDigits]="3"
-                      fluid
-                    ></p-inputNumber>
-                  </ng-template>
-
-                  <ng-template pTemplate="output">
-                    {{ row.conversionRate }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-
-              <td [pEditableColumn]="row" pEditableColumnField="purchasePrice" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      mode="decimal"
-                      [(ngModel)]="row.purchasePrice"
-                      fluid
-                      (onInput)="recalculateRow(row)"
-                    ></p-inputNumber>
-                  </ng-template>
-
-                  <ng-template pTemplate="output">
-                    {{ row.purchasePrice | number:'1.2-2' }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td [pEditableColumn]="row" pEditableColumnField="salePrice" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      mode="decimal"
-                      [(ngModel)]="row.salePrice"
-                      fluid
-                    ></p-inputNumber>
-                  </ng-template>
-
-                  <ng-template pTemplate="output">
-                    {{ row.salePrice | number:'1.2-2' }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
-              <td [pEditableColumn]="row" pEditableColumnField="altSalePrice" class="text-center">
+              <td [pEditableColumn]="row" pEditableColumnField="altSalePrice" class="text-center bg-yellow-500">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber
@@ -816,29 +827,12 @@
                       fluid
                     ></p-inputNumber>
                   </ng-template>
-
                   <ng-template pTemplate="output">
-                    {{ row.altSalePrice | number:'1.2-2' }}
+                    <span class="text-white">{{ row.altSalePrice | number:'1.2-2' }}</span>
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]="row" pEditableColumnField="minimalSum" class="text-center">
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      mode="currency"
-                      [currency]="'UZS'"
-                      [locale]="'uz-UZ'"
-                      [(ngModel)]="row.minimalSum"
-                      fluid
-                    ></p-inputNumber>
-                  </ng-template>
 
-                  <ng-template pTemplate="output">
-                    {{ row.minimalSum | number:'1.2-2' }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
               <td [pEditableColumn]="row" pEditableColumnField="discount" class="text-center">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
@@ -867,7 +861,6 @@
                     <input pInputText
                            fluid [(ngModel)]="row.batchNumber"/>
                   </ng-template>
-
                   <ng-template pTemplate="output">
                     {{ row.batchNumber }}
                   </ng-template>

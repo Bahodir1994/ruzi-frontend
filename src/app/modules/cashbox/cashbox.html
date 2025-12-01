@@ -1,3 +1,4 @@
+<!--Tovarlar jadvali va savat jadvali-->
 <div class="flex h-screen w-screen">
   <p-splitter
     class="w-full" gutterSize="10"
@@ -369,7 +370,7 @@
                   <span class="font-semibold w-20 text-center select-none text-xs sm:text-sm">
                     {{ item.quantity }} {{ getUnitName(item.unitCode) }}
                     @if(item.altQuantity && item.altQuantity > 0){
-                        + {{ item.altQuantity }} {{ item.altUnitName }}
+                      <br/><small>+ {{ item.altQuantity }} {{ getUnitName(item.altUnitCode) }}</small>
                     }
                   </span>
 
@@ -440,6 +441,7 @@
   </p-splitter>
 </div>
 
+<!--Savat ochish va theme -->
 <div class="absolute bottom-4 rounded-3xl left-4 bg-white dark:bg-gray-700">
   <p-button
     [rounded]="true"
@@ -455,6 +457,7 @@
   </div>
 </div>
 
+<!--Mijoz qidirish-->
 <p-popover #opCustomers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()">
   <ng-template #content>
     <p-listbox
@@ -484,6 +487,7 @@
   </ng-template>
 </p-popover>
 
+<!--Xamkor qidirish-->
 <p-popover #opReferrers (onShow)="onPopoverShow()" (onHide)="onPopoverHide()">
   <ng-template #content>
     <p-listbox
@@ -513,6 +517,7 @@
   </ng-template>
 </p-popover>
 
+<!--Narxni o‘zgartirish-->
 <p-dialog
   [(visible)]="editPriceVisible"
   header="Narxni o‘zgartirish"
@@ -578,6 +583,7 @@
   </ng-template>
 </p-dialog>
 
+<!-- Birlikni o‘zgartirish -->
 <p-dialog
   [(visible)]="editQuantityVisible"
   header="Birlikni o‘zgartirish"
@@ -585,37 +591,44 @@
   [style]="{ width: '320px' }"
 >
   <div class="p-fluid">
-    <p-floatlabel variant="in">
-      <p-inputNumber
-        [(ngModel)]="editedQuantity"
-        [min]="0"
-        [maxFractionDigits]="3"
-        [step]="0.01"
-        mode="decimal"
-        locale="en-US"
-        inputId="qtyInput"
-        id="qtyInput"
-        class="w-full"
-      />
-      <label for="qtyInput">Yangi miqdor (asosiy)</label>
+    <div [ngClass]="{ 'border-runner-rtl': animateFlow }"></div>
+    <!-- ASOSIY MIQDOR -->
+    <p-floatlabel variant="in" class="mt-1">
+          <p-inputNumber
+            [(ngModel)]="editedQuantity"
+            [min]="0"
+            [maxFractionDigits]="3"
+            [step]="0.01"
+            mode="decimal"
+            locale="en-US"
+            id="qtyInputMain"
+            class="w-full"
+          ></p-inputNumber>
+        <label for="qtyInputMain">Yangi miqdor (asosiy)</label>
     </p-floatlabel>
 
+    <!-- QO‘SHIMCHA MIQDOR -->
     <p-floatlabel variant="in" class="my-2">
-      <p-inputNumber
-        [(ngModel)]="editedAltQuantity"
-        [min]="0"
-        [maxFractionDigits]="3"
-        [step]="0.01"
-        mode="decimal"
-        locale="en-US"
-        inputId="qtyInput"
-        id="qtyInputAlt"
-        class="w-full"
-      />
-      <label for="qtyInput">Yangi miqdor (qoshimcha)</label>
-    </p-floatlabel>
+          <p-inputNumber
+            [(ngModel)]="editedAltQuantity"
+            (onInput)="onAltChanged()"
+            [min]="0"
+            [maxFractionDigits]="4"
+            [step]="0.01"
+            mode="decimal"
+            locale="en-US"
+            id="qtyInputAlt"
+            class="w-full"
+          ></p-inputNumber>
+          <label for="qtyInputAlt">
+            Yangi miqdor (qo‘shimcha)
+            <small style="color: #888;">
+              (1 {{ getUnitName(editedItem?.unitCode) || '' }} = {{ conversionRate || '' }} {{ getUnitName(editedItem?.altUnitCode) || '' }})
+            </small>
+          </label>
+        </p-floatlabel>
+    <div [ngClass]="{ 'border-runner': animateFlow }"></div>
   </div>
-
   <ng-template pTemplate="footer">
     <p-button
       label="Bekor"
@@ -623,15 +636,17 @@
       (click)="editQuantityVisible=false"
       class="p-button-text"
     ></p-button>
+
     <p-button
       label="Saqlash"
       icon="pi pi-check"
       (click)="applyQuantityChange()"
-      [disabled]="!editedQuantity || editedQuantity <= 0"
+      [disabled]="editedQuantity === null || editedQuantity <= 0"
     ></p-button>
   </ng-template>
 </p-dialog>
 
+<!--Qo'shimcha funksiyalar-->
 <p-drawer
   header="Qo'shimcha funksiyalar"
   [(visible)]="visibleDrawerUsers"
@@ -729,6 +744,7 @@
 
 </p-drawer>
 
+<!--Savatlar-->
 <p-drawer
   [(visible)]="visibleDrawerCartsList"
   styleClass="!w-full md:!w-80 lg:!w-[30rem]"
@@ -811,7 +827,6 @@
                 {{ item?.closedAt | date : 'dd MMM yyyy, HH:mm' }}
               </div>
             </div>
-
             <div class="text-right">
               <div class="font-semibold text-green-600 text-sm">
                 {{ item?.totalAmount | number }} so'm
@@ -827,7 +842,6 @@
         {{ item?.status }}
       </span>
             </div>
-
           </div>
         </th>
       </tr>
@@ -869,9 +883,9 @@
       </div>
     </div>
   </ng-template>
-
 </p-drawer>
 
+<!--to'lov kalkulyator-->
 @if (cartSessionModel) {
   <app-payments-dialog
     [visible]="payVisible"

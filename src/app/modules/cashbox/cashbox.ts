@@ -113,6 +113,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   editPriceVisible = false;
   editQuantityVisible = false;
   discountOnly = false;
+  conversionRate: any = null;
   editedItem: any = null;
   editedQuantity = 0;
   editedAltQuantity = 0;
@@ -196,7 +197,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
   ];
 
   cartFilterStatus: 'ALL' | 'OPEN' | 'CHECKED_OUT' = 'ALL';
-
+  animateFlow = false;
 
   /** item lar table ==> start*/
   totalRecords: number = 0;
@@ -550,16 +551,15 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     });
   }
 
-
   increase(item: CartItem) {
     const dto = {cartItemId: item.cartItemId, newQuantity: item.quantity + 1};
     this.cashBoxService.update_item(dto).subscribe({
       next: (res) => {
         item.quantity++;
+        item.altQuantity = 0;
         item.lineTotal = item.unitPrice * item.quantity;
         this.cdr.detectChanges();
-      },
-      error: (err) => alert('Xatolik: ' + err.error.message)
+      }
     });
   }
 
@@ -569,6 +569,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.cashBoxService.update_item(dto).subscribe({
       next: (res) => {
         item.quantity--;
+        item.altQuantity = 0;
         item.lineTotal = item.unitPrice * item.quantity;
         this.cdr.detectChanges();
       },
@@ -836,18 +837,38 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
 
   openEditQuantity() {
     if (!this.editedItem) return;
-
+    this.conversionRate = this.editedItem.conversionRate || 1;
     this.editQuantityVisible = true;
     this.editedQuantity = this.editedItem.quantity || 0;
     this.editedAltQuantity = this.editedItem.altQuantity || 0;
   }
+  onAltChanged() {
+    const alt = Number(this.editedAltQuantity) || 0;
+    const rate = this.conversionRate || 1;
 
+    // ALT → PACK + qoldiq ALT
+    const addPack = Math.floor(alt / rate);
+    const remainAlt = alt % rate;
+
+    // Yangi asosiy qiymat
+    const oldMain = Number(this.editedQuantity);
+    const newMain = Number(this.editedItem.quantity) + addPack;
+
+    this.editedQuantity = newMain;
+    this.editedAltQuantity = remainAlt;
+    this.cdr.detectChanges()
+    if (newMain !== oldMain) {
+      this.animateFlow = true;
+      setTimeout(() => {
+        this.animateFlow = false;
+      }, 3);
+    }
+  }
   applyQuantityChange() {
-    if (!this.editedItem || !this.editedQuantity) return;
-
     const dto = {
       cartItemId: this.editedItem.cartItemId,
-      newQuantity: this.editedQuantity
+      newQuantity: this.editedQuantity,
+      newAltQuantity: this.editedAltQuantity
     };
 
     // 🔹 Backendga yuborish
@@ -855,7 +876,8 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       next: (res) => {
         console.log('✅ Miqdor yangilandi:', res);
         this.editedItem.quantity = this.editedQuantity;
-        this.editedItem.lineTotal = this.editedItem.unitPrice * this.editedQuantity;
+        this.editedItem.altQuantity = this.editedAltQuantity;
+        this.editedItem.lineTotal = this.editedItem.unitPrice * this.editedQuantity + this.editedItem.altSalePrice * this.editedAltQuantity;
         this.editQuantityVisible = false;
         this.cdr.detectChanges();
       },
@@ -951,11 +973,17 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
 
     const pack = item.availableQuantity ?? 0;
     const alt = item.availableAltQuantity ?? 0;
+    const rate = item.conversionRate ?? 1;
+
+    const altName = item.altUnitName || ''
+
+    const packet = Math.floor(alt / rate);  // 55 / 6 = 9
+    const remain = alt % rate > 0 ? 'va ' +  alt % rate + ' ' + altName : '';            // 55 % 6 = 1
 
     if (pack <= 0 && alt <= 0) return `0 ${item.unitName || ''}`;
 
     // 15 rulon (300 metr)
-    return `${pack} ${item.unitName || ''} (${alt} ${item.altUnitName || ''})`;
+    return `${packet} ${item.unitName || ''} ${remain} (yoki ${alt} ${item.altUnitName || ''})`;
   }
 
 }

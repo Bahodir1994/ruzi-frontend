@@ -508,15 +508,18 @@ export class PurchaseOrder {
   }
 
   onCellEditComplete(event: any) {
-    const {data, field} = event;
-
-    // yangi qiymatni to‘g‘ri olish
+    const { data, field } = event;
     const newValue = data[field];
 
     console.log("Field:", field);
-    console.log("Row ID:", data.id);
     console.log("Value:", newValue);
 
+    // FRONTEND AVTO-QAYTA HISOBLASH
+    if (['conversionRate', 'packageCount', 'salePrice', 'purchasePrice', 'discount'].includes(field)) {
+      this.recalculateRowFrontend(data);
+    }
+
+    // Backendga yuboriladigan payload
     const payload = {
       id: data.id,
       field: field,
@@ -525,13 +528,30 @@ export class PurchaseOrder {
 
     this.purchaseOrderService.update_item_field(payload).subscribe({
       next: () => {
-        if (['quantity', 'purchasePrice', 'discount'].includes(field)) {
-          data.sum = (data.quantity * data.purchasePrice) - (data.discount || 0);
-        }
-        this.loadPurOrderSingle()
-        this.cdr.detectChanges()
+        this.loadPurOrderSingle();
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  recalculateRowFrontend(row: any) {
+    const conv = Number(row.conversionRate) || 1;
+    const pkg = Number(row.packageCount) || 1;
+
+    // 1) QUANTITY (packageCount yoki convRate o‘zgarsa)
+    row.quantity = conv * pkg;
+
+    // 2) ALT SALE PRICE (salePrice yoki convRate o‘zgarsa)
+    if (row.salePrice != null) {
+      row.altSalePrice = Number(row.salePrice) / conv;
+    }
+
+    // 3) SUM (har doim shu formula)
+    const qty = Number(row.quantity) || 0;
+    const price = Number(row.purchasePrice) || 0;
+    const discount = Number(row.discount) || 0;
+
+    row.sum = qty * price - discount;
   }
 
   getUnitName(code: string): string {

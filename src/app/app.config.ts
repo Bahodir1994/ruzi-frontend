@@ -54,10 +54,17 @@ export const appConfig: ApplicationConfig = {
         clientId: 'ruzi'
       },
       initOptions: {
+        refreshToken: '3000',
         onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+        silentCheckSsoRedirectUri: '/silent-check-sso.html',
         checkLoginIframe: true
       },
+      features: [
+        withAutoRefreshToken({
+          sessionTimeout: Infinity,
+          onInactivityTimeout: 'none'
+        })
+      ],
       providers: [AutoRefreshTokenService, UserActivityService]
     }),
     {provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, useValue: [globalCondition]},
