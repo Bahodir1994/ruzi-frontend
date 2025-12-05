@@ -75,8 +75,6 @@ export interface AddCartItemDto {
   altQuantity?: number;    // metr
 }
 
-
-
 export interface UpdateCartItemDto {
   cartItemId: string;
   newQuantity: number;

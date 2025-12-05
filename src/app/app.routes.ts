@@ -9,6 +9,7 @@ import {PurchaseOrder} from './modules/settings/purchase-order/purchase-order';
 import {Supplier} from './modules/settings/supplier/supplier';
 import {canActivateAuthGuard} from './configuration/authentication/auth.guard';
 import {Image} from './modules/items/image/image';
+import {Carts} from './modules/carts/carts';
 
 export const routes: Routes = [
   {
@@ -117,6 +118,16 @@ export const routes: Routes = [
             }
           }
         ]
+      },
+      {
+        path: 'carts',
+        component: Carts,
+        canActivate: [canActivateAuthGuard],
+        data: {
+          roles: ['ROLE_ITEM_READ'],
+          title: 'Savatlar oynasi',
+          breadcrumb: 'Savatlar oynasi'
+        }
       }
     ]
   }

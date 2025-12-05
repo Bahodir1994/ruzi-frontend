@@ -72,6 +72,13 @@
     "type": "link",
     "route": "cashbox",
     "permissions": []
+  },
+  {
+    "label": "Savatlar",
+    "icon": "pi pi-cart-arrow-down",
+    "type": "link",
+    "route": "carts",
+    "permissions": []
   }
 ]
 

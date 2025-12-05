@@ -1,13 +1,8 @@
-/* =====================================================================================
- *  IMPORTLAR – BARCHASI SAQLANDI, FAQAT TARTIB BILAN GURUHLANDI
- * ===================================================================================== */
 import {ChangeDetectorRef, Component, signal, ViewChild, ViewEncapsulation} from '@angular/core';
 import {DecimalPipe, NgClass, NgOptimizedImage} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {firstValueFrom} from 'rxjs';
-
-/* PrimeNG UI */
 import {TableModule} from 'primeng/table';
 import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
@@ -32,13 +27,9 @@ import {FileUpload, FileUploadHandlerEvent} from 'primeng/fileupload';
 import {ProgressBar} from 'primeng/progressbar';
 import {Card} from 'primeng/card';
 import {Ripple} from 'primeng/ripple';
-
-/* Custom Components / Directives */
 import {Actionbar} from '../../../component/actionbar/actionbar';
 import {ImageFallbackDirective} from '../../../configuration/directives/image.fallback';
 import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner';
-
-/* Services & Models */
 import {ItemService} from './item.service';
 import {ErrorResponse, ItemModel} from './item-model';
 import {DataTableInput} from '../../../component/datatables/datatable-input.model';
@@ -54,18 +45,12 @@ import {UnitModel} from '../unit/unit-model';
 import {HasRolesDirective} from 'keycloak-angular';
 import {environment} from '../../../../environments/environment';
 
-
-/* =====================================================================================
- *  COMPONENT METADATA
- * ===================================================================================== */
 @Component({
   selector: 'app-item',
   standalone: true,
   templateUrl: './item.html',
   styleUrl: './item.scss',
   encapsulation: ViewEncapsulation.None,
-
-  /* Importlar komponentga injekt qilingan – o‘zgartirilmagan */
   imports: [
     Dialog, TableModule, FormsModule, IconField, Button, DecimalPipe, Tag, InputIcon, InputText,
     HasRolesDirective, ReactiveFormsModule, Select, SelectButton, FloatLabel, ScrollPanel,
