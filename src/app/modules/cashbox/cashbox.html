@@ -24,7 +24,7 @@
                 (input)="loadData()"
               />
             </div>
-            <div class="flex justify-around align-middle my-auto">
+            <div class="flex justify-around gap-4 align-middle my-auto">
               <p-button
                 pTooltip="Admin panelga o'tish"
                 tooltipPosition="bottom"
@@ -37,7 +37,7 @@
                 (click)="visibleDrawerUsers = true">
                 <i class="pi pi-tags" style="font-size: 2rem"></i>
               </p-button>
-              <div class="flex items-center border rounded gap-1">
+              <div class="flex items-center border rounded gap-3">
                 <!-- List tugma -->
                 <p-button
                   pRipple
@@ -162,13 +162,13 @@
                       <!-- Rasm va kategoriya tag -->
                       <div
                         class="relative bg-surface-50 dark:bg-surface-800 flex justify-center items-center rounded-t-xl p-4">
-<!--                        <img-->
-<!--                          ngSrc="{{ imagePathPrefix + product.imageUrl }}"-->
-<!--                          fill-->
-<!--                          appImageFallback="assets/images/image.png"-->
-<!--                          decoding="async"-->
-<!--                          class="rounded-md object-contain max-h-[180px]"-->
-<!--                          alt=""/>-->
+                        <!--                        <img-->
+                        <!--                          ngSrc="{{ imagePathPrefix + product.imageUrl }}"-->
+                        <!--                          fill-->
+                        <!--                          appImageFallback="assets/images/image.png"-->
+                        <!--                          decoding="async"-->
+                        <!--                          class="rounded-md object-contain max-h-[180px]"-->
+                        <!--                          alt=""/>-->
 
                         <img
                           appImageFallback="assets/images/image.png"
@@ -315,7 +315,8 @@
         </div>
       </div>
       <div class="card flex flex-col h-full w-full p-2">
-        <div class="flex justify-start p-2" [ngClass]="((cartSessionModel && cartSessionModel.customer) || (cartSessionModel && cartSessionModel.referrer)) ? 'border-b': '' ">
+        <div class="flex justify-start p-2"
+             [ngClass]="((cartSessionModel && cartSessionModel.customer) || (cartSessionModel && cartSessionModel.referrer)) ? 'border-b': '' ">
           @if (cartSessionModel && cartSessionModel.customer != null) {
             <p-chip
               label="Mijoz: {{ cartSessionModel.customer.fullName }}"
@@ -369,7 +370,7 @@
                   ></p-button>
                   <span class="font-semibold w-20 text-center select-none text-xs sm:text-sm">
                     {{ item.quantity }} {{ getUnitName(item.unitCode) }}
-                    @if(item.altQuantity && item.altQuantity > 0){
+                    @if (item.altQuantity && item.altQuantity > 0) {
                       <br/><small>+ {{ item.altQuantity }} {{ getUnitName(item.altUnitCode) }}</small>
                     }
                   </span>
@@ -594,39 +595,40 @@
     <div [ngClass]="{ 'border-runner-rtl': animateFlow }"></div>
     <!-- ASOSIY MIQDOR -->
     <p-floatlabel variant="in" class="mt-1">
-          <p-inputNumber
-            [(ngModel)]="editedQuantity"
-            [min]="0"
-            [maxFractionDigits]="3"
-            [step]="0.01"
-            mode="decimal"
-            locale="en-US"
-            id="qtyInputMain"
-            class="w-full"
-          ></p-inputNumber>
-        <label for="qtyInputMain">Yangi miqdor (asosiy)</label>
+      <p-inputNumber
+        [(ngModel)]="editedQuantity"
+        [min]="0"
+        [maxFractionDigits]="3"
+        [step]="0.01"
+        mode="decimal"
+        locale="en-US"
+        id="qtyInputMain"
+        class="w-full"
+      ></p-inputNumber>
+      <label for="qtyInputMain">Yangi miqdor (asosiy)</label>
     </p-floatlabel>
 
     <!-- QO‘SHIMCHA MIQDOR -->
     <p-floatlabel variant="in" class="my-2">
-          <p-inputNumber
-            [(ngModel)]="editedAltQuantity"
-            (onInput)="onAltChanged()"
-            [min]="0"
-            [maxFractionDigits]="4"
-            [step]="0.01"
-            mode="decimal"
-            locale="en-US"
-            id="qtyInputAlt"
-            class="w-full"
-          ></p-inputNumber>
-          <label for="qtyInputAlt">
-            Yangi miqdor (qo‘shimcha)
-            <small style="color: #888;">
-              (1 {{ getUnitName(editedItem?.unitCode) || '' }} = {{ conversionRate || '' }} {{ getUnitName(editedItem?.altUnitCode) || '' }})
-            </small>
-          </label>
-        </p-floatlabel>
+      <p-inputNumber
+        [(ngModel)]="editedAltQuantity"
+        (onInput)="onAltChanged()"
+        [min]="0"
+        [maxFractionDigits]="4"
+        [step]="0.01"
+        mode="decimal"
+        locale="en-US"
+        id="qtyInputAlt"
+        class="w-full"
+      ></p-inputNumber>
+      <label for="qtyInputAlt">
+        Yangi miqdor (qo‘shimcha)
+        <small style="color: #888;">
+          (1 {{ getUnitName(editedItem?.unitCode) || '' }}
+          = {{ conversionRate || '' }} {{ getUnitName(editedItem?.altUnitCode) || '' }})
+        </small>
+      </label>
+    </p-floatlabel>
     <div [ngClass]="{ 'border-runner': animateFlow }"></div>
   </div>
   <ng-template pTemplate="footer">
@@ -674,72 +676,80 @@
   </div>
   <p-divider></p-divider>
 
-  @if (selectedForm === null){
+  @if (selectedForm === null) {
     <div class="text-center py-10 opacity-70">
       <h3>Funksiyani tanlang</h3>
     </div>
   }
 
-  @if (selectedForm === 'customer'){
+  @if (selectedForm === 'customer') {
     <p-card header="Yangi mijoz qo'shish">
-    <div class="card flex justify-center">
-      <form [formGroup]="formCustomer" (submit)="createCustomer()">
-        <div pFocusTrap class="w-full sm:w-80 flex flex-col gap-6">
-          <p-iconfield>
-            <p-inputicon>
-              <i class="pi pi-user"></i>
-            </p-inputicon>
-            <input typeof="text" pInputText id="input1" formControlName="fullName" type="text" placeholder="ism sharfi" [fluid]="true" />
-          </p-iconfield>
+      <div class="card flex justify-center">
+        <form [formGroup]="formCustomer" (submit)="createCustomer()">
+          <div pFocusTrap class="w-full sm:w-80 flex flex-col gap-6">
+            <p-iconfield>
+              <p-inputicon>
+                <i class="pi pi-user"></i>
+              </p-inputicon>
+              <input typeof="text" pInputText id="input1" formControlName="fullName" type="text"
+                     placeholder="ism sharfi" [fluid]="true"/>
+            </p-iconfield>
 
-          <p-iconfield>
-            <p-inputicon>
-              <i class="pi pi-phone"> </i>
-            </p-inputicon>
-            <input typeof="text" pInputText id="email1" formControlName="phoneNumber" type="email" placeholder="telefon raqami" [fluid]="true" />
-          </p-iconfield>
+            <p-iconfield>
+              <p-inputicon>
+                <i class="pi pi-phone"> </i>
+              </p-inputicon>
+              <input typeof="text" pInputText id="email1" formControlName="phoneNumber" type="email"
+                     placeholder="telefon raqami" [fluid]="true"/>
+            </p-iconfield>
 
-          <div class="flex items-center gap-2">
-            <p-checkbox id="accept1" name="accept" value="Accept" />
-            <label for="accept1">Mijoz kodi avtomatik generatsiya boladi.</label>
+            <div class="flex items-center gap-2">
+              <p-checkbox id="accept1" name="accept" value="Accept"/>
+              <label for="accept1">Mijoz kodi avtomatik generatsiya boladi.</label>
+            </div>
+            <small>Mijoz bo'yicha batafsil ma'lumot to'ldirish/o'zgartirish lar <a routerLink="/settings/warehouse"
+                                                                                   class="text-blue-500 font-bold">"sozlamalar"</a>
+              menyusidan amalga oshiriladi</small>
+            <p-button type="submit" label="Saqlash" class="mt-2" styleClass="w-full"/>
           </div>
-          <small>Mijoz bo'yicha batafsil ma'lumot to'ldirish/o'zgartirish lar <a routerLink="/settings/warehouse" class="text-blue-500 font-bold">"sozlamalar"</a> menyusidan amalga oshiriladi</small>
-          <p-button type="submit" label="Saqlash" class="mt-2" styleClass="w-full" />
-        </div>
-      </form>
-    </div>
-  </p-card>
+        </form>
+      </div>
+    </p-card>
   }
 
-  @if (selectedForm === 'referrer'){
+  @if (selectedForm === 'referrer') {
     <p-card header="Yangi xamkor qo'shish">
-    <div class="card flex justify-center">
-      <form [formGroup]="formReferrer" (submit)="createReferrer()">
-        <div pFocusTrap class="w-full sm:w-80 flex flex-col gap-6">
-        <p-iconfield>
-          <p-inputicon>
-            <i class="pi pi-user"></i>
-          </p-inputicon>
-          <input typeof="text" pInputText formControlName="fullName" id="fullNameReferrer" type="text" placeholder="ism sharfi" [fluid]="true" />
-        </p-iconfield>
+      <div class="card flex justify-center">
+        <form [formGroup]="formReferrer" (submit)="createReferrer()">
+          <div pFocusTrap class="w-full sm:w-80 flex flex-col gap-6">
+            <p-iconfield>
+              <p-inputicon>
+                <i class="pi pi-user"></i>
+              </p-inputicon>
+              <input typeof="text" pInputText formControlName="fullName" id="fullNameReferrer" type="text"
+                     placeholder="ism sharfi" [fluid]="true"/>
+            </p-iconfield>
 
-        <p-iconfield>
-          <p-inputicon>
-            <i class="pi pi-phone"> </i>
-          </p-inputicon>
-          <input typeof="text" pInputText formControlName="phone" id="phoneReferrer" type="number" placeholder="telefon raqami" [fluid]="true" />
-        </p-iconfield>
+            <p-iconfield>
+              <p-inputicon>
+                <i class="pi pi-phone"> </i>
+              </p-inputicon>
+              <input typeof="text" pInputText formControlName="phone" id="phoneReferrer" type="number"
+                     placeholder="telefon raqami" [fluid]="true"/>
+            </p-iconfield>
 
-        <div class="flex items-center gap-2">
-          <p-checkbox id="accept2" name="accept" value="Accept" />
-          <label for="accept2">Xamkor kodi avtomatik generatsiya boladi.</label>
-        </div>
-        <small>Xamkor bo'yicha batafsil ma'lumot to'ldirish/o'zgartirish lar <a routerLink="/settings/warehouse" class="text-blue-500 font-bold">"sozlamalar"</a> menyusidan amalga oshiriladi</small>
-        <p-button type="submit" label="Saqlash" class="mt-2" styleClass="w-full" />
+            <div class="flex items-center gap-2">
+              <p-checkbox id="accept2" name="accept" value="Accept"/>
+              <label for="accept2">Xamkor kodi avtomatik generatsiya boladi.</label>
+            </div>
+            <small>Xamkor bo'yicha batafsil ma'lumot to'ldirish/o'zgartirish lar <a routerLink="/settings/warehouse"
+                                                                                    class="text-blue-500 font-bold">"sozlamalar"</a>
+              menyusidan amalga oshiriladi</small>
+            <p-button type="submit" label="Saqlash" class="mt-2" styleClass="w-full"/>
+          </div>
+        </form>
       </div>
-      </form>
-    </div>
-  </p-card>
+    </p-card>
   }
 
 </p-drawer>

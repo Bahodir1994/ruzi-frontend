@@ -12,6 +12,7 @@ import {Dialog} from 'primeng/dialog';
 import {UnitService} from "./unit-service";
 import {HasRolesDirective} from 'keycloak-angular';
 import {Card} from 'primeng/card';
+import {NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-unit',
@@ -24,7 +25,8 @@ import {Card} from 'primeng/card';
     Button,
     Dialog,
     HasRolesDirective,
-    Card
+    Card,
+    NgOptimizedImage
   ],
   templateUrl: './unit.html',
   standalone: true,

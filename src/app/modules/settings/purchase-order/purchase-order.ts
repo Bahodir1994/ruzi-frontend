@@ -23,7 +23,6 @@ import {InputNumber} from 'primeng/inputnumber';
 import {Menu} from 'primeng/menu';
 import {Ripple} from 'primeng/ripple';
 import {MenuItem} from 'primeng/api';
-import {ScrollPanel} from 'primeng/scrollpanel';
 import {Textarea} from 'primeng/textarea';
 import {Select} from 'primeng/select';
 import {DatePicker} from 'primeng/datepicker';
@@ -38,7 +37,6 @@ import {PurchaseOrderStatusClass, PurchaseOrderStatusLabel} from '../../../compo
 import {SupplierModel} from '../supplier/supplier.model';
 import {WarehouseModel} from '../warehouse/warehouse.model';
 import {CurrencyOptions} from '../../../component/constants/currency.constant';
-import {Badge} from 'primeng/badge';
 import {Tag} from 'primeng/tag';
 import {BarcodeScanner} from '../../../component/barcode-scanner/barcode-scanner';
 import {UnitModel} from '../../items/unit/unit-model';
@@ -379,14 +377,14 @@ export class PurchaseOrder {
     this.searchItem = scannedCode;
 
     // 2) Autocomplete completeMethod ni qo‘lda chaqirish
-    await this.searchItems({ query: scannedCode });
+    await this.searchItems({query: scannedCode});
 
     // 3) Tovarlar listi yangilanishi uchun detectChanges
     this.cdr.detectChanges();
 
     // 4) Agar bitta tovar bo‘lsa → avtomatik qo‘shamiz
     if (this.filteredItems.length === 1) {
-      this.onItemSelect({ value: this.filteredItems[0] });
+      this.onItemSelect({value: this.filteredItems[0]});
     }
   }
 
@@ -508,7 +506,7 @@ export class PurchaseOrder {
   }
 
   onCellEditComplete(event: any) {
-    const { data, field } = event;
+    const {data, field} = event;
     const newValue = data[field];
 
     console.log("Field:", field);

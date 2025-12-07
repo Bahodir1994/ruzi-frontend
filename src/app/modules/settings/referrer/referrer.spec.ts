@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Referrer } from './referrer';
+import {Referrer} from './referrer';
 
 describe('Referrer', () => {
   let component: Referrer;
@@ -10,7 +10,7 @@ describe('Referrer', () => {
     await TestBed.configureTestingModule({
       imports: [Referrer]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(Referrer);
     component = fixture.componentInstance;

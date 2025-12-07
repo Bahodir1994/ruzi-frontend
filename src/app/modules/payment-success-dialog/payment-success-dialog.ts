@@ -24,7 +24,8 @@ export class PaymentSuccessDialog {
   @Output() newSale = new EventEmitter();
   @Output() printReceipt = new EventEmitter();
 
-  constructor(private printer: ReceiptPrintService) {}
+  constructor(private printer: ReceiptPrintService) {
+  }
 
   onPrint() {
     const html = `

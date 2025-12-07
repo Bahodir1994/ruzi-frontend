@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PaymentSuccessDialog } from './payment-success-dialog';
+import {PaymentSuccessDialog} from './payment-success-dialog';
 
 describe('PaymentSuccessDialog', () => {
   let component: PaymentSuccessDialog;
@@ -10,7 +10,7 @@ describe('PaymentSuccessDialog', () => {
     await TestBed.configureTestingModule({
       imports: [PaymentSuccessDialog]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PaymentSuccessDialog);
     component = fixture.componentInstance;

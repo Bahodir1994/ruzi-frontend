@@ -29,7 +29,7 @@
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-28 text-center transition-all duration-200 mt-0"
     >
-      <i class="pi pi-folder mb-3 text-gray-500" style="font-size: 4rem;"></i>
+      <img ngSrc="assets/images/icons/compass.png" width="200" height="200" alt="icon"/>
       <p class="text-2xl font-bold">
         O‘lchov birligi
       </p>
@@ -37,11 +37,11 @@
         Tovarlarning miqdorini to‘g‘ri belgilash, sotuv jarayonida miqdor hisobini yuritish va hisobotlarda aniq ko‘rsatkichlarni shakllantirishga yordam beradi. Dona, kilogramm, litr, metr kabi o‘lchov birliklarini yaratishingiz va boshqarishingiz mumkin.
       </span>
       <p-button
-        *kaHasRoles="['ROLE_CAT_CREATE']"
+        *kaHasRoles="['ROLE_UNIT_CREATE']"
         class="p-2"
         styleClass="shadow shadow-blue-500/50"
         icon="pi pi-file-plus"
-        label="Yangi guruh qo'shish"
+        label="Yangi o'lchov birligi qo'shish"
         (onClick)="openDialog()"
       />
     </div>
@@ -102,7 +102,6 @@
 
     </p-table>
   }
-
 </p-card>
 
 <p-dialog

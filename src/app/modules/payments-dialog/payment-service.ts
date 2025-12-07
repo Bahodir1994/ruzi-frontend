@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AddPaymentDto, AddPaymentResultDto, CheckoutDto, CheckoutResultDto} from './payment.model';
+import {CheckoutDto} from './payment.model';
 import {FindResultApiUrl} from '../../configuration/resursurls/apiConfigDto';
 import {DatatableService} from '../../component/datatables/datatable.service';
 import {ApiConfigService} from '../../configuration/resursurls/apiConfig.service';
-import {AddCartItemDto} from '../cashbox/cashbox.model';
 import {Observable, switchMap} from 'rxjs';
 import {ResponseDto} from '../../configuration/resursurls/responseDto';
 

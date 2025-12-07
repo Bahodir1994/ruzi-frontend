@@ -2,77 +2,107 @@
   <ng-template #header>
     <p class="text-3xl font-bold px-4 pt-2">Savatlar to'plami</p>
   </ng-template>
-
-  <!-- ❗ Bo'sh holat -->
-  @if (cartSessionModel.length === 0 && !searchValue) {
+  @if (cartSessionModel.length === 0 && !searchValue && allRecords == 0) {
     <div
       class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0"
     >
-      <img ngSrc="assets/images/icons/cart.gif" width="200" height="200" alt="icon" />
+      <img ngSrc="assets/images/icons/black-friday.png" width="200" height="200" alt="icon"/>
 
       <p class="text-2xl font-bold">
         Savatlar to'plami
       </p>
 
       <span class="text-sm max-w-3xl">
-        Xaridorlar uchun yaratilgan savatlar ro'yxati. To'lov jarayonini tezlashtirish,
-        savdo holatini kuzatish va nazoratni soddalashtirish uchun savat yarating.
+        Xaridorlar uchun yaratilgan savatlar ro'yxati. Ushbu bo'limda savatlar ro'yxatini boshqarish ularni xolatini ozgartrish, qarzodroliklarni yopish mumkin.
       </span>
 
-      <div class="flex justify-between mt-4">
-        <p-button
-          *kaHasRoles="['ROLE_CART_CREATE']"
-          class="p-2"
-          styleClass="shadow shadow-blue-500/50"
-          icon="pi pi-plus"
-          label="Yangi savat yaratish"
-          (click)="showCreateCartModal = true"
-        />
+    </div>
+  } @else {
+    <div class="grid grid-cols-5">
+      <div class="col-span-2 grid grid-rows-2 md:grid-rows-2 border-r border-b gap-2 p-2">
+        <div class="px-2">
+          <p-icon-field iconPosition="right" >
+            <p-inputicon class="pi pi-search"></p-inputicon>
+            <input
+              type="search"
+              pInputText
+              placeholder="Qidiruv"
+              [(ngModel)]="searchValue"
+              (input)="loadData()"
+              fluid
+            />
+          </p-icon-field>
+        </div>
+        <div class="px-2 grid grid-cols-3 md:grid-cols-3 items-center justify-content-between gap-2">
+          <p-floatlabel class="w-full " variant="on">
+            <input
+              id="createdDate"
+              pInputText
+              type="date"
+              class="w-full"
+              [ngModel]="defDate"
+              (ngModelChange)="onDateChange($event)"
+              placeholder="dd.mm.yyyy"
+            />
+            <label for="createdDate">Yaratilgan vaqti</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on"  class="w-full">
+            <p-select
+              id="selectPaymentType"
+              [options]="selectPaymentType"
+              optionValue="value"
+              optionLabel="label"
+              [(ngModel)]="selectedPaymentType"
+              [showClear]="true"
+              (ngModelChange)="onPayTypeAndPayStatusChange()"
+              fluid
+            ></p-select>
+            <label for="selectPaymentType">To'lov turi</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on" class="w-full">
+            <p-select
+              id="selectPaymentStatus"
+              [options]="selectPaymentStatus"
+              optionValue="value"
+              optionLabel="label"
+              [(ngModel)]="selectedPaymentStatus"
+              [showClear]="true"
+              (ngModelChange)="onPayTypeAndPayStatusChange()"
+              fluid
+            ></p-select>
+            <label for="selectPaymentStatus">To'lov holati</label>
+          </p-floatlabel>
+
+        </div>
+      </div>
+      <div class="col-span-3 grid grid-cols-2 md:grid-cols-2 gap-0 border-b">
+        <div class="grid grid-rows-2 border-r">
+          <div class="border-b p-2">
+            <p class="text-sm text-gray-500">To'langan summa</p>
+            <p class="text-2xl font-bold text-green-700">
+              {{ paidAmountPeriod | number:'1.2-2' }}
+            </p>
+          </div>
+          <div class="p-2">
+            <p class="text-sm text-gray-500">Qarzlar</p>
+            <p class="text-2xl font-extrabold text-red-600">
+              {{ debtAmountPeriod | number:'1.2-2' }}
+            </p>
+          </div>
+        </div>
+        <div class="grid grid-rows-2">
+          <div class="border-b p-2">
+            <p class="text-sm text-gray-500">Jami hisoblangan summa (tanlangan davr bo‘yicha)</p>
+            <p class="text-2xl font-bold text-blue-700">
+              {{ totalAmountPeriod | number:'1.2-2' }}
+            </p>
+          </div>
+          <div class="card flex justify-center p-2">
+            <p-selectButton size="small" [options]="stateOptions" (onChange)="setPeriod()" [(ngModel)]="selectedPeriod" optionLabel="label" optionValue="value" aria-labelledby="basic" />
+          </div>
+        </div>
       </div>
     </div>
-
-    <p class="text-md font-bold p-4">Tezkor savat yaratish</p>
-
-    <div class="flex items-center justify-between gap-2">
-      <input
-        pInputText
-        placeholder="Savat raqami"
-        [(ngModel)]="newCart.cartNumber"
-      />
-
-      <p-button
-        icon="pi pi-save"
-        label="Saqlash"
-      ></p-button>
-    </div>
-
-    <p-divider></p-divider>
-
-  } @else {
-
-    <!-- 🔎 Qidiruv + Amallar -->
-    <div class="flex w-full justify-between gap-2 p-4 pb-0">
-      <p-icon-field iconPosition="right" class="pr-2">
-        <p-inputicon class="pi pi-search"></p-inputicon>
-        <input
-          type="text"
-          pInputText
-          placeholder="Qidiruv"
-          [(ngModel)]="searchValue"
-        />
-      </p-icon-field>
-
-      <p-button
-        *kaHasRoles="['ROLE_CART_CREATE']"
-        class="pr-2"
-        styleClass="shadow shadow-blue-500/50"
-        icon="pi pi-plus"
-        label="Yangi savat yaratish"
-        (click)="showCreateCartModal = true"
-      />
-    </div>
-
-    <!-- 🧾 TABLE -->
     <p-table
       size="small"
       #dataTableCart
@@ -147,9 +177,20 @@
           <td class="text-center">{{ row.closedAt ? (row.closedAt | date:'dd.MM.yyyy HH:mm') : '-' }}</td>
 
           <td class="text-center">
-<!--            [model]="getRowActions(row)"-->
-            <p-menu #actionTable [popup]="true"></p-menu>
-            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-h" />
+            <p-menu #actionTable [popup]="true" [model]="getRowActions(row)" appendTo="body">
+              <ng-template pTemplate="item" let-item>
+                <a
+                  pRipple
+                  class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"
+                  [ngClass]="item.styleClass"
+                  (click)="item.command?.($event)"
+                >
+                  <i [class]="item.icon + ' mr-2'"></i>
+                  <span>{{ item.label }}</span>
+                </a>
+              </ng-template>
+            </p-menu>
+            <p-button [text]="true" (click)="actionTable.toggle($event)" icon="pi pi-ellipsis-h"/>
           </td>
 
         </tr>
@@ -169,3 +210,131 @@
     </p-table>
   }
 </p-card>
+
+<p-dialog
+  [(visible)]="showCartDetailModal"
+  (onShow)="onDialogShown()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+  [maximizable]="true"
+  [dismissableMask]="true"
+  [style]="{ minWidth: '50rem'}"
+  #dialog
+  [baseZIndex]="10000"
+  (onHide)="loadData()"
+>
+  <ng-template #header>
+    <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
+      <div class="flex items-center gap-2">
+<!--        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">-->
+<!--          <p-button type="submit" label="Saqlash" severity="primary"></p-button>-->
+<!--        </form>-->
+        <div class="justify-self-end flex items-center gap-2 ml-2">
+<!--          <p-menu #menu [model]="actions" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-md">-->
+<!--            <ng-template pTemplate="item" let-item>-->
+<!--              <a-->
+<!--                pRipple-->
+<!--                class="flex items-center px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer"-->
+<!--                [ngClass]="item.styleClass"-->
+<!--                (click)="item.command?.($event)"-->
+<!--              >-->
+<!--                <i [class]="item.icon + ' mr-2'"></i>-->
+<!--                <span>{{ item.label }}</span>-->
+<!--              </a>-->
+<!--            </ng-template>-->
+<!--          </p-menu>-->
+<!--          <p-button-->
+<!--            (click)="toggleMenu($event, menu)"-->
+<!--            label="Amallar"-->
+<!--            [icon]="menuVisible ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"-->
+<!--            iconPos="right"-->
+<!--            severity="info"-->
+<!--            variant="outlined"-->
+<!--            class="rounded-md"-->
+<!--          ></p-button>-->
+        </div>
+      </div>
+      <div class="justify-self-center text-center">
+          <span class="text-2xl font-semibold">Savat ustida amallar</span>
+      </div>
+      <div class="justify-self-end"></div>
+    </div>
+  </ng-template>
+  <div class="grid grid-cols-3">
+    <div class="col-span-2">
+      <p-dataView #dv [value]="cartItems">
+        <ng-template #list let-items>
+          <div class="grid grid-cols-12 gap-4 grid-nogutter">
+            @for (item of items; track item.id){
+              <div class="col-span-12">
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
+                  [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !item.id }"
+                >
+                  <div class="md:w-40 relative">
+                    <img
+                      class="block xl:block mx-auto rounded-border w-full"
+                      [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
+                      [alt]="item.name"
+                    />
+                    <p-tag
+                      [value]="item.inventoryStatus"
+                      [severity]="'info'"
+                      class="absolute dark:!bg-surface-900"
+                      [style.left.px]="4"
+                      [style.top.px]="4"
+                    />
+                  </div>
+                  <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                      <div>
+                        <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
+                        <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
+                      </div>
+                      <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
+                        <div
+                          class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
+                          style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
+                        >
+                                          <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{
+                                              item.rating
+                                            }}</span>
+                          <i class="pi pi-star-fill text-yellow-500"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col md:items-end gap-8">
+                                  <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
+                                      '$' + item.price
+                                    }}</span>
+                      <div class="flex flex-row-reverse md:flex-row gap-2">
+                        <p-button icon="pi pi-heart" [outlined]="true" />
+                        <p-button
+                          icon="pi pi-shopping-cart"
+                          class="flex-auto md:flex-initial whitespace-nowrap"
+                          label="Buy Now"
+                          [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      </p-dataView>
+    </div>
+    <div class="col-span-1">
+        <p-list-box [options]="cartPayments ? cartPayments : []" optionLabel="name" class="w-full md:w-56">
+          <ng-template #item let-pays>
+            <div class="flex items-center gap-2">
+              <div>{{ pays.method }} - {{ pays.amount }}</div>
+            </div>
+          </ng-template>
+        </p-list-box>
+    </div>
+  </div>
+</p-dialog>

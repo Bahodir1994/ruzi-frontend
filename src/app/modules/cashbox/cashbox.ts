@@ -3,8 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener, OnChanges,
-  OnInit, SimpleChanges,
+  HostListener,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
@@ -49,7 +51,6 @@ import {InputIcon} from 'primeng/inputicon';
 import {Checkbox} from 'primeng/checkbox';
 import {CustomerModel} from '../settings/customer/customer.model';
 import {ReferrerModel} from '../settings/referrer/referrer.model';
-import {ItemModel} from '../items/item/item-model';
 import {UnitModel} from '../items/unit/unit-model';
 import {UnitService} from '../items/unit/unit-service';
 
@@ -143,6 +144,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       if (input) (input as HTMLInputElement).focus();
     }, 50);
   }
+
   onPopoverHide() {
     this.popoverOpen = false;
   }
@@ -161,6 +163,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     action(); // darhol bajar
     this.holdInterval = setInterval(action, 120);
   }
+
   stopHold() {
     if (this.holdInterval) {
       clearInterval(this.holdInterval);
@@ -254,10 +257,22 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     columns: [
       {data: 'id', name: 'id', searchable: false, orderable: false, search: {value: '', regex: false}},
       {data: 'cartNumber', name: 'cartNumber', searchable: true, orderable: false, search: {value: '', regex: false}},
-      {data: 'createdByUser', name: 'createdByUser', searchable: true, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'createdByUser',
+        name: 'createdByUser',
+        searchable: true,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
       {data: 'createdAt', name: 'createdAt', searchable: false, orderable: true, search: {value: '', regex: false}},
       {data: 'closedAt', name: 'closedAt', searchable: false, orderable: false, search: {value: '', regex: false}},
-      {data: 'totalAmount', name: 'totalAmount', searchable: false, orderable: false, search: {value: '', regex: false}},
+      {
+        data: 'totalAmount',
+        name: 'totalAmount',
+        searchable: false,
+        orderable: false,
+        search: {value: '', regex: false}
+      },
       {data: 'status', name: 'status', searchable: true, orderable: false, search: {value: '', regex: false}}
     ]
   };
@@ -324,18 +339,18 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       activeSessionId: savedSessionId,
       forceNew: false
     })).then(res => {
-        /** 3- Backenddan qaytgan sessiyani o‘rnatamiz */
-        this.cartSessionModel = res.data as CartSession;
+      /** 3- Backenddan qaytgan sessiyani o‘rnatamiz */
+      this.cartSessionModel = res.data as CartSession;
 
-        /** 4- Agar ID yangilangan bo‘lsa — localStorage ga yozamiz */
-        if (this.cartSessionModel?.id) {
-          localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
-        }
+      /** 4- Agar ID yangilangan bo‘lsa — localStorage ga yozamiz */
+      if (this.cartSessionModel?.id) {
+        localStorage.setItem('activeCartSessionId', this.cartSessionModel.id);
+      }
 
-        /** active cart boyicha cartItem larni olib kelish*/
-        this.getActiveCartSessionItem(this.cartSessionModel?.id).then(r => null)
-        this.cdr.detectChanges();
-      });
+      /** active cart boyicha cartItem larni olib kelish*/
+      this.getActiveCartSessionItem(this.cartSessionModel?.id).then(r => null)
+      this.cdr.detectChanges();
+    });
 
     this.loadData().then(() => {
       this.cashBoxWebSocketService.connect((updatedStock) => {
@@ -842,6 +857,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.editedQuantity = this.editedItem.quantity || 0;
     this.editedAltQuantity = this.editedItem.altQuantity || 0;
   }
+
   onAltChanged() {
     const alt = Number(this.editedAltQuantity) || 0;
     const rate = this.conversionRate || 1;
@@ -864,6 +880,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
       }, 3);
     }
   }
+
   applyQuantityChange() {
     const dto = {
       cartItemId: this.editedItem.cartItemId,
@@ -892,6 +909,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.selectedForm = 'customer';
     this.formCustomer.reset();
   }
+
   createCustomer() {
     const fromCustomer = this.formCustomer.value;
     this.cashBoxService.create_customer_referrer(fromCustomer, 'customer').subscribe({
@@ -906,6 +924,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.selectedForm = 'referrer';
     this.formReferrer.reset();
   }
+
   createReferrer() {
     const formReferrer = this.formReferrer.value;
     this.cashBoxService.create_customer_referrer(formReferrer, 'referrer').subscribe({
@@ -926,16 +945,20 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     this.firstCartTable = this.firstCartTable + this.rowsCartTable;
     this.loadCarts()
   }
+
   prev() {
     this.firstCartTable = this.firstCartTable - this.rowsCartTable;
     this.loadCarts()
   }
+
   isLastPage(): boolean {
     return this.cartSessionTable ? this.firstCartTable + this.rowsCartTable >= this.cartSessionTable.length : true;
   }
+
   isFirstPage(): boolean {
     return this.cartSessionTable ? this.firstCartTable === 0 : true;
   }
+
   reset() {
     this.firstCartTable = 0;
     this.loadCarts()
@@ -978,7 +1001,7 @@ export class Cashbox implements OnInit, AfterViewInit, OnChanges {
     const altName = item.altUnitName || ''
 
     const packet = Math.floor(alt / rate);  // 55 / 6 = 9
-    const remain = alt % rate > 0 ? 'va ' +  alt % rate + ' ' + altName : '';            // 55 % 6 = 1
+    const remain = alt % rate > 0 ? 'va ' + alt % rate + ' ' + altName : '';            // 55 % 6 = 1
 
     if (pack <= 0 && alt <= 0) return `0 ${item.unitName || ''}`;
 

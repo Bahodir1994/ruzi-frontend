@@ -1,6 +1,5 @@
 import {WarehouseModel} from '../warehouse/warehouse.model';
 import {ItemModel} from '../../items/item/item-model';
-import {Supplier} from '../supplier/supplier';
 import {SupplierModel} from '../supplier/supplier.model';
 
 export interface PurchaseOrderModel {

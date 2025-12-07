@@ -44,4 +44,13 @@ export class DatatableService {
         })
       );
   }
+
+  getDataForCart<TOutput>(url: string, input: DataTableInput): Observable<TOutput> {
+    return this.http.post<TOutput>(url, input).pipe(
+      catchError(error => {
+        console.error('Error fetching data', error);
+        return throwError(() => new Error('Error fetching data'));
+      })
+    );
+  }
 }

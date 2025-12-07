@@ -370,13 +370,13 @@ export class PaymentsDialog implements OnChanges {
 
   onPrintReceipt() {
     this.api.printReceipt("a7eb484e-f6fc-4f02-ade4-7e0119ca5254", "192.168.1.45").subscribe(() => {
-      this.ms.add({severity:'success', summary:'OK', detail:'Chek printerni chiqdi'});
+      this.ms.add({severity: 'success', summary: 'OK', detail: 'Chek printerni chiqdi'});
     });
   }
 
   getPayments() {
     this.api.getPayments(this.rows).subscribe({
-      next: ()=> {
+      next: () => {
         console.log("saved")
       }
     })

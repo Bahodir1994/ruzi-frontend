@@ -378,6 +378,16 @@ export const apiConfigData: ApiUrls[] = [
         roles: []
       },
       {
+        url: "/route-cart/data-table-cart-main-cart",
+        method: "post",
+        label: "cart_table_main",
+        comment: "cart sessiya jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-cart/create",
         method: "post",
         label: "create_cart",
@@ -422,6 +432,16 @@ export const apiConfigData: ApiUrls[] = [
         method: "get",
         label: "get_item",
         comment: "cart sessiya id boyicha  tovarlar ni olish",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-cart/stats",
+        method: "get",
+        label: "get_stats",
+        comment: "cart sessiyalar statistika1",
         active: true,
         showSuccess: false,
         showWarning: true,

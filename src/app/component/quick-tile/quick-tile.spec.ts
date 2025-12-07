@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { QuickTile } from './quick-tile';
+import {QuickTile} from './quick-tile';
 
 describe('QuickTile', () => {
   let component: QuickTile;
@@ -10,7 +10,7 @@ describe('QuickTile', () => {
     await TestBed.configureTestingModule({
       imports: [QuickTile]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(QuickTile);
     component = fixture.componentInstance;

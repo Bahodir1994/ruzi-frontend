@@ -19,7 +19,8 @@ export class CashboxService {
     private http: HttpClient,
     private datatableService: DatatableService,
     private apiConfigService: ApiConfigService
-  ) {}
+  ) {
+  }
 
   /* -crud- */
   create_cart(dto?: any): Observable<ResponseDto> {
@@ -36,7 +37,7 @@ export class CashboxService {
     );
   }
 
-    add_item(dto: AddCartItemDto): Observable<ResponseDto> {
+  add_item(dto: AddCartItemDto): Observable<ResponseDto> {
     return this.apiConfigService.loadConfigAndGetResultUrl('cart', 'add_item').pipe(
       switchMap(value => {
         if (value) {
@@ -193,8 +194,7 @@ export class CashboxService {
           }
         })
       );
-    }
-    else {
+    } else {
       return new Observable();
     }
   }
