@@ -536,10 +536,30 @@ export const apiConfigData: ApiUrls[] = [
     active: true,
     list: [
       {
+        url: "/route-customer/data-table-main",
+        method: "post",
+        label: "customer_table",
+        comment: "mijozlar asosy jadvali",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
         url: "/route-customer/get-customers",
         method: "get",
         label: "get_customers",
         comment: "mijozlar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-customer/get-customer",
+        method: "get",
+        label: "get_customer_by_id",
+        comment: "cart boyicha mijoz",
         active: true,
         showSuccess: false,
         showWarning: true,
@@ -568,6 +588,16 @@ export const apiConfigData: ApiUrls[] = [
         method: "get",
         label: "get_referrers",
         comment: "xamkorlar royxati",
+        active: true,
+        showSuccess: false,
+        showWarning: true,
+        roles: []
+      },
+      {
+        url: "/route-referrer/get-referrer",
+        method: "get",
+        label: "get_referrers_by_id",
+        comment: "id boyicha xamkor",
         active: true,
         showSuccess: false,
         showWarning: true,

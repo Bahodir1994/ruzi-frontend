@@ -1,1 +1,235 @@
-<p>customer works!</p>
+<p-card class="card">
+  <ng-template #header>
+    <p class="text-3xl font-bold px-4 pt-2">Mijoz ma'lumotlari</p>
+  </ng-template>
+  @if (customerModel.length === 0 && !searchValue) {
+    <div
+      class="relative flex flex-col items-center justify-center border rounded px-20 py-24 text-center transition-all duration-200 mt-0">
+      <img ngSrc="assets/images/icons/order.gif" width="200" height="200" alt="icon"/>
+      <p class="text-2xl font-bold">
+        Kirim jadvali
+      </p>
+      <span class="text-sm max-w-3xl">Xarid buyurtmalarini yaratish, tahrirlash va boshqarish uchun mo‘ljallangan modul. Ushbu bo‘lim orqali foydalanuvchi yetkazib beruvchilar bilan kelishilgan xarid jarayonlarini tartibga soladi va har bir buyurtmaning to‘liq tafsilotlarini kiritadi</span>
+      <div class="flex justify-between">
+        <p-button
+          *kaHasRoles="['ROLE_CUS_CREATE']"
+          [outlined]="true"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+        >
+          <ng-template pTemplate="content">
+            <img ngSrc="assets/images/icons/excel.svg" width="28" height="28" alt="icon"/>
+          </ng-template>
+        </p-button>
+        <p-button
+          *kaHasRoles="['ROLE_CUS_CREATE']"
+          class="p-2"
+          styleClass="shadow shadow-blue-500/50"
+          icon="pi pi-file-excel"
+          label="Yangi kirim qo'shish"
+        />
+<!--        (onClick)="dialog.maximize();"-->
+<!--        (click)="createNewOrder()"-->
+      </div>
+    </div>
+  } @else {
+<!--    <div class="flex w-full justify-between gap-2 p-4 pb-0">-->
+<!--      <p-icon-field iconPosition="right" class="pr-2">-->
+<!--        <p-inputicon class="pi pi-search"></p-inputicon>-->
+<!--        <input-->
+<!--          type="text"-->
+<!--          pInputText-->
+<!--          placeholder="Qidiruv"-->
+<!--          [(ngModel)]="searchValue"-->
+<!--          (input)="loadData()"-->
+<!--        />-->
+<!--      </p-icon-field>-->
+
+<!--      <p-menu #menu [model]="getExcelBtnAction()" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-xl">-->
+<!--        <ng-template pTemplate="item" let-item>-->
+<!--          <a-->
+<!--            pRipple-->
+<!--            class="flex items-center px-3 p-4 min-w-[250px] rounded-md transition-colors duration-150 cursor-pointer"-->
+<!--            [ngClass]="item.styleClass"-->
+<!--            (click)="item.command?.($event)"-->
+<!--          >-->
+<!--            <i [class]="item.icon + ' mr-2'"></i>-->
+<!--            <span>{{ item.label }}</span>-->
+<!--          </a>-->
+<!--        </ng-template>-->
+<!--      </p-menu>-->
+<!--      <p-button-->
+<!--        *kaHasRoles="['ROLE_CUS_CREATE']"-->
+<!--        (click)="toggleMenu($event, menu)"-->
+<!--        label="Amallar"-->
+<!--        [icon]="menuVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"-->
+<!--        iconPos="right"-->
+<!--        severity="secondary"-->
+<!--        class="ml-auto pr-2 rounded-md"-->
+<!--      ></p-button>-->
+<!--      <p-button-->
+<!--        *kaHasRoles="['ROLE_CUS_CREATE']"-->
+<!--        class="pr-2"-->
+<!--        styleClass="shadow shadow-blue-500/50"-->
+<!--        icon="pi pi-file-plus"-->
+<!--        label="Yangi kirim qo'shish"-->
+<!--        (onClick)="dialog.maximize()"-->
+<!--        (click)="createNewOrder()"-->
+<!--      />-->
+<!--    </div>-->
+    <p-table
+      size="small"
+      #dataTableUnit
+      [value]="customerModel"
+      dataKey="id"
+      [rowHover]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      loadingIcon="pi pi-spinner"
+      [paginator]="true"
+      currentPageReportTemplate="{totalPages} ta dan {currentPage}-sahifa, jami {totalRecords} ta dan {first}-{last} gacha"
+      [filterDelay]="0"
+      [scrollable]="true"
+      scrollHeight="80vh"
+      [lazy]="true"
+      [totalRecords]="totalRecords"
+      (onLazyLoad)="pageChange($event)"
+      [first]="0"
+      [pageLinks]="5"
+      [showJumpToPageInput]="true"
+      selectionMode="single"
+    >
+
+      <!-- ================= TABLE HEADER ================ -->
+      <ng-template pTemplate="header">
+        <tr class="border shadow h-[60px]">
+
+          <th pSortableColumn="fullName" class="text-center text-nowrap sort-header">
+            Mijoz
+            <p-sortIcon field="fullName"/>
+          </th>
+
+          <th pSortableColumn="customerType" class="text-center text-nowrap sort-header">
+            Turi
+            <p-sortIcon field="customerType"/>
+          </th>
+
+          <th pSortableColumn="phoneNumber" class="text-center text-nowrap sort-header">
+            Telefon
+            <p-sortIcon field="phoneNumber"/>
+          </th>
+
+          <th pSortableColumn="tin" class="text-center text-nowrap sort-header">
+            STIR / TIN
+            <p-sortIcon field="tin"/>
+          </th>
+
+          <th pSortableColumn="region" class="text-center text-nowrap sort-header">
+            Hudud
+            <p-sortIcon field="region"/>
+          </th>
+
+          <th pSortableColumn="companyName" class="text-center text-nowrap sort-header">
+            Kompaniya
+            <p-sortIcon field="companyName"/>
+          </th>
+
+          <th pSortableColumn="insTime" class="text-center text-nowrap sort-header">
+            Sana
+            <p-sortIcon field="insTime"/>
+          </th>
+
+          <th class="text-center"></th>
+        </tr>
+      </ng-template>
+
+
+      <!-- ================= TABLE BODY ================= -->
+      <ng-template pTemplate="body" let-row let-i="rowIndex">
+        <tr style="height:49px" [pSelectableRow]="row">
+
+          <!-- FULL NAME -->
+          <td class="text-nowrap text-center font-medium">
+            {{ row.fullName }}
+          </td>
+
+          <!-- CUSTOMER TYPE -->
+          <td class="text-nowrap text-center">
+            <p-tag
+              [value]="row.customerType"
+              [severity]="row.customerType === 'LEGAL' ? 'info' : 'success'"
+            ></p-tag>
+          </td>
+
+          <!-- PHONE NUMBER -->
+          <td class="text-nowrap text-center">
+            {{ row.phoneNumber || '-' }}
+          </td>
+
+          <!-- TIN -->
+          <td class="text-nowrap text-center">
+            {{ row.tin || '-' }}
+          </td>
+
+          <!-- REGION -->
+          <td class="text-nowrap text-center">
+            {{ row.region || '-' }}
+          </td>
+
+          <!-- COMPANY NAME -->
+          <td class="text-nowrap text-center">
+            {{ row.companyName || '-' }}
+          </td>
+
+          <!-- DATE -->
+          <td class="text-nowrap text-center">
+            {{ row.insTime | date:'dd.MM.yyyy HH:mm' }}
+          </td>
+
+          <!-- ACTIONS MENU -->
+          <td pFrozenColumn alignFrozen="right" class="text-center">
+            <p-menu
+              #actionTable
+              [model]="getRowActions(row)"
+              appendTo="body"
+              [popup]="true"
+            >
+              <ng-template pTemplate="item" let-item>
+                <a
+                  pRipple
+                  class="flex items-center px-3 p-2 min-w-[200px] rounded-md
+                     transition-colors duration-150 cursor-pointer"
+                  [ngClass]="item.styleClass"
+                  (click)="item.command?.($event)"
+                >
+                  <i [class]="item.icon + ' mr-2'"></i>
+                  <span>{{ item.label }}</span>
+                </a>
+              </ng-template>
+            </p-menu>
+
+            <p-button [text]="true" icon="pi pi-ellipsis-h"
+                      (click)="actionTable.toggle($event)" />
+          </td>
+
+        </tr>
+      </ng-template>
+
+
+      <!-- =============== EMPTY MESSAGE =============== -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="8" class="mx-auto">
+            <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+              <i class="pi pi-info-circle text-3xl mb-2"></i>
+              <span>Mijozlar topilmadi</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+
+  }
+</p-card>

@@ -62,6 +62,20 @@
         "type": "link",
         "route": "supplier",
         "permissions": []
+      },
+      {
+        "label": "Mijozlar",
+        "icon": "pi pi-address-book",
+        "type": "link",
+        "route": "customer",
+        "permissions": []
+      },
+      {
+        "label": "Xamkorlar",
+        "icon": "pi pi-id-card",
+        "type": "link",
+        "route": "referrer",
+        "permissions": []
       }
     ],
     "permissions": []

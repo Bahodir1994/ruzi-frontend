@@ -1,6 +1,8 @@
 import {PurchaseOrderPaymentStatus} from '../settings/purchase-order/purchase-order.model';
 import {CartStatus, PaymentType} from '../../component/enums/PaymentTypeEnum';
 import {DataTableOutput} from '../../component/datatables/datatable-input.model';
+import {CustomerModel} from '../settings/customer/customer.model';
+import {ReferrerModel} from '../settings/referrer/referrer.model';
 
 export interface CartSession {
   insUser: string | null;
@@ -11,10 +13,12 @@ export interface CartSession {
   id: string | null;
   cartNumber: string | null;
   paymentType: PaymentType | null;
-  paymentStatus: PurchaseOrderPaymentStatus | null;
+  paymentStatus: PurchaseOrderPaymentStatus | '';
   debtAmount: number | null;
   createdByUser: string | null;
-  status: CartStatus | null;
+  customer: CustomerModel | null;
+  referrer: ReferrerModel | null;
+  status: CartStatus | '';
   createdAt: string | null;       // LocalDateTime → ISO string
   closedAt: string | null;
   totalAmount: number | null;

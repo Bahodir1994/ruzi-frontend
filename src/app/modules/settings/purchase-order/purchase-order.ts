@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Dialog} from 'primeng/dialog';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
@@ -54,7 +54,7 @@ import {UnitService} from '../../items/unit/unit-service';
     Select, DatePicker, Textarea, InputNumber, Tooltip, AutoComplete, Tag, BarcodeScanner
   ]
 })
-export class PurchaseOrder {
+export class PurchaseOrder implements OnInit{
   /* ============================================================
      --AUTOCOMPLETE
      Tovar izlab uni partiyaga qoshish uchun ozgaruvchilar

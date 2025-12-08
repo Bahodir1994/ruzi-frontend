@@ -10,6 +10,8 @@ import {Supplier} from './modules/settings/supplier/supplier';
 import {canActivateAuthGuard} from './configuration/authentication/auth.guard';
 import {Image} from './modules/items/image/image';
 import {Carts} from './modules/carts/carts';
+import {Customer} from './modules/settings/customer/customer';
+import {Referrer} from './modules/settings/referrer/referrer';
 
 export const routes: Routes = [
   {
@@ -115,6 +117,26 @@ export const routes: Routes = [
               roles: [],
               title: 'Ta\'minotchi',
               breadcrumb: 'Ta\'minotchi'
+            }
+          },
+          {
+            path: 'customer',
+            component: Customer,
+            canActivate: [canActivateAuthGuard],
+            data: {
+              roles: [],
+              title: 'Mijzolar',
+              breadcrumb: 'Mijozlar'
+            }
+          },
+          {
+            path: 'referrer',
+            component: Referrer,
+            canActivate: [canActivateAuthGuard],
+            data: {
+              roles: [],
+              title: 'Xamkorlar',
+              breadcrumb: 'Xamkorlar'
             }
           }
         ]

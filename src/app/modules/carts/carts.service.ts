@@ -84,4 +84,30 @@ export class CartsService {
       })
     );
   }
+
+  get_customer(id: string | null): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('customer', 'get_customer_by_id').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
+
+  get_referrer(id: string | null): Observable<ResponseDto> {
+    return this.apiConfigService.loadConfigAndGetResultUrl('referrer', 'get_referrers_by_id').pipe(
+      switchMap(value => {
+        if (value) {
+          this.moduleUrl = value;
+          return this.http.get<ResponseDto>(`${this.moduleUrl.host}${this.moduleUrl.url}/${id}`);
+        } else {
+          throw new Error('URL не был получен');
+        }
+      })
+    );
+  }
 }

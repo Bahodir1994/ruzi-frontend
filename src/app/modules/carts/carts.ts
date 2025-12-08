@@ -20,6 +20,9 @@ import {Dialog} from 'primeng/dialog';
 import {Ripple} from 'primeng/ripple';
 import {DataView} from 'primeng/dataview';
 import {Listbox} from 'primeng/listbox';
+import {Badge} from 'primeng/badge';
+import {CustomerModel} from '../settings/customer/customer.model';
+import {ReferrerModel} from '../settings/referrer/referrer.model';
 
 @Component({
   selector: 'app-carts',
@@ -44,7 +47,8 @@ import {Listbox} from 'primeng/listbox';
     Ripple,
     NgClass,
     DataView,
-    Listbox
+    Listbox,
+    Badge
   ],
   templateUrl: './carts.html',
   standalone: true,
@@ -93,7 +97,7 @@ export class Carts implements OnInit {
   debtAmountPeriod = 0;
 
   cartSessionModel: CartSession[] = [];
-  cartSessionSelectedModel: CartSession | undefined;
+  cartSessionSelectedModel?: CartSession;
   dataTableInputCartSessionModel: DataTableInput = {
     draw: 0,
     start: 0,
@@ -143,6 +147,8 @@ export class Carts implements OnInit {
 
   cartItems: CartItem[] | undefined;
   cartPayments: CartPayment[] | undefined;
+  cartCustomer: CustomerModel | undefined;
+  cartReferrer: ReferrerModel | undefined;
 
   autoDetectPeriodIndex = 0;
   autoDetecting = false;
@@ -220,6 +226,12 @@ export class Carts implements OnInit {
     this.cartSessionSelectedModel = row;
     this.getSelectedCartSessionItem(this.cartSessionSelectedModel.id)
     this.getSelectedCartSessionPayment(this.cartSessionSelectedModel.id)
+    if (this.cartSessionSelectedModel.customer){
+      this.getSelectedCartSessionCustomer(this.cartSessionSelectedModel.customer.id)
+    }
+    if (this.cartSessionSelectedModel.referrer){
+      this.getSelectedCartSessionReferrer(this.cartSessionSelectedModel.referrer.id)
+    }
   }
   private getLocalDate(daysAgo: number = 0): string {
     const now = new Date();
@@ -232,9 +244,19 @@ export class Carts implements OnInit {
   getRowActions(row: CartSession): MenuItem[] {
     return [
       {
-        label: 'Savatni taxrirlash',
+        label: 'Batafsil',
         icon: 'pi pi-file-edit',
         styleClass: 'text-blue-600 hover:bg-blue-50',
+        command: () => {
+          this.openEditCart(row)
+          this.shouldMaximize = true;
+          this.showCartDetailModal = true;
+        }
+      },
+      {
+        label: 'Kassada taxrirlash',
+        icon: 'pi pi-file-edit',
+        styleClass: 'text-yellow-600 hover:bg-yellow-50 border-t',
         command: () => {
           this.openEditCart(row)
           this.shouldMaximize = true;
@@ -306,6 +328,18 @@ export class Carts implements OnInit {
   getSelectedCartSessionPayment(id: string | null) {
     this.cartService.get_payment(id).subscribe(value => {
       this.cartPayments = value.data as CartPayment[];
+      this.cdr.detectChanges()
+    })
+  }
+  getSelectedCartSessionCustomer(id: string | null) {
+    this.cartService.get_customer(id).subscribe(value => {
+      this.cartCustomer = value.data as CustomerModel;
+      this.cdr.detectChanges()
+    })
+  }
+  getSelectedCartSessionReferrer(id: string | null) {
+    this.cartService.get_referrer(id).subscribe(value => {
+      this.cartReferrer = value.data as ReferrerModel;
       this.cdr.detectChanges()
     })
   }

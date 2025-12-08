@@ -20,3 +20,17 @@ export interface CustomerModel {
   region?: string;        // varchar(120)
   tin?: string;           // varchar(15)
 }
+
+
+export interface CustomerStatsModel {
+  id: string;
+  fullName: string;
+  phoneNumber?: string;
+  tin?: string;
+  customerType?: string;
+
+  cartCount: number;
+  totalAmount: number;
+  paidAmount: number;
+  debtAmount: number;
+}

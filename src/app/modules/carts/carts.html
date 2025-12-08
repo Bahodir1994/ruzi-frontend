@@ -225,116 +225,324 @@
   [baseZIndex]="10000"
   (onHide)="loadData()"
 >
+
+  <!-- ===================== HEADER ===================== -->
   <ng-template #header>
-    <div class="grid grid-cols-[auto,1fr,auto] items-center gap-3 w-full">
-      <div class="flex items-center gap-2">
-<!--        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contents">-->
-<!--          <p-button type="submit" label="Saqlash" severity="primary"></p-button>-->
-<!--        </form>-->
-        <div class="justify-self-end flex items-center gap-2 ml-2">
-<!--          <p-menu #menu [model]="actions" [popup]="true" appendTo="body" styleClass="rounded-lg shadow-md">-->
-<!--            <ng-template pTemplate="item" let-item>-->
-<!--              <a-->
-<!--                pRipple-->
-<!--                class="flex items-center px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer"-->
-<!--                [ngClass]="item.styleClass"-->
-<!--                (click)="item.command?.($event)"-->
-<!--              >-->
-<!--                <i [class]="item.icon + ' mr-2'"></i>-->
-<!--                <span>{{ item.label }}</span>-->
-<!--              </a>-->
-<!--            </ng-template>-->
-<!--          </p-menu>-->
-<!--          <p-button-->
-<!--            (click)="toggleMenu($event, menu)"-->
-<!--            label="Amallar"-->
-<!--            [icon]="menuVisible ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"-->
-<!--            iconPos="right"-->
-<!--            severity="info"-->
-<!--            variant="outlined"-->
-<!--            class="rounded-md"-->
-<!--          ></p-button>-->
-        </div>
-      </div>
-      <div class="justify-self-center text-center">
-          <span class="text-2xl font-semibold">Savat ustida amallar</span>
-      </div>
-      <div class="justify-self-end"></div>
+    <div class="text-center w-full py-2">
+      <span class="text-2xl font-semibold">Savat tafsilotlari</span>
     </div>
   </ng-template>
-  <div class="grid grid-cols-3">
-    <div class="col-span-2">
-      <p-dataView #dv [value]="cartItems">
+
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+
+
+    <!-- ================= LEFT PANEL: CART ITEMS ================= -->
+    <div class="md:col-span-2 space-y-4">
+
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xl font-semibold">Mahsulotlar</h2>
+        <p-badge value="{{ cartItems?.length }}" severity="info"></p-badge>
+      </div>
+
+
+      <p-dataView [value]="cartItems">
         <ng-template #list let-items>
-          <div class="grid grid-cols-12 gap-4 grid-nogutter">
-            @for (item of items; track item.id){
-              <div class="col-span-12">
-                <div
-                  class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                  [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !item.id }"
-                >
-                  <div class="md:w-40 relative">
-                    <img
-                      class="block xl:block mx-auto rounded-border w-full"
-                      [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image"
-                      [alt]="item.name"
-                    />
-                    <p-tag
-                      [value]="item.inventoryStatus"
-                      [severity]="'info'"
-                      class="absolute dark:!bg-surface-900"
-                      [style.left.px]="4"
-                      [style.top.px]="4"
-                    />
-                  </div>
-                  <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                      <div>
-                        <span class="font-medium text-secondary text-sm">{{ item.category }}</span>
-                        <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">{{ item.name }}</div>
-                      </div>
-                      <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
-                        <div
-                          class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                          style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)"
-                        >
-                                          <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">{{
-                                              item.rating
-                                            }}</span>
-                          <i class="pi pi-star-fill text-yellow-500"></i>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="flex flex-col md:items-end gap-8">
-                                  <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
-                                      '$' + item.price
-                                    }}</span>
-                      <div class="flex flex-row-reverse md:flex-row gap-2">
-                        <p-button icon="pi pi-heart" [outlined]="true" />
-                        <p-button
-                          icon="pi pi-shopping-cart"
-                          class="flex-auto md:flex-initial whitespace-nowrap"
-                          label="Buy Now"
-                          [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
-                        />
-                      </div>
-                    </div>
-                  </div>
+
+          <div class="space-y-3">
+
+            @for (item of items; track item.cartItemId) {
+
+              <div
+                class="flex flex-col bg-white dark:bg-gray-900 rounded-lg border border-gray-200
+                 dark:border-gray-700 shadow-sm p-3 gap-2"
+              >
+
+                <!-- TITLE + TOTAL -->
+                <div class="flex justify-between items-start">
+                  <h3 class="text-base font-semibold leading-tight w-2/3">
+                    {{ item.itemName }}
+                  </h3>
+
+                  <span class="text-blue-600 font-bold text-base whitespace-nowrap">
+              {{ item.lineTotal | number:'1.2-2' }}
+            </span>
                 </div>
+
+                <!-- QUANTITY + PRICE INLINE -->
+                <div class="grid grid-cols-2 gap-2 text-sm">
+
+                  <!-- Quantity -->
+                  <div class="text-gray-700">
+                    Sarflangan miqdor:
+                    <span class="font-semibold">{{ item.quantity }}</span>
+
+                    @if (item.altUnitName) {
+                      <span class="text-gray-500">
+                  ({{ item.altQuantity }} {{ item.altUnitName }})
+                </span>
+                    }
+                  </div>
+
+                  <!-- Unit Price -->
+                  <div class="text-gray-700 text-right">
+                    Sotuv narxi:
+                    <span class="font-semibold">{{ item.unitPrice | number:'1.2-2' }}</span>
+                  </div>
+
+                </div>
+
+                <!-- EXTRA INFO — icon badges instead of full text -->
+                <div class="flex flex-wrap gap-2 mt-1 text-xs text-gray-600">
+
+                  @if (item.salePrice) {
+                    <span class="px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded-md">
+                Asl: <span class="line-through text-red-500">{{ item.salePrice | number:'1.2-2' }}</span>
+              </span>
+                  }
+
+                  @if (item.minimalSum) {
+                    <span class="px-2 py-1 bg-yellow-50 dark:bg-yellow-900/20 rounded-md">
+                Min: <b>{{ item.minimalSum | number:'1.2-2' }}</b>
+              </span>
+                  }
+
+                  @if (item.purchasePrice) {
+                    <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                Xarid: <b>{{ item.purchasePrice | number:'1.2-2' }}</b>
+              </span>
+                  }
+
+                  @if (item.purchaseDiscount) {
+                    <span class="px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-md text-green-700">
+                Chegirma: {{ item.purchaseDiscount }}
+              </span>
+                  }
+
+                  @if (item.saleDiscount) {
+                    <span class="px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded-md text-red-600">
+                Kassir: {{ item.saleDiscount }}
+              </span>
+                  }
+
+                  @if (item.altSalePrice) {
+                    <span class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 rounded-md">
+                Qo'shimcha birlik uchun narx: {{ item.altSalePrice | number:'1.2-2' }}
+              </span>
+                  }
+
+                </div>
+
               </div>
+
             }
+
           </div>
+
         </ng-template>
       </p-dataView>
+
+
     </div>
-    <div class="col-span-1">
-        <p-list-box [options]="cartPayments ? cartPayments : []" optionLabel="name" class="w-full md:w-56">
-          <ng-template #item let-pays>
-            <div class="flex items-center gap-2">
-              <div>{{ pays.method }} - {{ pays.amount }}</div>
+
+
+    <!-- ================= RIGHT PANEL: CART INFO + PAYMENTS ================= -->
+    <div class="md:col-span-1 flex flex-col gap-4">
+
+      <!-- CART SESSION INFO -->
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow p-4">
+
+        <!-- Title + Cart Number -->
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-base font-semibold">Savat haqida</h2>
+          <span class="text-sm text-gray-500 font-medium">
+      № {{ cartSessionSelectedModel?.cartNumber }}
+    </span>
+        </div>
+
+        <!-- Statuses -->
+        <div class="flex justify-between text-sm mb-3">
+          <div>
+            <span class="text-gray-600">Holati:</span>
+            <p-tag
+              styleClass="ml-1"
+              [value]="cartSessionSelectedModel?.status"
+              [severity]="cartSessionSelectedModel?.status === 'OPEN' ? 'info' : 'success'"
+            ></p-tag>
+          </div>
+
+          <div>
+            <span class="text-gray-600">To‘lov:</span>
+            <p-tag
+              styleClass="ml-1"
+              [value]="cartSessionSelectedModel?.paymentStatus"
+            ></p-tag>
+          </div>
+        </div>
+
+        <!-- Amounts -->
+        <div class="grid grid-cols-2 gap-2 text-sm">
+
+          <div class="flex justify-between bg-gray-50 dark:bg-gray-800 p-2 rounded-md">
+            <span>Jami:</span>
+            <span class="font-semibold text-blue-600">
+        {{ cartSessionSelectedModel?.totalAmount | number:'1.2-2' }}
+      </span>
+          </div>
+
+          <div class="flex justify-between bg-gray-50 dark:bg-gray-800 p-2 rounded-md">
+            <span>To‘langan:</span>
+            <span class="font-semibold text-green-600">
+        {{ cartSessionSelectedModel?.paidAmount | number:'1.2-2' }}
+      </span>
+          </div>
+
+          <div class="col-span-2 flex justify-between bg-gray-50 dark:bg-gray-800 p-2 rounded-md">
+            <span>Qarz:</span>
+            <span class="font-semibold text-red-600">
+        {{ cartSessionSelectedModel?.debtAmount | number:'1.2-2' }}
+      </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CUSTOMER INFO -->
+      @if (cartCustomer ) {
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow p-4">
+
+          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+            <i class="pi pi-user text-blue-600"></i>
+            Mijoz haqida
+          </h2>
+
+          <div class="space-y-2 text-sm text-gray-700">
+
+            <div class="flex justify-between">
+              <span>To‘liq ism:</span>
+              <span class="font-medium">{{ cartCustomer.fullName }}</span>
             </div>
+
+            @if (cartCustomer.phoneNumber) {
+              <div class="flex justify-between">
+                <span>Telefon:</span>
+                <span class="font-medium">{{ cartCustomer.phoneNumber }}</span>
+              </div>
+            }
+
+            @if (cartCustomer.tin) {
+              <div class="flex justify-between">
+                <span>STIR / PINFL:</span>
+                <span class="font-medium">{{ cartCustomer.tin }}</span>
+              </div>
+            }
+
+            @if (cartCustomer.address) {
+              <div>
+                <span class="text-gray-600">Manzil:</span>
+                <p class="font-medium mt-1">{{ cartCustomer.address }}</p>
+              </div>
+            }
+
+            @if (cartCustomer.loyaltyPoints) {
+              <div class="flex justify-between">
+                <span>Loyalty ballari:</span>
+                <span class="font-semibold text-blue-600">
+            {{ cartCustomer.loyaltyPoints }}
+          </span>
+              </div>
+            }
+
+          </div>
+
+        </div>
+      }
+
+      <!-- REFERRER INFO -->
+      @if (cartReferrer ) {
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow p-4">
+
+          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+            <i class="pi pi-users text-green-600"></i>
+            Xamkor (Referent)
+          </h2>
+
+          <div class="space-y-2 text-sm text-gray-700">
+
+            <div class="flex justify-between">
+              <span>Ism / Tashkilot:</span>
+              <span class="font-medium">{{ cartReferrer.fullName }}</span>
+            </div>
+
+            <div class="flex justify-between">
+              <span>Xamkor kodi:</span>
+              <span class="font-semibold">{{ cartReferrer.referrerCode }}</span>
+            </div>
+
+            @if (cartReferrer.phone) {
+              <div class="flex justify-between">
+                <span>Telefon:</span>
+                <span class="font-medium">{{ cartReferrer.phone }}</span>
+              </div>
+            }
+
+            <div class="flex justify-between">
+              <span>Bonus balansi:</span>
+              <span class="font-bold text-purple-600">
+          {{ cartReferrer.balance | number:'1.0-0' }}
+        </span>
+            </div>
+
+          </div>
+
+        </div>
+      }
+
+      <!-- PAYMENT LIST -->
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow p-4">
+
+        <h2 class="text-lg font-semibold mb-3">To‘lovlar</h2>
+
+        <p-listbox
+          [options]="cartPayments || []"
+          optionLabel="method"
+          class="w-full"
+        >
+          <ng-template let-pay #item>
+
+            <div class="py-2">
+
+              <div class="flex justify-between items-center">
+                <p-tag [value]="pay.method" severity="info"></p-tag>
+
+                <span class="text-green-700 font-semibold text-lg">
+                  {{ pay.amount | number:'1.2-2' }}
+                </span>
+              </div>
+
+              @if (pay.externalTxnId){
+                <div class="text-xs text-gray-500 mt-1">
+                  Tranzaksiya ID: {{ pay.externalTxnId }}
+                </div>
+              }
+
+              @if (pay.paidAt){
+                <div class="text-xs text-gray-500">
+                  {{ pay.paidAt | date:'dd.MM.yyyy HH:mm' }}
+                </div>
+              }
+
+            </div>
+
           </ng-template>
-        </p-list-box>
+        </p-listbox>
+
+      </div>
+
     </div>
+
+
   </div>
+
 </p-dialog>
