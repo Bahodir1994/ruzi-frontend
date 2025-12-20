@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {Toolbar} from 'primeng/toolbar';
 import {Button} from 'primeng/button';
-import {UserprofileComponent} from '../../component/userprofile/userprofile.component';
 import {BreadcrumbComponent} from '../../component/breadcrumb/breadcrumb';
 
 @Component({
@@ -9,7 +8,6 @@ import {BreadcrumbComponent} from '../../component/breadcrumb/breadcrumb';
   imports: [
     Toolbar,
     Button,
-    UserprofileComponent,
     BreadcrumbComponent
   ],
   templateUrl: './navbar.html',

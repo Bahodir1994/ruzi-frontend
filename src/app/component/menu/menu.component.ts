@@ -1,15 +1,14 @@
 import {ChangeDetectorRef, Component, inject, Input, OnInit} from '@angular/core';
-import {NgClass} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 import {Ripple} from 'primeng/ripple';
 import {StyleClass} from 'primeng/styleclass';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {MenuAs} from '../../service/sidebar/sidebarDto';
 import {SidebarService} from '../../service/sidebar/sidebar.service';
-import {AuthService} from '../../configuration/authentication/auth.service';
 import {Button} from 'primeng/button';
 import {ThemeSwitcher} from '../../configuration/theme/themeswitcher';
 import {Tooltip} from "primeng/tooltip";
-
+import {Userprofile} from '../userprofile/userprofile';
 
 @Component({
   standalone: true,
@@ -22,7 +21,9 @@ import {Tooltip} from "primeng/tooltip";
     StyleClass,
     Button,
     ThemeSwitcher,
-    Tooltip
+    Tooltip,
+    NgOptimizedImage,
+    Userprofile
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
@@ -38,14 +39,9 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private sidebarService: SidebarService,
-    private authService: AuthService
-  ) {
-  }
+  ) {}
 
   async ngOnInit() {
-    const roles = await this.authService.loadUserRoles();
-    this.userRoles = new Set(roles.map(r => r.code));
-
     this.sidebarService.menuItems$.subscribe(items => {
       this.items = this.filterMenu(items);
       this.cdr.detectChanges();

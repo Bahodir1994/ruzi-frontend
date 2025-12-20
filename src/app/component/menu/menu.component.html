@@ -5,14 +5,8 @@
   <!-- ⭐ HEADER USER CARD -->
   @if (visible) {
     <div class="px-4 py-4 border-b border-gray-200">
-      <div class="flex items-center gap-3">
-        <img src="assets/images/photo.png"
-             class="w-10 h-10 rounded-full shadow-sm"/>
-
-        <div>
-          <div class="text-sm font-semibold text-gray-800">John Doe</div>
-          <div class="text-xs text-gray-500">johnexample.com</div>
-        </div>
+      <div class="w-full">
+        <app-userprofile/>
       </div>
     </div>
   } @else {

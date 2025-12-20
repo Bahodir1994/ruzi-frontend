@@ -24,7 +24,6 @@ import {Tag} from 'primeng/tag';
     NgOptimizedImage,
     TableModule,
     Menu,
-    DecimalPipe,
     DatePipe,
     NgClass,
     Tag

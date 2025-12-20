@@ -1,0 +1,72 @@
+@if (auth.isAuthenticated()) {
+
+  <p-button
+    pRipple
+    fluid
+    severity="info"
+    [rounded]="true"
+    [outlined]="true"
+    icon="pi pi-user"
+    [label]="auth.userProfile()?.firstName || auth.userProfile()?.lastName"
+    (click)="openProfile()">
+  </p-button>
+
+  <p-drawer
+    position="right"
+    header="Foydalanuvchi profili"
+    [visible]="profileDialogVisible()"
+    (onHide)="profileDialogVisible.set(false)"
+    styleClass="!w-full md:!w-80 lg:!w-[35rem] rounded-l-3xl">
+
+    @if (auth.userProfile(); as user) {
+
+      <!-- HEADER -->
+      <div class="profile-header">
+        <p-avatar
+          icon="pi pi-user"
+          size="xlarge"
+          shape="circle"
+          class="profile-avatar">
+        </p-avatar>
+
+        <div class="profile-main">
+          <div class="profile-name">
+            {{ user.firstName }} {{ user.lastName }}
+          </div>
+          <div class="profile-username">
+            {{ user.username }}
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="profile-info">
+        <div class="info-row">
+          <i class="pi pi-envelope"></i>
+          <span>{{ user.email }}</span>
+        </div>
+      </div>
+
+      <!-- ROLES -->
+      <div class="profile-roles">
+        <h4>Rollar</h4>
+
+        @if (auth.roles().length > 0) {
+          <div class="role-chips">
+            @for (role of auth.roles(); track role) {
+              <p-chip
+                [label]="role"
+                class="role-chip">
+              </p-chip>
+            }
+          </div>
+        } @else {
+          <p class="text-muted">Rollar topilmadi</p>
+        }
+      </div>
+
+    }
+
+  </p-drawer>
+
+}

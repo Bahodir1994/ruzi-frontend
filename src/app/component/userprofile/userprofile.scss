@@ -1,0 +1,73 @@
+.user-profile-wrapper {
+  width: 100%;
+  display: block; /* MUHIM */
+}
+
+:host ::ng-deep .user-profile-menu {
+  margin-left: 12px;
+  margin-top: 6px;
+}
+
+:host ::ng-deep .user-profile-menu::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px; /* buttonga qarab joylashadi */
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--surface-overlay);
+}
+
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.profile-avatar {
+  background: var(--primary-color);
+  color: white;
+}
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.profile-username {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+.profile-info {
+  margin: 1rem 0;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color);
+}
+
+.profile-roles {
+  margin-top: 1.5rem;
+}
+
+.role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.role-chip {
+  font-size: 0.75rem;
+}
+

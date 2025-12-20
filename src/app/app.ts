@@ -35,8 +35,7 @@ export class App implements OnInit {
     private authService: AuthService,
     private apiConfigService: ApiConfigService,
     private primengLocale: PrimengLocaleService
-  ) {
-  }
+  ) {}
 
   async ngOnInit() {
     this.isMobile = this.deviceService.isMobile();
@@ -44,10 +43,8 @@ export class App implements OnInit {
     this.isDesktop = this.deviceService.isDesktop();
 
     this.languageService.initLanguage();
-    this.authService.startTokenRefresh();
     this.primengLocale.setLocale(this.languageService.getCurrentLanguage());
 
-    // ✅ foydalanuvchi rollarini olish
     await this.initUserRoles();
 
     this.router.events.pipe(
